@@ -3,80 +3,283 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cupomclic - Sua Saúde em Recorrência</title>
-    <!-- Tailwind CSS via CDN (Sem instalação necessária) -->
+    <title>RAFARMA / CUPOMCLIC</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Cor personalizada verde saúde */
         .bg-health { background-color: #16a34a; }
+        .bg-health:hover { background-color: #15803d; }
         .text-health { color: #16a34a; }
-        .border-health { border-color: #16a34a; }
+        .fade-in { animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800 font-sans antialiased">
+<body class="bg-gray-50 text-gray-800 font-sans antialiased min-h-screen flex flex-col">
 
-    <!-- Cabeçalho -->
-    <header class="bg-white shadow-sm py-4 px-6 sticky top-0 z-10">
-        <div class="max-w-md mx-auto flex items-center justify-center">
-            <span class="text-2xl font-bold text-health">💊 Cupomclic</span>
+    <!-- CABEÇALHO -->
+    <header class="bg-white shadow-sm py-4 px-6 sticky top-0 z-20">
+        <div class="max-w-md mx-auto flex items-center justify-between">
+            <span class="text-xl font-extrabold text-gray-900">RAFARMA <span class="text-health">/ CUPOMCLIC</span></span>
+            <!-- Botão Secreto para alternar modos -->
+            <button onclick="alternarModo()" class="text-xs bg-gray-200 hover:bg-gray-300 text-gray-700 px-3 py-1 rounded-full transition">
+                🔒 Modo Farmácia
+            </button>
         </div>
     </header>
 
-    <main class="max-w-md mx-auto px-4 py-8 space-y-8">
+    <main class="max-w-md mx-auto px-4 py-6 flex-grow w-full">
         
-        <!-- Título Principal -->
-        <section class="text-center space-y-3">
-            <h1 class="text-3xl font-extrabold text-gray-900 leading-tight">
-                Nunca mais esqueça seu <span class="text-health">medicamento contínuo</span>.
-            </h1>
-            <p class="text-gray-600 text-sm">Receba seus remédios em casa todo mês, com desconto e sem preocupação.</p>
-        </section>
+        <!-- ================= MODO CLIENTE (LANDING PAGE) ================= -->
+        <div id="modo-cliente" class="space-y-6 fade-in">
+            <section class="text-center space-y-2">
+                <h1 class="text-2xl font-bold text-gray-900 leading-tight">
+                    Nunca mais esqueça seu <span class="text-health">medicamento contínuo</span>.
+                </h1>
+                <p class="text-gray-600 text-sm">Escolha abaixo seus medicamentos e receba em casa todo mês com desconto.</p>
+            </section>
 
-        <!-- Caixa de Busca Falsa -->
-        <section class="relative">
-            <input type="text" placeholder="Qual remédio você usa? (ex: Losartana)" 
-                class="w-full px-4 py-4 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent shadow-sm text-gray-700" disabled>
-            <svg class="w-6 h-6 text-gray-400 absolute right-4 top-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-        </section>
-
-        <!-- Card de Produto -->
-        <section class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
-            <div class="h-40 bg-green-100 flex items-center justify-center">
-                <span class="text-6xl">💊</span>
+            <div id="lista-cliente" class="space-y-5">
+                <!-- Os cards serão injetados aqui pelo JavaScript -->
             </div>
-            <div class="p-5 space-y-4">
+
+            <section class="bg-green-50 border border-green-200 rounded-xl p-4 flex items-start space-x-3 mt-8">
+                <div class="bg-green-100 p-2 rounded-full flex-shrink-0">
+                    <svg class="w-5 h-5 text-health" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+                </div>
                 <div>
-                    <h3 class="text-xl font-bold text-gray-900">Losartana 50mg</h3>
-                    <p class="text-sm text-gray-500">Caixa com 30 comprimidos</p>
+                    <h4 class="font-bold text-gray-900 text-sm">Zero esquecimento</h4>
+                    <p class="text-xs text-gray-600 mt-1">Avisamos no WhatsApp 5 dias antes de acabar. Você só confirma o envio.</p>
                 </div>
-                <div class="flex items-end space-x-2">
-                    <span class="text-gray-400 line-through text-sm">R$ 45,90</span>
-                    <span class="text-2xl font-bold text-health">R$ 36,70</span>
-                </div>
-                
-                <!-- BOTÃO DE AÇÃO (O href será alterado no Passo 4) -->
-                <a href="#" id="btn-assinar" class="block w-full bg-health hover:bg-green-700 text-white text-center font-bold py-4 rounded-xl shadow-md transition transform active:scale-95 text-lg">
-                    Assinar com 20% OFF e Entrega Mensal
-                </a>
-            </div>
-        </section>
+            </section>
+        </div>
 
-        <!-- Bloco de Explicação WhatsApp -->
-        <section class="bg-green-50 border border-green-200 rounded-xl p-5 flex items-start space-x-4">
-            <div class="bg-green-100 p-2 rounded-full flex-shrink-0">
-                <svg class="w-6 h-6 text-health" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+        <!-- ================= MODO FARMÁCIA (PAINEL ADMIN) ================= -->
+        <div id="modo-farmacia" class="hidden space-y-6 fade-in">
+            <div class="bg-white p-5 rounded-2xl shadow-md border border-gray-100">
+                <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center">
+                    <span class="bg-health text-white w-6 h-6 rounded-full flex items-center justify-center text-xs mr-2">+</span>
+                    Adicionar Medicamento
+                </h2>
+                <form id="form-medicamento" class="space-y-4">
+                    <input type="hidden" id="edit-index" value="-1">
+                    
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-600 mb-1">Nome do Remédio</label>
+                            <input type="text" id="nome" required placeholder="Ex: Losartana" class="w-full px-3 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:outline-none text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-600 mb-1">Dosagem</label>
+                            <input type="text" id="dosagem" required placeholder="Ex: 50mg" class="w-full px-3 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:outline-none text-sm">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">Descrição / Características</label>
+                        <textarea id="descricao" required rows="2" placeholder="Ex: Caixa com 30 comprimidos. Uso contínuo." class="w-full px-3 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:outline-none text-sm"></textarea>
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-3">
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-600 mb-1">Preço Normal (R$)</label>
+                            <input type="number" step="0.01" id="preco-original" required placeholder="0,00" class="w-full px-3 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:outline-none text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-600 mb-1">Preço com Desconto (R$)</label>
+                            <input type="number" step="0.01" id="preco-desconto" required placeholder="0,00" class="w-full px-3 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:outline-none text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-600 mb-1">Qtd / Mês</label>
+                            <input type="text" id="quantidade" required placeholder="Ex: 1 caixa" class="w-full px-3 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:outline-none text-sm">
+                        </div>
+                    </div>
+
+                    <div class="flex space-x-3 pt-2">
+                        <button type="submit" class="flex-1 bg-health hover:bg-green-700 text-white font-bold py-3 rounded-xl shadow-md transition text-sm">
+                            Salvar Medicamento
+                        </button>
+                        <button type="button" onclick="limparFormulario()" class="px-4 py-3 bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-xl transition text-sm">
+                            Limpar
+                        </button>
+                    </div>
+                </form>
             </div>
+
             <div>
-                <h4 class="font-bold text-gray-900">Zero esquecimento</h4>
-                <p class="text-sm text-gray-600 mt-1">Nós te avisamos no WhatsApp 5 dias antes do seu medicamento acabar. Você só confirma o envio.</p>
+                <h3 class="text-sm font-bold text-gray-500 uppercase tracking-wide mb-3">Medicamentos Cadastrados</h3>
+                <div id="lista-admin" class="space-y-3">
+                    <!-- Lista administrativa será injetada aqui -->
+                </div>
             </div>
-        </section>
+        </div>
 
     </main>
 
-    <footer class="text-center py-6 text-gray-400 text-xs">
-        &copy; 2026 Cupomclic. Todos os direitos reservados.
+    <footer class="text-center py-6 text-gray-400 text-xs bg-white border-t border-gray-100 mt-auto">
+        &copy; 2026 RAFARMA / CUPOMCLIC. Sistema de Recorrência.
     </footer>
 
+    <!-- LÓGICA DO SISTEMA -->
+    <script>
+        const WHATSAPP_NUMERO = '5511999999999'; // COLOQUE SEU NÚMERO AQUI (com 55 e DDD)
+        let medicamentos = JSON.parse(localStorage.getItem('cupomclic_meds')) || [
+            { nome: 'Losartana', dosagem: '50mg', descricao: 'Caixa com 30 comprimidos. Controle de pressão arterial.', precoOriginal: '45,90', precoDesconto: '36,70', quantidade: '1 caixa' }
+        ];
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', () => {
+            renderizarTudo();
+        });
+
+        // Alternar entre Modo Cliente e Modo Farmácia
+        function alternarModo() {
+            const modoCliente = document.getElementById('modo-cliente');
+            const modoFarmacia = document.getElementById('modo-farmacia');
+            const btn = document.querySelector('header button');
+
+            if (modoCliente.classList.contains('hidden')) {
+                modoCliente.classList.remove('hidden');
+                modoFarmacia.classList.add('hidden');
+                btn.textContent = '🔒 Modo Farmácia';
+                btn.classList.replace('bg-green-100', 'bg-gray-200');
+                btn.classList.replace('text-green-700', 'text-gray-700');
+            } else {
+                // Simulação simples de "senha" para o dono não clicar sem querer
+                const senha = prompt("Digite a senha de acesso (Dica: 1234)");
+                if (senha === '1234') {
+                    modoCliente.classList.add('hidden');
+                    modoFarmacia.classList.remove('hidden');
+                    btn.textContent = '👁️ Modo Cliente';
+                    btn.classList.replace('bg-gray-200', 'bg-green-100');
+                    btn.classList.replace('text-gray-700', 'text-green-700');
+                    renderizarTudo();
+                } else if (senha !== null) {
+                    alert("Senha incorreta!");
+                }
+            }
+        }
+
+        // Salvar ou Editar Medicamento
+        document.getElementById('form-medicamento').addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const novoMed = {
+                nome: document.getElementById('nome').value,
+                dosagem: document.getElementById('dosagem').value,
+                descricao: document.getElementById('descricao').value,
+                precoOriginal: document.getElementById('preco-original').value,
+                precoDesconto: document.getElementById('preco-desconto').value,
+                quantidade: document.getElementById('quantidade').value
+            };
+
+            const index = document.getElementById('edit-index').value;
+            if (index === "-1") {
+                medicamentos.push(novoMed);
+            } else {
+                medicamentos[index] = novoMed;
+            }
+
+            salvarDados();
+            limparFormulario();
+            renderizarTudo();
+            alert("Medicamento salvo com sucesso!");
+        });
+
+        // Carregar dados para edição
+        function editarMedicamento(index) {
+            const med = medicamentos[index];
+            document.getElementById('nome').value = med.nome;
+            document.getElementById('dosagem').value = med.dosagem;
+            document.getElementById('descricao').value = med.descricao;
+            document.getElementById('preco-original').value = med.precoOriginal;
+            document.getElementById('preco-desconto').value = med.precoDesconto;
+            document.getElementById('quantidade').value = med.quantidade;
+            document.getElementById('edit-index').value = index;
+            
+            // Rola a tela para o formulário
+            document.getElementById('form-medicamento').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Excluir Medicamento
+        function excluirMedicamento(index) {
+            if (confirm("Tem certeza que deseja excluir este medicamento?")) {
+                medicamentos.splice(index, 1);
+                salvarDados();
+                renderizarTudo();
+            }
+        }
+
+        // Funções Auxiliares
+        function salvarDados() {
+            localStorage.setItem('cupomclic_meds', JSON.stringify(medicamentos));
+        }
+
+        function limparFormulario() {
+            document.getElementById('form-medicamento').reset();
+            document.getElementById('edit-index').value = "-1";
+        }
+
+        // Renderização na Tela
+        function renderizarTudo() {
+            const listaCliente = document.getElementById('lista-cliente');
+            const listaAdmin = document.getElementById('lista-admin');
+            
+            listaCliente.innerHTML = '';
+            listaAdmin.innerHTML = '';
+
+            if (medicamentos.length === 0) {
+                listaCliente.innerHTML = '<p class="text-center text-gray-500 py-4">Nenhum medicamento disponível no momento.</p>';
+                listaAdmin.innerHTML = '<p class="text-center text-gray-500 py-4 text-sm">Nenhum medicamento cadastrado.</p>';
+                return;
+            }
+
+            medicamentos.forEach((med, index) => {
+                // 1. Renderizar Card do Cliente
+                const msgZap = `Oi! Vim pelo RAFARMA/CUPOMCLIC e quero assinar a entrega mensal de: *${med.nome} ${med.dosagem}* (${med.quantidade}) com desconto.`;
+                const linkZap = `https://wa.me/${WHATSAPP_NUMERO}?text=${encodeURIComponent(msgZap)}`;
+
+                listaCliente.innerHTML += `
+                    <section class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden fade-in">
+                        <div class="h-20 bg-green-50 flex items-center justify-center border-b border-green-100">
+                            <span class="text-4xl">💊</span>
+                        </div>
+                        <div class="p-4 space-y-3">
+                            <div>
+                                <h3 class="text-lg font-bold text-gray-900">${med.nome} <span class="text-health text-base">${med.dosagem}</span></h3>
+                                <p class="text-xs text-gray-500 mt-1 leading-relaxed">${med.descricao}</p>
+                            </div>
+                            <div class="flex items-center justify-between bg-gray-50 p-3 rounded-lg">
+                                <div>
+                                    <span class="text-xs text-gray-400 line-through block">R$ ${med.precoOriginal}</span>
+                                    <span class="text-xl font-extrabold text-health">R$ ${med.precoDesconto}</span>
+                                    <span class="text-xs text-gray-500 block">/ ${med.quantidade}</span>
+                                </div>
+                                <a href="${linkZap}" target="_blank" class="bg-health hover:bg-green-700 text-white text-sm font-bold py-3 px-4 rounded-xl shadow-sm transition transform active:scale-95 text-center">
+                                    Assinar Agora
+                                </a>
+                            </div>
+                        </div>
+                    </section>
+                `;
+
+                // 2. Renderizar Linha do Admin
+                listaAdmin.innerHTML += `
+                    <div class="bg-white p-3 rounded-xl border border-gray-200 flex justify-between items-center fade-in">
+                        <div class="flex-grow">
+                            <p class="font-bold text-sm text-gray-900">${med.nome} ${med.dosagem}</p>
+                            <p class="text-xs text-gray-500">R$ ${med.precoDesconto} / ${med.quantidade}</p>
+                        </div>
+                        <div class="flex space-x-2">
+                            <button onclick="editarMedicamento(${index})" class="p-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                            </button>
+                            <button onclick="excluirMedicamento(${index})" class="p-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+    </script>
 </body>
 </html>
