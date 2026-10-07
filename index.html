@@ -13,6 +13,10 @@
         .fade-in { animation: fadeIn 0.3s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .badge-desconto { background: linear-gradient(135deg, #16a34a 0%, #15803d 100%); }
+        .dia-marcado { background-color: #16a34a; color: white; font-weight: bold; }
+        .dia-hoje { border: 2px solid #16a34a; }
+        .dia-clicavel { cursor: pointer; transition: all 0.2s; }
+        .dia-clicavel:hover { background-color: #dcfce7; transform: scale(1.1); }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 font-sans antialiased min-h-screen flex flex-col">
@@ -55,6 +59,34 @@
         <!-- MODO FARMÁCIA -->
         <div id="modo-farmacia" class="hidden space-y-6 fade-in">
             
+            <!-- Calendário -->
+            <div class="bg-white p-5 rounded-2xl shadow-md border border-gray-100">
+                <div class="flex items-center justify-between mb-4">
+                    <button onclick="mudarMes(-1)" class="p-2 hover:bg-gray-100 rounded-lg"></button>
+                    <h2 class="text-lg font-bold text-gray-900" id="mes-atual"></h2>
+                    <button onclick="mudarMes(1)" class="p-2 hover:bg-gray-100 rounded-lg">▶</button>
+                </div>
+                
+                <div class="grid grid-cols-7 gap-1 text-center text-xs font-semibold text-gray-600 mb-2">
+                    <div>Dom</div><div>Seg</div><div>Ter</div><div>Qua</div><div>Qui</div><div>Sex</div><div>Sáb</div>
+                </div>
+                
+                <div id="calendario" class="grid grid-cols-7 gap-1">
+                    <!-- Dias serão injetados aqui -->
+                </div>
+                
+                <div class="mt-4 flex items-center justify-center space-x-4 text-xs">
+                    <div class="flex items-center">
+                        <div class="w-4 h-4 bg-health rounded mr-2"></div>
+                        <span class="text-gray-600">Dia com entrega</span>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="w-4 h-4 border-2 border-health rounded mr-2"></div>
+                        <span class="text-gray-600">Hoje</span>
+                    </div>
+                </div>
+            </div>
+
             <!-- Configuração de Descontos -->
             <div class="bg-white p-5 rounded-2xl shadow-md border border-gray-100">
                 <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center">
@@ -107,6 +139,10 @@
 
                     <div class="grid grid-cols-3 gap-3">
                         <div>
+                            <label class="block text-xs font-semibold text-gray-600 mb-1">Duração (dias)</label>
+                            <input type="number" id="dias-duracao" required placeholder="30" class="w-full px-3 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:outline-none text-sm">
+                        </div>
+                        <div>
                             <label class="block text-xs font-semibold text-gray-600 mb-1">Preço Normal (R$)</label>
                             <input type="number" step="0.01" id="preco-original" required placeholder="0,00" class="w-full px-3 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:outline-none text-sm">
                         </div>
@@ -114,10 +150,11 @@
                             <label class="block text-xs font-semibold text-gray-600 mb-1">Qtd / Mês</label>
                             <input type="text" id="quantidade" required placeholder="Ex: 1 caixa" class="w-full px-3 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:outline-none text-sm">
                         </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-gray-600 mb-1">Taxa Entrega (R$)</label>
-                            <input type="number" step="0.01" id="taxa-entrega" required placeholder="0,00" class="w-full px-3 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:outline-none text-sm">
-                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">Taxa Entrega (R$)</label>
+                        <input type="number" step="0.01" id="taxa-entrega" required placeholder="0,00" class="w-full px-3 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:outline-none text-sm">
                     </div>
 
                     <div class="flex space-x-3 pt-2">
@@ -131,6 +168,56 @@
                 </form>
             </div>
 
+            <!-- Formulário de Nova Assinatura -->
+            <div class="bg-white p-5 rounded-2xl shadow-md border border-gray-100">
+                <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center">
+                    <span class="bg-health text-white w-6 h-6 rounded-full flex items-center justify-center text-xs mr-2">📝</span>
+                    Registrar Nova Assinatura
+                </h2>
+                <form id="form-assinatura" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">Nome do Cliente</label>
+                        <input type="text" id="cliente-nome" required placeholder="Ex: João Silva" class="w-full px-3 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:outline-none text-sm">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">WhatsApp (com DDD)</label>
+                        <input type="text" id="cliente-whatsapp" required placeholder="Ex: 5511999999999" class="w-full px-3 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:outline-none text-sm">
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-600 mb-1">Medicamento</label>
+                            <select id="assinatura-medicamento" required class="w-full px-3 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:outline-none text-sm">
+                                <!-- Opções serão injetadas -->
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-600 mb-1">Desconto Aplicado (%)</label>
+                            <input type="number" id="assinatura-desconto" required placeholder="20" class="w-full px-3 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:outline-none text-sm">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-600 mb-1">Data Última Entrega</label>
+                            <input type="date" id="assinatura-data" required class="w-full px-3 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:outline-none text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-600 mb-1">Tipo de Entrega</label>
+                            <select id="assinatura-tipo" required class="w-full px-3 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:outline-none text-sm">
+                                <option value="retirada">Retirada na Farmácia</option>
+                                <option value="entrega">Delivery</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="w-full bg-health hover:bg-green-700 text-white font-bold py-3 rounded-xl shadow-md transition text-sm">
+                        Registrar Assinatura
+                    </button>
+                </form>
+            </div>
+
             <div>
                 <h3 class="text-sm font-bold text-gray-500 uppercase tracking-wide mb-3">Medicamentos Cadastrados</h3>
                 <div id="lista-admin" class="space-y-3">
@@ -140,6 +227,19 @@
         </div>
 
     </main>
+
+    <!-- Modal de Clientes do Dia -->
+    <div id="modal-clientes" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full max-h-[80vh] overflow-y-auto">
+            <div class="p-5 border-b border-gray-200 flex justify-between items-center">
+                <h3 class="text-lg font-bold text-gray-900" id="modal-titulo">Clientes do Dia</h3>
+                <button onclick="fecharModal()" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+            </div>
+            <div id="modal-conteudo" class="p-5 space-y-3">
+                <!-- Lista de clientes será injetada aqui -->
+            </div>
+        </div>
+    </div>
 
     <footer class="text-center py-6 text-gray-400 text-xs bg-white border-t border-gray-100 mt-auto">
         &copy; 2026 RAFARMA / CUPOMCLIC. Sistema de Recorrência.
@@ -157,23 +257,21 @@
             { meses: 8, desconto: 30 }
         ];
 
-        // ========== INICIALIZAÇÃO ==========
         const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         let medicamentos = [];
+        let assinaturas = [];
         let tipoEntregaSelecionado = {};
+        let dataAtual = new Date();
 
         document.addEventListener('DOMContentLoaded', () => {
             carregarDescontos();
             carregarMedicamentos();
+            carregarAssinaturas();
         });
 
         async function carregarDescontos() {
             try {
-                const { data, error } = await db
-                    .from('config_descontos')
-                    .select('*')
-                    .limit(1);
-
+                const { data, error } = await db.from('config_descontos').select('*').limit(1);
                 if (!error && data && data.length > 0) {
                     TABELA_DESCONTOS = [
                         { meses: 3, desconto: data[0].desc_3 },
@@ -191,18 +289,25 @@
 
         async function carregarMedicamentos() {
             try {
-                const { data, error } = await db
-                    .from('medicamentos')
-                    .select('*')
-                    .order('created_at', { ascending: false });
-
+                const { data, error } = await db.from('medicamentos').select('*').order('created_at', { ascending: false });
                 if (error) throw error;
-
                 medicamentos = data || [];
                 renderizarTudo();
+                atualizarSelectMedicamentos();
             } catch (error) {
                 console.error('Erro ao carregar:', error);
-                document.getElementById('lista-cliente').innerHTML = '<p class="text-center text-red-500 py-4">Erro ao carregar. Verifique o Console (F12).</p>';
+                document.getElementById('lista-cliente').innerHTML = '<p class="text-center text-red-500 py-4">Erro ao carregar.</p>';
+            }
+        }
+
+        async function carregarAssinaturas() {
+            try {
+                const { data, error } = await db.from('assinaturas').select('*, medicamentos(nome, dosagem)').eq('ativa', true).order('data_proxima_entrega', { ascending: true });
+                if (error) throw error;
+                assinaturas = data || [];
+                renderizarCalendario();
+            } catch (error) {
+                console.error('Erro ao carregar assinaturas:', error);
             }
         }
 
@@ -221,10 +326,92 @@
                     modoCliente.classList.add('hidden');
                     modoFarmacia.classList.remove('hidden');
                     btn.textContent = '👁️ Modo Cliente';
+                    renderizarCalendario();
                 } else if (senha !== null) {
                     alert("Senha incorreta!");
                 }
             }
+        }
+
+        function renderizarCalendario() {
+            const ano = dataAtual.getFullYear();
+            const mes = dataAtual.getMonth();
+            const nomesMeses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+            
+            document.getElementById('mes-atual').textContent = `${nomesMeses[mes]} ${ano}`;
+
+            const primeiroDia = new Date(ano, mes, 1).getDay();
+            const diasNoMes = new Date(ano, mes + 1, 0).getDate();
+            const hoje = new Date();
+
+            let html = '';
+
+            // Espaços vazios antes do primeiro dia
+            for (let i = 0; i < primeiroDia; i++) {
+                html += '<div></div>';
+            }
+
+            // Dias do mês
+            for (let dia = 1; dia <= diasNoMes; dia++) {
+                const dataStr = `${ano}-${String(mes + 1).padStart(2, '0')}-${String(dia).padStart(2, '0')}`;
+                const temEntrega = assinaturas.some(a => a.data_proxima_entrega === dataStr);
+                const ehHoje = hoje.getDate() === dia && hoje.getMonth() === mes && hoje.getFullYear() === ano;
+
+                let classes = 'dia-clicvable p-2 rounded-lg text-sm text-center transition';
+                if (temEntrega) classes += ' dia-marcado';
+                if (ehHoje) classes += ' dia-hoje';
+
+                html += `<div class="${classes}" onclick="abrirDia('${dataStr}')">${dia}</div>`;
+            }
+
+            document.getElementById('calendario').innerHTML = html;
+        }
+
+        function mudarMes(direcao) {
+            dataAtual.setMonth(dataAtual.getMonth() + direcao);
+            renderizarCalendario();
+        }
+
+        function abrirDia(dataStr) {
+            const clientesDoDia = assinaturas.filter(a => a.data_proxima_entrega === dataStr);
+            
+            if (clientesDoDia.length === 0) {
+                alert('Nenhuma entrega programada para este dia.');
+                return;
+            }
+
+            const [ano, mes, dia] = dataStr.split('-');
+            document.getElementById('modal-titulo').textContent = `Entregas em ${dia}/${mes}/${ano}`;
+
+            let html = '';
+            clientesDoDia.forEach(cliente => {
+                const diasRestantes = Math.ceil((new Date(dataStr) - new Date()) / (1000 * 60 * 60 * 24));
+                const msg = `Oi ${cliente.cliente_nome}! Sua ${cliente.medicamentos.nome} ${cliente.medicamentos.dosagem} acaba em ${diasRestantes} dias. Posso separar a próxima caixa com ${cliente.desconto_aplicado}% de desconto? Responda SIM para confirmar.`;
+                const linkZap = `https://wa.me/${cliente.cliente_whatsapp}?text=${encodeURIComponent(msg)}`;
+
+                html += `
+                    <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                        <div class="flex justify-between items-start mb-2">
+                            <div>
+                                <p class="font-bold text-gray-900">${cliente.cliente_nome}</p>
+                                <p class="text-xs text-gray-600">${cliente.medicamentos.nome} ${cliente.medicamentos.dosagem}</p>
+                                <p class="text-xs text-health font-semibold">${cliente.desconto_aplicado}% OFF | ${cliente.tipo_entrega === 'entrega' ? '🚚 Delivery' : '🏪 Retirada'}</p>
+                            </div>
+                            <span class="text-xs bg-green-100 text-health px-2 py-1 rounded-full font-semibold">${diasRestantes} dias</span>
+                        </div>
+                        <a href="${linkZap}" target="_blank" class="block w-full bg-health hover:bg-green-700 text-white text-center font-bold py-2 rounded-lg transition text-sm mt-2">
+                            Enviar WhatsApp
+                        </a>
+                    </div>
+                `;
+            });
+
+            document.getElementById('modal-conteudo').innerHTML = html;
+            document.getElementById('modal-clientes').classList.remove('hidden');
+        }
+
+        function fecharModal() {
+            document.getElementById('modal-clientes').classList.add('hidden');
         }
 
         async function salvarDescontos() {
@@ -233,27 +420,14 @@
             const desc8 = parseInt(document.getElementById('desc-8').value);
 
             try {
-                const { data: existente } = await db
-                    .from('config_descontos')
-                    .select('id')
-                    .limit(1);
-
-                const configData = {
-                    desc_3: desc3,
-                    desc_5: desc5,
-                    desc_8: desc8
-                };
+                const { data: existente } = await db.from('config_descontos').select('id').limit(1);
+                const configData = { desc_3: desc3, desc_5: desc5, desc_8: desc8 };
 
                 if (existente && existente.length > 0) {
-                    const { error } = await db
-                        .from('config_descontos')
-                        .update(configData)
-                        .eq('id', existente[0].id);
+                    const { error } = await db.from('config_descontos').update(configData).eq('id', existente[0].id);
                     if (error) throw error;
                 } else {
-                    const { error } = await db
-                        .from('config_descontos')
-                        .insert([configData]);
+                    const { error } = await db.from('config_descontos').insert([configData]);
                     if (error) throw error;
                 }
 
@@ -278,6 +452,7 @@
                 nome: document.getElementById('nome').value,
                 dosagem: document.getElementById('dosagem').value,
                 descricao: document.getElementById('descricao').value,
+                dias_duracao: parseInt(document.getElementById('dias-duracao').value),
                 preco_original: document.getElementById('preco-original').value,
                 quantidade: document.getElementById('quantidade').value,
                 taxa_entrega: document.getElementById('taxa-entrega').value
@@ -287,15 +462,10 @@
 
             try {
                 if (editId) {
-                    const { error } = await db
-                        .from('medicamentos')
-                        .update(novoMed)
-                        .eq('id', editId);
+                    const { error } = await db.from('medicamentos').update(novoMed).eq('id', editId);
                     if (error) throw error;
                 } else {
-                    const { error } = await db
-                        .from('medicamentos')
-                        .insert([novoMed]);
+                    const { error } = await db.from('medicamentos').insert([novoMed]);
                     if (error) throw error;
                 }
 
@@ -304,15 +474,63 @@
                 alert("Medicamento salvo com sucesso!");
             } catch (error) {
                 console.error('Erro ao salvar:', error);
-                alert("Erro ao salvar. Veja o Console (F12).");
+                alert("Erro ao salvar.");
             }
         });
+
+        document.getElementById('form-assinatura').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const medicamentoId = parseInt(document.getElementById('assinatura-medicamento').value);
+            const medicamento = medicamentos.find(m => m.id === medicamentoId);
+            const dataUltimaEntrega = document.getElementById('assinatura-data').value;
+            const diasDuracao = medicamento.dias_duracao;
+
+            // Calcular próxima entrega
+            const dataUltima = new Date(dataUltimaEntrega);
+            const dataProxima = new Date(dataUltima);
+            dataProxima.setDate(dataProxima.getDate() + diasDuracao);
+            const dataProximaStr = dataProxima.toISOString().split('T')[0];
+
+            const novaAssinatura = {
+                cliente_nome: document.getElementById('cliente-nome').value,
+                cliente_whatsapp: document.getElementById('cliente-whatsapp').value,
+                medicamento_id: medicamentoId,
+                dias_duracao: diasDuracao,
+                data_ultima_entrega: dataUltimaEntrega,
+                data_proxima_entrega: dataProximaStr,
+                desconto_aplicado: parseInt(document.getElementById('assinatura-desconto').value),
+                tipo_entrega: document.getElementById('assinatura-tipo').value,
+                ativa: true
+            };
+
+            try {
+                const { error } = await db.from('assinaturas').insert([novaAssinatura]);
+                if (error) throw error;
+
+                document.getElementById('form-assinatura').reset();
+                await carregarAssinaturas();
+                alert("Assinatura registrada com sucesso!");
+            } catch (error) {
+                console.error('Erro ao registrar assinatura:', error);
+                alert("Erro ao registrar assinatura.");
+            }
+        });
+
+        function atualizarSelectMedicamentos() {
+            const select = document.getElementById('assinatura-medicamento');
+            select.innerHTML = '<option value="">Selecione...</option>';
+            medicamentos.forEach(med => {
+                select.innerHTML += `<option value="${med.id}">${med.nome} ${med.dosagem}</option>`;
+            });
+        }
 
         function editarMedicamento(index) {
             const med = medicamentos[index];
             document.getElementById('nome').value = med.nome;
             document.getElementById('dosagem').value = med.dosagem;
             document.getElementById('descricao').value = med.descricao;
+            document.getElementById('dias-duracao').value = med.dias_duracao;
             document.getElementById('preco-original').value = med.preco_original;
             document.getElementById('quantidade').value = med.quantidade;
             document.getElementById('taxa-entrega').value = med.taxa_entrega;
@@ -325,10 +543,7 @@
             if (confirm("Tem certeza que deseja excluir este medicamento?")) {
                 const med = medicamentos[index];
                 try {
-                    const { error } = await db
-                        .from('medicamentos')
-                        .delete()
-                        .eq('id', med.id);
+                    const { error } = await db.from('medicamentos').delete().eq('id', med.id);
                     if (error) throw error;
                     await carregarMedicamentos();
                 } catch (error) {
@@ -363,7 +578,6 @@
                 return;
             }
 
-            // Título da lista no modo cliente
             listaCliente.innerHTML += `
                 <div class="text-center mb-4">
                     <h2 class="text-lg font-bold text-gray-900">Veja aqui a lista de medicamentos e descontos</h2>
@@ -372,7 +586,6 @@
             `;
 
             medicamentos.forEach((med, index) => {
-                // CARD DO CLIENTE
                 listaCliente.innerHTML += `
                     <section class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden fade-in">
                         <div class="h-20 bg-green-50 flex items-center justify-center border-b border-green-100 relative">
@@ -387,7 +600,6 @@
                                 <p class="text-xs text-gray-500 mt-1 leading-relaxed">${med.descricao}</p>
                             </div>
                             
-                            <!-- Tabela de Descontos do Medicamento -->
                             <div class="bg-gradient-to-r from-green-50 to-green-100 border border-green-200 rounded-lg p-3">
                                 <p class="text-xs font-bold text-gray-700 mb-2">Descontos progressivos:</p>
                                 <div class="grid grid-cols-3 gap-2 text-center">
@@ -449,12 +661,11 @@
                     </section>
                 `;
 
-                // LINHA DO ADMIN
                 listaAdmin.innerHTML += `
                     <div class="bg-white p-3 rounded-xl border border-gray-200 flex justify-between items-center fade-in">
                         <div class="flex-grow">
                             <p class="font-bold text-sm text-gray-900">${med.nome} ${med.dosagem}</p>
-                            <p class="text-xs text-gray-500">R$ ${med.preco_original} / ${med.quantidade} | Taxa: R$ ${med.taxa_entrega}</p>
+                            <p class="text-xs text-gray-500">R$ ${med.preco_original} / ${med.quantidade} | Duração: ${med.dias_duracao} dias</p>
                         </div>
                         <div class="flex space-x-2">
                             <button onclick="editarMedicamento(${index})" class="p-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition">
