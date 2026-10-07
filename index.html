@@ -38,7 +38,7 @@
 
             <section class="bg-gradient-to-r from-green-50 to-green-100 border border-green-200 rounded-xl p-4">
                 <h3 class="text-sm font-bold text-gray-900 mb-2 flex items-center">
-                    <span class="text-lg mr-2">🎯</span> Quanto mais meses, maior o desconto!
+                    <span class="text-lg mr-2"></span> Quanto mais meses, maior o desconto!
                 </h3>
                 <div class="grid grid-cols-3 gap-2 text-center">
                     <div class="bg-white rounded-lg p-2 shadow-sm">
@@ -138,8 +138,8 @@
 
     <script>
         // ========== CONFIGURAÇÃO ==========
-        const SUPABASE_URL = 'https://rzapsntasfdqedlzmvyh.supabase.co';
-        const SUPABASE_ANON_KEY = 'sb_publishable_X10VkrweostPY740og0NYg_3mvhQgdk';
+        const SUPABASE_URL = 'https://hcgsttzjolotljqdvlat.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhjZ3N0dHpqb2xvdGxqcWR2bGF0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE0MDU5MTMsImV4cCI6MjEwNjk4MTkxM30.AWbtRx82wDp2K-yERqQy9RA8dYWXev6B14jP5isLkVM';
         const WHATSAPP_LINK = 'https://wa.link/j4fs7u';
 
         const TABELA_DESCONTOS = [
@@ -148,7 +148,7 @@
             { meses: 8, desconto: 30 }
         ];
 
-        // ========== INICIALIZAÇÃO (variável renomeada para 'db') ==========
+        // ========== INICIALIZAÇÃO ==========
         const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         let medicamentos = [];
         let tipoEntregaSelecionado = {};
@@ -170,7 +170,7 @@
                 renderizarTudo();
             } catch (error) {
                 console.error('Erro ao carregar:', error);
-                document.getElementById('lista-cliente').innerHTML = '<p class="text-center text-red-500 py-4">Erro ao carregar. Veja o Console (F12).</p>';
+                document.getElementById('lista-cliente').innerHTML = '<p class="text-center text-red-500 py-4">Erro ao carregar. Verifique o Console (F12).</p>';
             }
         }
 
