@@ -59,10 +59,23 @@
         <!-- MODO FARMÁCIA -->
         <div id="modo-farmacia" class="hidden space-y-6 fade-in">
             
+            <!-- Configuração do WhatsApp da Farmácia -->
+            <div class="bg-yellow-50 p-5 rounded-2xl shadow-md border border-yellow-200">
+                <h2 class="text-lg font-bold text-gray-900 mb-3 flex items-center">
+                    <span class="bg-yellow-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs mr-2">📱</span>
+                    WhatsApp da Farmácia (Destino)
+                </h2>
+                <p class="text-xs text-gray-600 mb-3">Este é o número que receberá os pedidos dos clientes. Use formato: 55 + DDD + número (só dígitos)</p>
+                <input type="text" id="whatsapp-farmacia" placeholder="Ex: 5511999999999" class="w-full px-3 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-yellow-500 focus:outline-none text-sm">
+                <button onclick="salvarWhatsAppFarmacia()" class="w-full mt-3 bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 rounded-xl shadow-md transition text-sm">
+                    Salvar Número
+                </button>
+            </div>
+
             <!-- Calendário -->
             <div class="bg-white p-5 rounded-2xl shadow-md border border-gray-100">
                 <div class="flex items-center justify-between mb-4">
-                    <button onclick="mudarMes(-1)" class="p-2 hover:bg-gray-100 rounded-lg"></button>
+                    <button onclick="mudarMes(-1)" class="p-2 hover:bg-gray-100 rounded-lg">◀</button>
                     <h2 class="text-lg font-bold text-gray-900" id="mes-atual"></h2>
                     <button onclick="mudarMes(1)" class="p-2 hover:bg-gray-100 rounded-lg">▶</button>
                 </div>
@@ -72,7 +85,6 @@
                 </div>
                 
                 <div id="calendario" class="grid grid-cols-7 gap-1">
-                    <!-- Dias serão injetados aqui -->
                 </div>
                 
                 <div class="mt-4 flex items-center justify-center space-x-4 text-xs">
@@ -189,7 +201,6 @@
                         <div>
                             <label class="block text-xs font-semibold text-gray-600 mb-1">Medicamento</label>
                             <select id="assinatura-medicamento" required class="w-full px-3 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:outline-none text-sm">
-                                <!-- Opções serão injetadas -->
                             </select>
                         </div>
                         <div>
@@ -236,7 +247,6 @@
                 <button onclick="fecharModal()" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
             </div>
             <div id="modal-conteudo" class="p-5 space-y-3">
-                <!-- Lista de clientes será injetada aqui -->
             </div>
         </div>
     </div>
@@ -249,7 +259,9 @@
         // ========== CONFIGURAÇÃO ==========
         const SUPABASE_URL = 'https://hcgsttzjolotljqdvlat.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhjZ3N0dHpqb2xvdGxqcWR2bGF0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE0MDU5MTMsImV4cCI6MjEwNjk4MTkxM30.AWbtRx82wDp2K-yERqQy9RA8dYWXev6B14jP5isLkVM';
-        const WHATSAPP_LINK = 'https://wa.link/j4fs7u';
+
+        // Número padrão da farmácia (será sobrescrito pelo banco)
+        let WHATSAPP_FARMACIA = '5511999999999';
 
         let TABELA_DESCONTOS = [
             { meses: 3, desconto: 12 },
@@ -264,15 +276,25 @@
         let dataAtual = new Date();
 
         document.addEventListener('DOMContentLoaded', () => {
-            carregarDescontos();
+            carregarConfiguracoes();
             carregarMedicamentos();
             carregarAssinaturas();
         });
 
-        async function carregarDescontos() {
+        async function carregarConfiguracoes() {
+            // Carregar WhatsApp da farmácia
             try {
-                const { data, error } = await db.from('config_descontos').select('*').limit(1);
-                if (!error && data && data.length > 0) {
+                const { data: configWhats } = await db.from('config_geral').select('*').limit(1);
+                if (configWhats && configWhats.length > 0 && configWhats[0].whatsapp_farmacia) {
+                    WHATSAPP_FARMACIA = configWhats[0].whatsapp_farmacia;
+                    document.getElementById('whatsapp-farmacia').value = WHATSAPP_FARMACIA;
+                }
+            } catch (e) { console.log('Config WhatsApp não carregada'); }
+
+            // Carregar descontos
+            try {
+                const { data } = await db.from('config_descontos').select('*').limit(1);
+                if (data && data.length > 0) {
                     TABELA_DESCONTOS = [
                         { meses: 3, desconto: data[0].desc_3 },
                         { meses: 5, desconto: data[0].desc_5 },
@@ -282,8 +304,33 @@
                     document.getElementById('desc-5').value = data[0].desc_5;
                     document.getElementById('desc-8').value = data[0].desc_8;
                 }
+            } catch (e) { console.log('Usando descontos padrão'); }
+        }
+
+        async function salvarWhatsAppFarmacia() {
+            const numero = document.getElementById('whatsapp-farmacia').value.trim();
+            if (!numero || numero.length < 10) {
+                alert('Digite um número válido (Ex: 5511999999999)');
+                return;
+            }
+            
+            try {
+                const { data: existente } = await db.from('config_geral').select('id').limit(1);
+                const configData = { whatsapp_farmacia: numero };
+
+                if (existente && existente.length > 0) {
+                    const { error } = await db.from('config_geral').update(configData).eq('id', existente[0].id);
+                    if (error) throw error;
+                } else {
+                    const { error } = await db.from('config_geral').insert([configData]);
+                    if (error) throw error;
+                }
+
+                WHATSAPP_FARMACIA = numero;
+                alert('Número da farmácia salvo com sucesso!');
             } catch (error) {
-                console.log('Usando descontos padrão');
+                console.error('Erro:', error);
+                alert('Erro ao salvar número.');
             }
         }
 
@@ -346,18 +393,16 @@
 
             let html = '';
 
-            // Espaços vazios antes do primeiro dia
             for (let i = 0; i < primeiroDia; i++) {
                 html += '<div></div>';
             }
 
-            // Dias do mês
             for (let dia = 1; dia <= diasNoMes; dia++) {
                 const dataStr = `${ano}-${String(mes + 1).padStart(2, '0')}-${String(dia).padStart(2, '0')}`;
                 const temEntrega = assinaturas.some(a => a.data_proxima_entrega === dataStr);
                 const ehHoje = hoje.getDate() === dia && hoje.getMonth() === mes && hoje.getFullYear() === ano;
 
-                let classes = 'dia-clicvable p-2 rounded-lg text-sm text-center transition';
+                let classes = 'dia-clicavel p-2 rounded-lg text-sm text-center transition';
                 if (temEntrega) classes += ' dia-marcado';
                 if (ehHoje) classes += ' dia-hoje';
 
@@ -486,7 +531,6 @@
             const dataUltimaEntrega = document.getElementById('assinatura-data').value;
             const diasDuracao = medicamento.dias_duracao;
 
-            // Calcular próxima entrega
             const dataUltima = new Date(dataUltimaEntrega);
             const dataProxima = new Date(dataUltima);
             dataProxima.setDate(dataProxima.getDate() + diasDuracao);
@@ -563,6 +607,42 @@
             const preco = parseFloat(precoOriginal);
             const precoComDesconto = preco * (1 - desconto / 100);
             return precoComDesconto.toFixed(2);
+        }
+
+        // ========== NOVA FUNÇÃO: ENVIAR PEDIDO COMPLETO PARA A FARMÁCIA ==========
+        function enviarPedidoCliente(index) {
+            const med = medicamentos[index];
+            const meses = parseInt(document.getElementById(`meses-${index}`).value);
+            const desconto = TABELA_DESCONTOS.find(d => d.meses === meses)?.desconto || 0;
+            const precoComDesconto = calcularPrecoComDesconto(med.preco_original, meses);
+            const tipoEntrega = tipoEntregaSelecionado[index] || 'retirada';
+            const entregaTexto = tipoEntrega === 'entrega' ? `🚚 Delivery (+R$ ${med.taxa_entrega})` : '🏪 Retirada na Farmácia';
+            const precoTotal = (parseFloat(precoComDesconto) + (tipoEntrega === 'entrega' ? parseFloat(med.taxa_entrega) : 0)).toFixed(2);
+
+            // Monta a mensagem completa que a farmácia vai receber
+            const mensagem = `*🛒 NOVO PEDIDO CUPOMCLIC*
+
+💊 *Medicamento:* ${med.nome} ${med.dosagem}
+📋 ${med.descricao}
+
+📅 *Plano de Assinatura:* ${meses} ${meses === 1 ? 'mês' : 'meses'}
+🎯 *Desconto:* ${desconto}% OFF
+💰 *Preço com desconto:* R$ ${precoComDesconto}/mês
+
+📦 *Quantidade:* ${med.quantidade}
+🚚 *Entrega:* ${entregaTexto}
+
+💳 *Total da 1ª entrega:* R$ ${precoTotal}
+(Pagamento na entrega)
+
+👤 *Meu nome:* [preencha aqui]
+📍 *Meu endereço:* [preencha se for delivery]
+
+Obrigado!`;
+
+            // Abre o WhatsApp do CLIENTE enviando para o número da FARMÁCIA
+            const linkZap = `https://wa.me/${WHATSAPP_FARMACIA}?text=${encodeURIComponent(mensagem)}`;
+            window.open(linkZap, '_blank');
         }
 
         function renderizarTudo() {
@@ -654,9 +734,9 @@
                                 </div>
                             </div>
 
-                            <a href="${WHATSAPP_LINK}" target="_blank" class="block w-full bg-health hover:bg-green-700 text-white text-center font-bold py-3 rounded-xl shadow-md transition transform active:scale-95 text-sm">
-                                ENVIAR
-                            </a>
+                            <button onclick="enviarPedidoCliente(${index})" class="block w-full bg-health hover:bg-green-700 text-white text-center font-bold py-3 rounded-xl shadow-md transition transform active:scale-95 text-sm">
+                                ENVIAR PEDIDO
+                            </button>
                         </div>
                     </section>
                 `;
