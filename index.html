@@ -80,7 +80,6 @@
                     Adicionar Medicamento
                 </h2>
                 <form id="form-medicamento" class="space-y-4">
-                    <input type="hidden" id="edit-index" value="-1">
                     <input type="hidden" id="edit-id" value="">
                     
                     <div class="grid grid-cols-2 gap-3">
@@ -140,19 +139,18 @@
     </footer>
 
     <script>
-        // ⚠️ CONFIGURAÇÃO: COLOQUE SUAS CREDENCIAIS DO SUPABASE AQUI
+        // ========== CONFIGURAÇÃO ==========
         const SUPABASE_URL = 'https://rzapsntasfdqedlzmvyh.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_X10VkrweostPY740og0NYg_3mvhQgdk';
-        
-        const WHATSAPP_LINK = 'https://wa.link/j4fs7u'; // SEU LINK DO WHATSAPP
-        
+        const WHATSAPP_LINK = 'https://wa.link/j4fs7u';
+
         const TABELA_DESCONTOS = [
             { meses: 3, desconto: 12 },
             { meses: 5, desconto: 20 },
             { meses: 8, desconto: 30 }
         ];
 
-        // Inicializar Supabase
+        // ========== INICIALIZAÇÃO ==========
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         let medicamentos = [];
         let tipoEntregaSelecionado = {};
@@ -161,6 +159,7 @@
             carregarMedicamentos();
         });
 
+        // ========== CARREGAR MEDICAMENTOS ==========
         async function carregarMedicamentos() {
             try {
                 const { data, error } = await supabase
@@ -174,10 +173,11 @@
                 renderizarTudo();
             } catch (error) {
                 console.error('Erro ao carregar:', error);
-                document.getElementById('lista-cliente').innerHTML = '<p class="text-center text-red-500 py-4">Erro ao carregar medicamentos. Verifique as credenciais do Supabase.</p>';
+                document.getElementById('lista-cliente').innerHTML = '<p class="text-center text-red-500 py-4">Erro ao carregar. Verifique o Console (F12).</p>';
             }
         }
 
+        // ========== ALTERNAR MODO ==========
         function alternarModo() {
             const modoCliente = document.getElementById('modo-cliente');
             const modoFarmacia = document.getElementById('modo-farmacia');
@@ -187,23 +187,19 @@
                 modoCliente.classList.remove('hidden');
                 modoFarmacia.classList.add('hidden');
                 btn.textContent = '🔒 Modo Farmácia';
-                btn.classList.replace('bg-green-100', 'bg-gray-200');
-                btn.classList.replace('text-green-700', 'text-gray-700');
             } else {
                 const senha = prompt("Digite a senha de acesso (Dica: 1234)");
                 if (senha === '1234') {
                     modoCliente.classList.add('hidden');
                     modoFarmacia.classList.remove('hidden');
                     btn.textContent = '👁️ Modo Cliente';
-                    btn.classList.replace('bg-gray-200', 'bg-green-100');
-                    btn.classList.replace('text-gray-700', 'text-green-700');
-                    renderizarTudo();
                 } else if (senha !== null) {
                     alert("Senha incorreta!");
                 }
             }
         }
 
+        // ========== FORMULÁRIO ==========
         document.getElementById('form-medicamento').addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -220,14 +216,12 @@
 
             try {
                 if (editId) {
-                    // Atualizar
                     const { error } = await supabase
                         .from('medicamentos')
                         .update(novoMed)
                         .eq('id', editId);
                     if (error) throw error;
                 } else {
-                    // Inserir
                     const { error } = await supabase
                         .from('medicamentos')
                         .insert([novoMed]);
@@ -239,7 +233,7 @@
                 alert("Medicamento salvo com sucesso!");
             } catch (error) {
                 console.error('Erro ao salvar:', error);
-                alert("Erro ao salvar medicamento. Verifique o console.");
+                alert("Erro ao salvar. Veja o Console (F12).");
             }
         });
 
@@ -268,7 +262,7 @@
                     await carregarMedicamentos();
                 } catch (error) {
                     console.error('Erro ao excluir:', error);
-                    alert("Erro ao excluir medicamento.");
+                    alert("Erro ao excluir.");
                 }
             }
         }
@@ -278,6 +272,7 @@
             document.getElementById('edit-id').value = "";
         }
 
+        // ========== CÁLCULOS ==========
         function calcularPrecoComDesconto(precoOriginal, meses) {
             const desconto = TABELA_DESCONTOS.find(d => d.meses === meses)?.desconto || 0;
             const preco = parseFloat(precoOriginal);
@@ -285,6 +280,7 @@
             return precoComDesconto.toFixed(2);
         }
 
+        // ========== RENDERIZAÇÃO ==========
         function renderizarTudo() {
             const listaCliente = document.getElementById('lista-cliente');
             const listaAdmin = document.getElementById('lista-admin');
@@ -299,10 +295,9 @@
             }
 
             medicamentos.forEach((med, index) => {
-                const cardId = `card-${index}`;
-                
+                // CARD DO CLIENTE
                 listaCliente.innerHTML += `
-                    <section class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden fade-in" id="${cardId}">
+                    <section class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden fade-in">
                         <div class="h-20 bg-green-50 flex items-center justify-center border-b border-green-100 relative">
                             <span class="text-4xl">💊</span>
                             <span class="absolute top-2 right-2 badge-desconto text-white text-xs font-bold px-2 py-1 rounded-full">
@@ -326,7 +321,7 @@
                             </div>
 
                             <div class="bg-gray-50 p-3 rounded-lg">
-                                <div class="flex items-center justify-between mb-2">
+                                <div class="flex items-center justify-between">
                                     <div>
                                         <span class="text-xs text-gray-400 line-through block">R$ ${med.preco_original}</span>
                                         <span class="text-xl font-extrabold text-health" id="preco-final-${index}">R$ ${med.preco_original}</span>
@@ -334,7 +329,7 @@
                                     </div>
                                     <div class="text-right">
                                         <span class="text-xs text-gray-500 block" id="desconto-label-${index}">Economia: R$ 0,00/mês</span>
-                                        <span class="text-xs text-green-600 font-semibold block">Pague somente ao receber</span>
+                                        <span class="text-xs text-green-600 font-semibold block">Pague ao receber</span>
                                     </div>
                                 </div>
                             </div>
@@ -346,18 +341,19 @@
                                         🏪 Retirar na Farmácia
                                     </button>
                                     <button onclick="selecionarEntrega(${index}, 'entrega')" id="btn-entrega-${index}" class="py-2 px-3 rounded-lg border-2 border-gray-300 text-sm font-semibold transition hover:border-green-500">
-                                        🚚 Delivery (+R$ ${med.taxa_entrega})
+                                         Delivery (+R$ ${med.taxa_entrega})
                                     </button>
                                 </div>
                             </div>
 
-                            <a href="${WHATSAPP_LINK}" target="_blank" onclick="salvarSelecao(${index})" class="block w-full bg-health hover:bg-green-700 text-white text-center font-bold py-3 rounded-xl shadow-md transition transform active:scale-95 text-sm">
+                            <a href="${WHATSAPP_LINK}" target="_blank" class="block w-full bg-health hover:bg-green-700 text-white text-center font-bold py-3 rounded-xl shadow-md transition transform active:scale-95 text-sm">
                                 Assinar Agora
                             </a>
                         </div>
                     </section>
                 `;
 
+                // LINHA DO ADMIN
                 listaAdmin.innerHTML += `
                     <div class="bg-white p-3 rounded-xl border border-gray-200 flex justify-between items-center fade-in">
                         <div class="flex-grow">
@@ -366,10 +362,10 @@
                         </div>
                         <div class="flex space-x-2">
                             <button onclick="editarMedicamento(${index})" class="p-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                                ✏️
                             </button>
                             <button onclick="excluirMedicamento(${index})" class="p-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                🗑️
                             </button>
                         </div>
                     </div>
@@ -400,11 +396,6 @@
                 btnEntrega.classList.add('border-green-500', 'bg-green-50');
                 btnRetirada.classList.remove('border-green-500', 'bg-green-50');
             }
-        }
-
-        function salvarSelecao(index) {
-            // Aqui você pode adicionar lógica para salvar a seleção antes de abrir o WhatsApp
-            console.log('Seleção salva:', tipoEntregaSelecionado[index]);
         }
     </script>
 </body>
