@@ -28,7 +28,6 @@
 
     <main class="max-w-md mx-auto px-4 py-6 flex-grow w-full">
         
-        <!-- MODO CLIENTE -->
         <div id="modo-cliente" class="space-y-6 fade-in">
             <section class="text-center space-y-2">
                 <h1 class="text-2xl font-bold text-gray-900 leading-tight">
@@ -72,7 +71,6 @@
             </section>
         </div>
 
-        <!-- MODO FARMÁCIA -->
         <div id="modo-farmacia" class="hidden space-y-6 fade-in">
             <div class="bg-white p-5 rounded-2xl shadow-md border border-gray-100">
                 <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center">
@@ -150,8 +148,8 @@
             { meses: 8, desconto: 30 }
         ];
 
-        // ========== INICIALIZAÇÃO ==========
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        // ========== INICIALIZAÇÃO (variável renomeada para 'db') ==========
+        const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         let medicamentos = [];
         let tipoEntregaSelecionado = {};
 
@@ -159,10 +157,9 @@
             carregarMedicamentos();
         });
 
-        // ========== CARREGAR MEDICAMENTOS ==========
         async function carregarMedicamentos() {
             try {
-                const { data, error } = await supabase
+                const { data, error } = await db
                     .from('medicamentos')
                     .select('*')
                     .order('created_at', { ascending: false });
@@ -173,11 +170,10 @@
                 renderizarTudo();
             } catch (error) {
                 console.error('Erro ao carregar:', error);
-                document.getElementById('lista-cliente').innerHTML = '<p class="text-center text-red-500 py-4">Erro ao carregar. Verifique o Console (F12).</p>';
+                document.getElementById('lista-cliente').innerHTML = '<p class="text-center text-red-500 py-4">Erro ao carregar. Veja o Console (F12).</p>';
             }
         }
 
-        // ========== ALTERNAR MODO ==========
         function alternarModo() {
             const modoCliente = document.getElementById('modo-cliente');
             const modoFarmacia = document.getElementById('modo-farmacia');
@@ -199,7 +195,6 @@
             }
         }
 
-        // ========== FORMULÁRIO ==========
         document.getElementById('form-medicamento').addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -216,13 +211,13 @@
 
             try {
                 if (editId) {
-                    const { error } = await supabase
+                    const { error } = await db
                         .from('medicamentos')
                         .update(novoMed)
                         .eq('id', editId);
                     if (error) throw error;
                 } else {
-                    const { error } = await supabase
+                    const { error } = await db
                         .from('medicamentos')
                         .insert([novoMed]);
                     if (error) throw error;
@@ -254,7 +249,7 @@
             if (confirm("Tem certeza que deseja excluir este medicamento?")) {
                 const med = medicamentos[index];
                 try {
-                    const { error } = await supabase
+                    const { error } = await db
                         .from('medicamentos')
                         .delete()
                         .eq('id', med.id);
@@ -272,7 +267,6 @@
             document.getElementById('edit-id').value = "";
         }
 
-        // ========== CÁLCULOS ==========
         function calcularPrecoComDesconto(precoOriginal, meses) {
             const desconto = TABELA_DESCONTOS.find(d => d.meses === meses)?.desconto || 0;
             const preco = parseFloat(precoOriginal);
@@ -280,7 +274,6 @@
             return precoComDesconto.toFixed(2);
         }
 
-        // ========== RENDERIZAÇÃO ==========
         function renderizarTudo() {
             const listaCliente = document.getElementById('lista-cliente');
             const listaAdmin = document.getElementById('lista-admin');
@@ -295,7 +288,6 @@
             }
 
             medicamentos.forEach((med, index) => {
-                // CARD DO CLIENTE
                 listaCliente.innerHTML += `
                     <section class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden fade-in">
                         <div class="h-20 bg-green-50 flex items-center justify-center border-b border-green-100 relative">
@@ -353,7 +345,6 @@
                     </section>
                 `;
 
-                // LINHA DO ADMIN
                 listaAdmin.innerHTML += `
                     <div class="bg-white p-3 rounded-xl border border-gray-200 flex justify-between items-center fade-in">
                         <div class="flex-grow">
