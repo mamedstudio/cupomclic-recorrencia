@@ -14,7 +14,6 @@
         .border-health { border-color: var(--cor-primaria); }
         .fade-in { animation: fadeIn 0.3s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .badge-desconto { background: linear-gradient(135deg, var(--cor-primaria), #15803d); }
         .dia-marcado { background-color: var(--cor-primaria); color: white; font-weight: bold; }
         .dia-hoje { border: 2px solid var(--cor-primaria); }
         .dia-clicavel { cursor: pointer; transition: all 0.2s; }
@@ -95,8 +94,8 @@
                     <button onclick="mostrarSecao('produtos')" id="tab-produtos" class="tab-inativa py-2 px-2 rounded-lg text-xs font-semibold transition">📦 Produtos</button>
                     <button onclick="mostrarSecao('assinaturas')" id="tab-assinaturas" class="tab-inativa py-2 px-2 rounded-lg text-xs font-semibold transition">👥 Assinar</button>
                     <button onclick="mostrarSecao('clientes')" id="tab-clientes" class="tab-inativa py-2 px-2 rounded-lg text-xs font-semibold transition"> Clientes</button>
-                    <button onclick="mostrarSecao('solicitacoes')" id="tab-solicitacoes" class="tab-inativa py-2 px-2 rounded-lg text-xs font-semibold transition">💡 Solicit</button>
-                    <button onclick="mostrarSecao('configuracoes')" id="tab-configuracoes" class="tab-inativa py-2 px-2 rounded-lg text-xs font-semibold transition">⚙️ Config</button>
+                    <button onclick="mostrarSecao('solicitacoes')" id="tab-solicitacoes" class="tab-inativa py-2 px-2 rounded-lg text-xs font-semibold transition"> Solicit</button>
+                    <button onclick="mostrarSecao('configuracoes')" id="tab-configuracoes" class="tab-inativa py-2 px-2 rounded-lg text-xs font-semibold transition">️ Config</button>
                 </div>
             </div>
 
@@ -264,9 +263,11 @@
     <script>
         const SUPABASE_URL = 'https://hcgsttzjolotljqdvlat.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhjZ3N0dHpqb2xvdGxqcWR2bGF0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE0MDU5MTMsImV4cCI6MjEwNjk4MTkxM30.AWbtRx82wDp2K-yERqQy9RA8dYWXev6B14jP5isLkVM';
-        const urlParams = new URLSearchParams(window.location.search);
-        const ESTABELECIMENTO_ID = parseInt(urlParams.get('loja')) || 1;
         const URL_BASE = 'https://cupomclic-recorrencia.vercel.app';
+
+        // Lê o slug da URL (?loja=rafarma, ?loja=farma-magistral, etc)
+        const urlParams = new URLSearchParams(window.location.search);
+        const slugLoja = urlParams.get('loja') || 'rafarma';
 
         let TABELA_DESCONTOS = [{ meses: 3, desconto: 12 }, { meses: 5, desconto: 20 }, { meses: 8, desconto: 30 }];
         const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -274,6 +275,8 @@
         let estabelecimento = null, medicamentos = [], medicamentosFiltrados = [], assinaturas = [], solicitacoes = [];
         let tipoEntregaSelecionado = {}, dataAtual = new Date(), accordionAberto = {};
         let clientesFiltrados = [];
+        let ESTABELECIMENTO_ID = 1;
+        let SENHA_ADMIN = '1234';
 
         document.addEventListener('DOMContentLoaded', () => {
             carregarEstabelecimento();
@@ -285,13 +288,23 @@
 
         async function carregarEstabelecimento() {
             try {
-                const { data, error } = await db.from('estabelecimentos').select('*').eq('id', ESTABELECIMENTO_ID).limit(1);
+                const { data, error } = await db
+                    .from('estabelecimentos')
+                    .select('*')
+                    .eq('slug', slugLoja)
+                    .limit(1);
+                
                 if (error) throw error;
+                
                 if (data && data.length > 0) {
                     estabelecimento = data[0];
+                    ESTABELECIMENTO_ID = estabelecimento.id;
+                    SENHA_ADMIN = estabelecimento.senha_admin || '1234';
+                    
                     document.getElementById('nome-estabelecimento').textContent = estabelecimento.nome;
                     const tipos = { farmacia: 'Farmácia', pet: 'Pet Shop', proteicos: 'Loja de Proteicos', outros: 'Estabelecimento' };
                     document.getElementById('tipo-estabelecimento').textContent = tipos[estabelecimento.tipo] || '';
+                    
                     if (estabelecimento.cor_primaria) {
                         document.documentElement.style.setProperty('--cor-primaria', estabelecimento.cor_primaria);
                         document.getElementById('est-cor').value = estabelecimento.cor_primaria;
@@ -299,8 +312,13 @@
                     document.getElementById('est-nome').value = estabelecimento.nome;
                     document.getElementById('est-tipo').value = estabelecimento.tipo;
                     document.getElementById('est-whatsapp').value = estabelecimento.whatsapp;
+                } else {
+                    // Loja não encontrada, redireciona para rafarma
+                    window.location.href = '?loja=rafarma';
                 }
-            } catch (e) { console.error('Erro estabelecimento:', e); }
+            } catch (e) { 
+                console.error('Erro estabelecimento:', e);
+            }
         }
 
         async function carregarDescontos() {
@@ -364,13 +382,25 @@
         }
 
         function alternarModo() {
-            const modoCliente = document.getElementById('modo-cliente'), modoFarmacia = document.getElementById('modo-farmacia'), btn = document.querySelector('header button');
+            const modoCliente = document.getElementById('modo-cliente'), 
+                  modoFarmacia = document.getElementById('modo-farmacia'), 
+                  btn = document.querySelector('header button');
+            
             if (modoCliente.classList.contains('hidden')) {
-                modoCliente.classList.remove('hidden'); modoFarmacia.classList.add('hidden'); btn.textContent = '🔒 Modo Admin';
+                modoCliente.classList.remove('hidden'); 
+                modoFarmacia.classList.add('hidden'); 
+                btn.textContent = '🔒 Modo Admin';
             } else {
-                const senha = prompt("Senha de acesso (Dica: 1234)");
-                if (senha === '1234') { modoCliente.classList.add('hidden'); modoFarmacia.classList.remove('hidden'); btn.textContent = '️ Modo Cliente'; mostrarSecao('calendario'); } 
-                else if (senha !== null) { alert("Senha incorreta!"); }
+                const nomeLoja = estabelecimento ? estabelecimento.nome : 'Admin';
+                const senha = prompt(`Senha de acesso para ${nomeLoja}:`);
+                if (senha === SENHA_ADMIN) { 
+                    modoCliente.classList.add('hidden'); 
+                    modoFarmacia.classList.remove('hidden'); 
+                    btn.textContent = '👁️ Modo Cliente'; 
+                    mostrarSecao('calendario'); 
+                } else if (senha !== null) { 
+                    alert("Senha incorreta!"); 
+                }
             }
         }
 
@@ -426,7 +456,7 @@
                 const diasRestantes = Math.ceil((new Date(dataEntregaStr) - hoje) / (1000 * 60 * 60 * 24));
                 const descontoCalculado = calcularDescontoFidelidade(cliente);
                 const linkRenovacao = `${URL_BASE}/renovar.html?token=${cliente.token_pagamento}`;
-                const msg = `Oi ${cliente.cliente_nome}! 🎉\n\nSeu ${cliente.medicamentos.nome} ${cliente.medicamentos.dosagem} acaba em ${diasRestantes} dias.\n\nComo você já é um cliente fiel (${cliente.quantidade_compras} compras), seu desconto subiu para *${descontoCalculado}% OFF*!\n\nPara renovar agora sem burocracia, basta clicar no link abaixo:\n\n👉 ${linkRenovacao}\n\nTe esperamos!`;
+                const msg = `Oi ${cliente.cliente_nome}! \n\nSeu ${cliente.medicamentos.nome} ${cliente.medicamentos.dosagem} acaba em ${diasRestantes} dias.\n\nComo você já é um cliente fiel (${cliente.quantidade_compras} compras), seu desconto subiu para *${descontoCalculado}% OFF*!\n\nPara renovar agora sem burocracia, basta clicar no link abaixo:\n\n👉 ${linkRenovacao}\n\nTe esperamos!`;
                 if (!validarTelefone(cliente.cliente_whatsapp)) {
                     html += `<div class="bg-red-50 p-4 rounded-lg border border-red-200">
                         <div><p class="font-bold text-gray-900">${cliente.cliente_nome}</p><p class="text-xs text-gray-600">${cliente.medicamentos.nome} ${cliente.medicamentos.dosagem}</p><p class="text-xs text-red-600 font-bold mt-1">⚠️ Telefone inválido: ${cliente.cliente_whatsapp}</p></div>
@@ -570,7 +600,7 @@
             const precoComDesconto = calcularPrecoComDesconto(med.preco_original, meses), tipoEntrega = tipoEntregaSelecionado[index] || 'retirada';
             const entregaTexto = tipoEntrega === 'entrega' ? `🚚 Delivery (+R$ ${med.taxa_entrega})` : '🏪 Retirada na Loja';
             const precoTotal = (parseFloat(precoComDesconto) + (tipoEntrega === 'entrega' ? parseFloat(med.taxa_entrega) : 0)).toFixed(2);
-            const mensagem = `* NOVO PEDIDO - ${estabelecimento ? estabelecimento.nome : 'CUPOMCLIC'}*\n\n💊 *Produto:* ${med.nome} ${med.dosagem}\n📋 ${med.descricao}\n\n📅 *Plano:* ${meses} ${meses === 1 ? 'mês' : 'meses'}\n *Desconto:* ${desconto}% OFF\n💰 *Preço c/ desconto:* R$ ${precoComDesconto}/mês\n\n *Quantidade:* ${med.quantidade}\n *Entrega:* ${entregaTexto}\n\n💳 *Total 1ª entrega:* R$ ${precoTotal}\n\n👤 *Meu nome:* [preencha]\n *Endereço:* [se delivery]\n\nObrigado!`;
+            const mensagem = `* NOVO PEDIDO - ${estabelecimento ? estabelecimento.nome : 'CUPOMCLIC'}*\n\n💊 *Produto:* ${med.nome} ${med.dosagem}\n📋 ${med.descricao}\n\n📅 *Plano:* ${meses} ${meses === 1 ? 'mês' : 'meses'}\n *Desconto:* ${desconto}% OFF\n💰 *Preço c/ desconto:* R$ ${precoComDesconto}/mês\n\n *Quantidade:* ${med.quantidade}\n *Entrega:* ${entregaTexto}\n\n💳 *Total 1ª entrega:* R$ ${precoTotal}\n\n *Meu nome:* [preencha]\n *Endereço:* [se delivery]\n\nObrigado!`;
             const numeroDestino = estabelecimento ? estabelecimento.whatsapp : '5514998771964';
             window.open(`https://wa.me/${numeroDestino}?text=${encodeURIComponent(mensagem)}`, '_blank');
         }
@@ -627,7 +657,7 @@
                             <div class="space-y-2">
                                 <label class="text-xs font-semibold text-gray-600">Como deseja receber?</label>
                                 <div class="grid grid-cols-2 gap-2">
-                                    ${podeLoja ? `<button onclick="selecionarEntrega(${index}, 'retirada')" id="btn-retirada-${index}" class="py-2 px-3 rounded-lg border-2 border-gray-300 text-xs font-semibold transition hover:border-green-500"> Buscar na Loja</button>` : ''}
+                                    ${podeLoja ? `<button onclick="selecionarEntrega(${index}, 'retirada')" id="btn-retirada-${index}" class="py-2 px-3 rounded-lg border-2 border-gray-300 text-xs font-semibold transition hover:border-green-500">🏪 Buscar na Loja</button>` : ''}
                                     ${podeDelivery ? `<button onclick="selecionarEntrega(${index}, 'entrega')" id="btn-entrega-${index}" class="py-2 px-3 rounded-lg border-2 border-gray-300 text-xs font-semibold transition hover:border-green-500">🚚 Delivery (+R$ ${med.taxa_entrega})</button>` : ''}
                                 </div>
                             </div>
@@ -679,7 +709,7 @@
                                     <div><p class="text-xs text-gray-500">Próxima Entrega</p><p class="font-semibold ${new Date(cliente.data_proxima_entrega) < new Date() ? 'text-red-600' : 'text-green-600'}">${dataFormatada}</p></div>
                                     <div><p class="text-xs text-gray-500">Compras</p><p class="font-semibold text-gray-900">${cliente.quantidade_compras}</p></div>
                                     <div><p class="text-xs text-gray-500">Desconto</p><p class="font-semibold text-health">${cliente.desconto_aplicado}% OFF</p></div>
-                                    <div><p class="text-xs text-gray-500">Entrega</p><p class="font-semibold text-gray-900">${cliente.tipo_entrega === 'entrega' ? ' Delivery' : '🏪 Retirada'}</p></div>
+                                    <div><p class="text-xs text-gray-500">Entrega</p><p class="font-semibold text-gray-900">${cliente.tipo_entrega === 'entrega' ? '🚚 Delivery' : '🏪 Retirada'}</p></div>
                                     <div><p class="text-xs text-gray-500">Status</p><p class="font-semibold ${cliente.ativa ? 'text-green-600' : 'text-red-600'}">${cliente.ativa ? '✅ Ativa' : '❌ Inativa'}</p></div>
                                 </div>
                                 <div class="flex space-x-2 pt-2">
