@@ -30,11 +30,114 @@
         .tab-inativa:hover { background-color: #e5e7eb; }
         .secao-admin { display: none; }
         .secao-admin.ativa { display: block; animation: fadeIn 0.3s; }
+        
+        /* ===== BACKGROUNDS SOFISTICADOS POR NICHO ===== */
+        #header-principal {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.5s ease;
+        }
+        
+        #header-principal.header-colorido {
+            color: white;
+            padding: 1.5rem 1.5rem;
+        }
+        
+        #header-principal.header-colorido::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            opacity: 0.15;
+            z-index: 0;
+        }
+        
+        #header-principal.header-colorido > div {
+            position: relative;
+            z-index: 1;
+        }
+        
+        #header-principal.header-colorido #nome-estabelecimento,
+        #header-principal.header-colorido #tipo-estabelecimento,
+        #header-principal.header-colorido button {
+            color: white;
+        }
+        
+        #header-principal.header-colorido button {
+            background-color: rgba(255,255,255,0.25);
+            backdrop-filter: blur(10px);
+        }
+        
+        /* FARMÁCIA TRADICIONAL - Azul */
+        #header-principal.bg-farmacia {
+            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 50%, #60a5fa 100%);
+        }
+        #header-principal.bg-farmacia::before {
+            background-image: 
+                radial-gradient(circle, white 2px, transparent 2px),
+                radial-gradient(circle, white 1px, transparent 1px);
+            background-size: 40px 40px, 20px 20px;
+            background-position: 0 0, 20px 20px;
+        }
+        
+        /* FARMÁCIA DE MANIPULAÇÃO - Roxo */
+        #header-principal.bg-farmacia-manipulacao {
+            background: linear-gradient(135deg, #581c87 0%, #7c3aed 50%, #a78bfa 100%);
+        }
+        #header-principal.bg-farmacia-manipulacao::before {
+            background-image: 
+                linear-gradient(45deg, transparent 48%, white 49%, white 51%, transparent 52%),
+                linear-gradient(-45deg, transparent 48%, white 49%, white 51%, transparent 52%);
+            background-size: 30px 30px;
+        }
+        
+        /* PET SHOP - Laranja */
+        #header-principal.bg-pet {
+            background: linear-gradient(135deg, #c2410c 0%, #f97316 50%, #fb923c 100%);
+        }
+        #header-principal.bg-pet::before {
+            background-image: 
+                radial-gradient(circle at 30% 50%, white 8px, transparent 9px),
+                radial-gradient(circle at 70% 30%, white 6px, transparent 7px),
+                radial-gradient(circle at 50% 70%, white 10px, transparent 11px);
+            background-size: 80px 80px;
+        }
+        
+        /* PROTEICOS - Vermelho */
+        #header-principal.bg-proteicos {
+            background: linear-gradient(135deg, #7f1d1d 0%, #dc2626 50%, #ef4444 100%);
+        }
+        #header-principal.bg-proteicos::before {
+            background-image: 
+                repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.1) 10px, rgba(255,255,255,0.1) 20px);
+        }
+        
+        /* OUTROS - Cinza */
+        #header-principal.bg-outros {
+            background: linear-gradient(135deg, #374151 0%, #6b7280 50%, #9ca3af 100%);
+        }
+        #header-principal.bg-outros::before {
+            background-image: 
+                linear-gradient(90deg, transparent 49%, white 49%, white 51%, transparent 51%);
+            background-size: 50px 50px;
+        }
+        
+        /* Ícones decorativos no header */
+        .header-icon {
+            position: absolute;
+            font-size: 3.5rem;
+            opacity: 0.25;
+            z-index: 0;
+            pointer-events: none;
+        }
+        .header-icon-1 { top: 5px; right: 100px; }
+        .header-icon-2 { bottom: 5px; right: 20px; font-size: 2.5rem; }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 font-sans antialiased min-h-screen flex flex-col">
 
-    <header class="bg-white shadow-sm py-4 px-6 sticky top-0 z-20">
+    <header id="header-principal" class="bg-white shadow-sm py-4 px-6 sticky top-0 z-20">
+        <span class="header-icon header-icon-1" id="header-icon-1"></span>
+        <span class="header-icon header-icon-2" id="header-icon-2"></span>
         <div class="max-w-md mx-auto flex items-center justify-between">
             <div>
                 <span class="text-xl font-extrabold text-gray-900" id="nome-estabelecimento">CUPOMCLIC</span>
@@ -91,11 +194,11 @@
             <div class="bg-white rounded-xl shadow-sm mb-6 overflow-hidden">
                 <div class="grid grid-cols-6 gap-1 p-2">
                     <button onclick="mostrarSecao('calendario')" id="tab-calendario" class="tab-ativa py-2 px-2 rounded-lg text-xs font-semibold transition">📅 Calend</button>
-                    <button onclick="mostrarSecao('produtos')" id="tab-produtos" class="tab-inativa py-2 px-2 rounded-lg text-xs font-semibold transition">📦 Produtos</button>
-                    <button onclick="mostrarSecao('assinaturas')" id="tab-assinaturas" class="tab-inativa py-2 px-2 rounded-lg text-xs font-semibold transition">👥 Assinar</button>
-                    <button onclick="mostrarSecao('clientes')" id="tab-clientes" class="tab-inativa py-2 px-2 rounded-lg text-xs font-semibold transition"> Clientes</button>
-                    <button onclick="mostrarSecao('solicitacoes')" id="tab-solicitacoes" class="tab-inativa py-2 px-2 rounded-lg text-xs font-semibold transition"> Solicit</button>
-                    <button onclick="mostrarSecao('configuracoes')" id="tab-configuracoes" class="tab-inativa py-2 px-2 rounded-lg text-xs font-semibold transition">️ Config</button>
+                    <button onclick="mostrarSecao('produtos')" id="tab-produtos" class="tab-inativa py-2 px-2 rounded-lg text-xs font-semibold transition"> Produtos</button>
+                    <button onclick="mostrarSecao('assinaturas')" id="tab-assinaturas" class="tab-inativa py-2 px-2 rounded-lg text-xs font-semibold transition"> Assinar</button>
+                    <button onclick="mostrarSecao('clientes')" id="tab-clientes" class="tab-inativa py-2 px-2 rounded-lg text-xs font-semibold transition">🔍 Clientes</button>
+                    <button onclick="mostrarSecao('solicitacoes')" id="tab-solicitacoes" class="tab-inativa py-2 px-2 rounded-lg text-xs font-semibold transition">💡 Solicit</button>
+                    <button onclick="mostrarSecao('configuracoes')" id="tab-configuracoes" class="tab-inativa py-2 px-2 rounded-lg text-xs font-semibold transition">⚙️ Config</button>
                 </div>
             </div>
 
@@ -182,7 +285,7 @@
             <!-- SEÇÃO: CLIENTES -->
             <div id="secao-clientes" class="secao-admin">
                 <div class="bg-white p-4 rounded-2xl shadow-md border border-gray-100 mb-4">
-                    <h3 class="text-sm font-bold text-gray-900 mb-3">🔍 Buscar Clientes</h3>
+                    <h3 class="text-sm font-bold text-gray-900 mb-3"> Buscar Clientes</h3>
                     <div class="space-y-3">
                         <input type="text" id="filtro-nome" oninput="filtrarClientes()" placeholder="Nome do cliente..." class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm">
                         <input type="text" id="filtro-produto" oninput="filtrarClientes()" placeholder="Produto..." class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm">
@@ -206,7 +309,7 @@
             <!-- SEÇÃO: CONFIGURAÇÕES -->
             <div id="secao-configuracoes" class="secao-admin">
                 <div class="bg-white p-5 rounded-2xl shadow-md border border-gray-100 mb-6">
-                    <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center"><span class="bg-purple-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs mr-2">🏪</span>Personalizar Estabelecimento</h2>
+                    <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center"><span class="bg-purple-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs mr-2"></span>Personalizar Estabelecimento</h2>
                     <form id="form-estabelecimento" class="space-y-4">
                         <div>
                             <label class="block text-xs font-semibold text-gray-600 mb-1">Nome do Estabelecimento</label>
@@ -265,7 +368,6 @@
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhjZ3N0dHpqb2xvdGxqcWR2bGF0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE0MDU5MTMsImV4cCI6MjEwNjk4MTkxM30.AWbtRx82wDp2K-yERqQy9RA8dYWXev6B14jP5isLkVM';
         const URL_BASE = 'https://cupomclic-recorrencia.vercel.app';
 
-        // Lê o slug da URL (?loja=rafarma, ?loja=farma-magistral, etc)
         const urlParams = new URLSearchParams(window.location.search);
         const slugLoja = urlParams.get('loja') || 'rafarma';
 
@@ -312,12 +414,48 @@
                     document.getElementById('est-nome').value = estabelecimento.nome;
                     document.getElementById('est-tipo').value = estabelecimento.tipo;
                     document.getElementById('est-whatsapp').value = estabelecimento.whatsapp;
+                    
+                    aplicarBackgroundEstabelecimento(estabelecimento.tipo);
                 } else {
-                    // Loja não encontrada, redireciona para rafarma
                     window.location.href = '?loja=rafarma';
                 }
             } catch (e) { 
                 console.error('Erro estabelecimento:', e);
+            }
+        }
+
+        function aplicarBackgroundEstabelecimento(tipo) {
+            const header = document.getElementById('header-principal');
+            const icon1 = document.getElementById('header-icon-1');
+            const icon2 = document.getElementById('header-icon-2');
+            
+            header.classList.remove('bg-farmacia', 'bg-farmacia-manipulacao', 'bg-pet', 'bg-proteicos', 'bg-outros');
+            
+            switch(tipo) {
+                case 'farmacia':
+                    header.classList.add('bg-farmacia', 'header-colorido');
+                    icon1.textContent = '💊';
+                    icon2.textContent = '⚕️';
+                    break;
+                case 'pet':
+                    header.classList.add('bg-pet', 'header-colorido');
+                    icon1.textContent = '🐾';
+                    icon2.textContent = '🐕';
+                    break;
+                case 'proteicos':
+                    header.classList.add('bg-proteicos', 'header-colorido');
+                    icon1.textContent = '';
+                    icon2.textContent = '🏋️';
+                    break;
+                case 'outros':
+                    header.classList.add('bg-outros', 'header-colorido');
+                    icon1.textContent = '';
+                    icon2.textContent = '⭐';
+                    break;
+                default:
+                    header.classList.add('bg-farmacia', 'header-colorido');
+                    icon1.textContent = '💊';
+                    icon2.textContent = '⚕️';
             }
         }
 
@@ -456,7 +594,7 @@
                 const diasRestantes = Math.ceil((new Date(dataEntregaStr) - hoje) / (1000 * 60 * 60 * 24));
                 const descontoCalculado = calcularDescontoFidelidade(cliente);
                 const linkRenovacao = `${URL_BASE}/renovar.html?token=${cliente.token_pagamento}`;
-                const msg = `Oi ${cliente.cliente_nome}! \n\nSeu ${cliente.medicamentos.nome} ${cliente.medicamentos.dosagem} acaba em ${diasRestantes} dias.\n\nComo você já é um cliente fiel (${cliente.quantidade_compras} compras), seu desconto subiu para *${descontoCalculado}% OFF*!\n\nPara renovar agora sem burocracia, basta clicar no link abaixo:\n\n👉 ${linkRenovacao}\n\nTe esperamos!`;
+                const msg = `Oi ${cliente.cliente_nome}! 🎉\n\nSeu ${cliente.medicamentos.nome} ${cliente.medicamentos.dosagem} acaba em ${diasRestantes} dias.\n\nComo você já é um cliente fiel (${cliente.quantidade_compras} compras), seu desconto subiu para *${descontoCalculado}% OFF*!\n\nPara renovar agora sem burocracia, basta clicar no link abaixo:\n\n ${linkRenovacao}\n\nTe esperamos!`;
                 if (!validarTelefone(cliente.cliente_whatsapp)) {
                     html += `<div class="bg-red-50 p-4 rounded-lg border border-red-200">
                         <div><p class="font-bold text-gray-900">${cliente.cliente_nome}</p><p class="text-xs text-gray-600">${cliente.medicamentos.nome} ${cliente.medicamentos.dosagem}</p><p class="text-xs text-red-600 font-bold mt-1">⚠️ Telefone inválido: ${cliente.cliente_whatsapp}</p></div>
@@ -598,9 +736,9 @@
         function enviarPedidoCliente(index) {
             const med = medicamentosFiltrados[index], meses = parseInt(document.getElementById(`meses-${index}`).value), desconto = TABELA_DESCONTOS.find(d => d.meses === meses)?.desconto || 0;
             const precoComDesconto = calcularPrecoComDesconto(med.preco_original, meses), tipoEntrega = tipoEntregaSelecionado[index] || 'retirada';
-            const entregaTexto = tipoEntrega === 'entrega' ? `🚚 Delivery (+R$ ${med.taxa_entrega})` : '🏪 Retirada na Loja';
+            const entregaTexto = tipoEntrega === 'entrega' ? ` Delivery (+R$ ${med.taxa_entrega})` : '🏪 Retirada na Loja';
             const precoTotal = (parseFloat(precoComDesconto) + (tipoEntrega === 'entrega' ? parseFloat(med.taxa_entrega) : 0)).toFixed(2);
-            const mensagem = `* NOVO PEDIDO - ${estabelecimento ? estabelecimento.nome : 'CUPOMCLIC'}*\n\n💊 *Produto:* ${med.nome} ${med.dosagem}\n📋 ${med.descricao}\n\n📅 *Plano:* ${meses} ${meses === 1 ? 'mês' : 'meses'}\n *Desconto:* ${desconto}% OFF\n💰 *Preço c/ desconto:* R$ ${precoComDesconto}/mês\n\n *Quantidade:* ${med.quantidade}\n *Entrega:* ${entregaTexto}\n\n💳 *Total 1ª entrega:* R$ ${precoTotal}\n\n *Meu nome:* [preencha]\n *Endereço:* [se delivery]\n\nObrigado!`;
+            const mensagem = `* NOVO PEDIDO - ${estabelecimento ? estabelecimento.nome : 'CUPOMCLIC'}*\n\n💊 *Produto:* ${med.nome} ${med.dosagem}\n📋 ${med.descricao}\n\n📅 *Plano:* ${meses} ${meses === 1 ? 'mês' : 'meses'}\n *Desconto:* ${desconto}% OFF\n *Preço c/ desconto:* R$ ${precoComDesconto}/mês\n\n📦 *Quantidade:* ${med.quantidade}\n🚚 *Entrega:* ${entregaTexto}\n\n💳 *Total 1ª entrega:* R$ ${precoTotal}\n\n *Meu nome:* [preencha]\n📍 *Endereço:* [se delivery]\n\nObrigado!`;
             const numeroDestino = estabelecimento ? estabelecimento.whatsapp : '5514998771964';
             window.open(`https://wa.me/${numeroDestino}?text=${encodeURIComponent(mensagem)}`, '_blank');
         }
