@@ -264,7 +264,8 @@
     <script>
         const SUPABASE_URL = 'https://hcgsttzjolotljqdvlat.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhjZ3N0dHpqb2xvdGxqcWR2bGF0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE0MDU5MTMsImV4cCI6MjEwNjk4MTkxM30.AWbtRx82wDp2K-yERqQy9RA8dYWXev6B14jP5isLkVM';
-        const ESTABELECIMENTO_ID = 1;
+        const urlParams = new URLSearchParams(window.location.search);
+        const ESTABELECIMENTO_ID = parseInt(urlParams.get('loja')) || 1;
         const URL_BASE = 'https://cupomclic-recorrencia.vercel.app';
 
         let TABELA_DESCONTOS = [{ meses: 3, desconto: 12 }, { meses: 5, desconto: 20 }, { meses: 8, desconto: 30 }];
