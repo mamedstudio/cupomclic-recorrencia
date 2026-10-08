@@ -26,6 +26,11 @@
         .accordion-content.open { max-height: 1000px; }
         .rotate-icon { transition: transform 0.3s; }
         .rotate-icon.open { transform: rotate(180deg); }
+        .tab-ativa { background-color: var(--cor-primaria); color: white; }
+        .tab-inativa { background-color: #f3f4f6; color: #374151; }
+        .tab-inativa:hover { background-color: #e5e7eb; }
+        .secao-admin { display: none; }
+        .secao-admin.ativa { display: block; animation: fadeIn 0.3s; }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 font-sans antialiased min-h-screen flex flex-col">
@@ -76,99 +81,151 @@
             </section>
         </div>
 
-        <!-- MODO ADMIN (FARMÁCIA/LOJA) -->
-        <div id="modo-farmacia" class="hidden space-y-6 fade-in">
+        <!-- MODO ADMIN COM MENU HORIZONTAL -->
+        <div id="modo-farmacia" class="hidden fade-in">
             
-            <!-- Calendário Inteligente -->
-            <div class="bg-white p-5 rounded-2xl shadow-md border border-gray-100">
-                <div class="flex items-center justify-between mb-4">
-                    <button onclick="mudarMes(-1)" class="p-2 hover:bg-gray-100 rounded-lg">◀</button>
-                    <h2 class="text-lg font-bold text-gray-900" id="mes-atual"></h2>
-                    <button onclick="mudarMes(1)" class="p-2 hover:bg-gray-100 rounded-lg">▶</button>
-                </div>
-                <div class="grid grid-cols-7 gap-1 text-center text-xs font-semibold text-gray-600 mb-2">
-                    <div>Dom</div><div>Seg</div><div>Ter</div><div>Qua</div><div>Qui</div><div>Sex</div><div>Sáb</div>
-                </div>
-                <div id="calendario" class="grid grid-cols-7 gap-1"></div>
-                <div class="mt-4 flex items-center justify-center space-x-4 text-xs">
-                    <div class="flex items-center"><div class="w-4 h-4 bg-health rounded mr-2"></div><span class="text-gray-600">Dia de Avisar</span></div>
-                    <div class="flex items-center"><div class="w-4 h-4 border-2 border-health rounded mr-2"></div><span class="text-gray-600">Hoje</span></div>
+            <!-- MENU HORIZONTAL -->
+            <div class="bg-white rounded-xl shadow-sm mb-6 overflow-hidden">
+                <div class="grid grid-cols-5 gap-1 p-2">
+                    <button onclick="mostrarSecao('calendario')" id="tab-calendario" class="tab-ativa py-2 px-3 rounded-lg text-xs font-semibold transition"> Calendário</button>
+                    <button onclick="mostrarSecao('produtos')" id="tab-produtos" class="tab-inativa py-2 px-3 rounded-lg text-xs font-semibold transition">📦 Produtos</button>
+                    <button onclick="mostrarSecao('assinaturas')" id="tab-assinaturas" class="tab-inativa py-2 px-3 rounded-lg text-xs font-semibold transition">👥 Assinaturas</button>
+                    <button onclick="mostrarSecao('solicitacoes')" id="tab-solicitacoes" class="tab-inativa py-2 px-3 rounded-lg text-xs font-semibold transition">💡 Solicitações</button>
+                    <button onclick="mostrarSecao('configuracoes')" id="tab-configuracoes" class="tab-inativa py-2 px-3 rounded-lg text-xs font-semibold transition">⚙️ Config</button>
                 </div>
             </div>
 
-            <!-- Config Descontos -->
-            <div class="bg-white p-5 rounded-2xl shadow-md border border-gray-100">
-                <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center"><span class="bg-health text-white w-6 h-6 rounded-full flex items-center justify-center text-xs mr-2">%</span>Descontos Progressivos</h2>
-                <div class="grid grid-cols-3 gap-3">
-                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">3 meses (%)</label><input type="number" id="desc-3" value="12" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
-                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">5 meses (%)</label><input type="number" id="desc-5" value="20" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
-                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">8 meses (%)</label><input type="number" id="desc-8" value="30" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
+            <!-- SEÇÃO: CALENDÁRIO -->
+            <div id="secao-calendario" class="secao-admin ativa">
+                <div class="bg-white p-5 rounded-2xl shadow-md border border-gray-100">
+                    <div class="flex items-center justify-between mb-4">
+                        <button onclick="mudarMes(-1)" class="p-2 hover:bg-gray-100 rounded-lg">◀</button>
+                        <h2 class="text-lg font-bold text-gray-900" id="mes-atual"></h2>
+                        <button onclick="mudarMes(1)" class="p-2 hover:bg-gray-100 rounded-lg">▶</button>
+                    </div>
+                    <div class="grid grid-cols-7 gap-1 text-center text-xs font-semibold text-gray-600 mb-2">
+                        <div>Dom</div><div>Seg</div><div>Ter</div><div>Qua</div><div>Qui</div><div>Sex</div><div>Sáb</div>
+                    </div>
+                    <div id="calendario" class="grid grid-cols-7 gap-1"></div>
+                    <div class="mt-4 flex items-center justify-center space-x-4 text-xs">
+                        <div class="flex items-center"><div class="w-4 h-4 bg-health rounded mr-2"></div><span class="text-gray-600">Dia de Avisar</span></div>
+                        <div class="flex items-center"><div class="w-4 h-4 border-2 border-health rounded mr-2"></div><span class="text-gray-600">Hoje</span></div>
+                    </div>
                 </div>
-                <button onclick="salvarDescontos()" class="w-full mt-4 bg-health hover:bg-green-700 text-white font-bold py-2 rounded-xl shadow-md transition text-sm">Salvar Descontos</button>
             </div>
 
-            <!-- Formulário Produto -->
-            <div class="bg-white p-5 rounded-2xl shadow-md border border-gray-100">
-                <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center"><span class="bg-health text-white w-6 h-6 rounded-full flex items-center justify-center text-xs mr-2">+</span>Adicionar Produto</h2>
-                <form id="form-medicamento" class="space-y-4">
-                    <input type="hidden" id="edit-id" value="">
-                    <div class="grid grid-cols-2 gap-3">
-                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">Nome</label><input type="text" id="nome" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
-                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">Dosagem/Versão</label><input type="text" id="dosagem" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
-                    </div>
-                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">Descrição</label><textarea id="descricao" required rows="2" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></textarea></div>
-                    <div class="grid grid-cols-2 gap-3">
-                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">Duração (dias)</label><input type="number" id="dias-duracao" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
-                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">Estoque</label><input type="number" id="estoque" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-3">
-                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">Preço Normal (R$)</label><input type="number" step="0.01" id="preco-original" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
-                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">Qtd / Mês</label><input type="text" id="quantidade" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-600 mb-1">Tipo de Entrega</label>
-                        <select id="tipo-entrega" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm">
-                            <option value="ambos">Busca na Loja + Delivery</option>
-                            <option value="loja">Apenas Busca na Loja</option>
-                            <option value="delivery">Apenas Delivery</option>
-                        </select>
-                    </div>
-                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">Taxa Entrega (R$)</label><input type="number" step="0.01" id="taxa-entrega" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
-                    <div class="flex space-x-3 pt-2">
-                        <button type="submit" class="flex-1 bg-health hover:bg-green-700 text-white font-bold py-3 rounded-xl shadow-md transition text-sm">Salvar Produto</button>
-                        <button type="button" onclick="limparFormulario()" class="px-4 py-3 bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-xl transition text-sm">Limpar</button>
-                    </div>
-                </form>
+            <!-- SEÇÃO: PRODUTOS -->
+            <div id="secao-produtos" class="secao-admin">
+                <div class="bg-white p-5 rounded-2xl shadow-md border border-gray-100">
+                    <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center"><span class="bg-health text-white w-6 h-6 rounded-full flex items-center justify-center text-xs mr-2">+</span>Adicionar Produto</h2>
+                    <form id="form-medicamento" class="space-y-4">
+                        <input type="hidden" id="edit-id" value="">
+                        <div class="grid grid-cols-2 gap-3">
+                            <div><label class="block text-xs font-semibold text-gray-600 mb-1">Nome</label><input type="text" id="nome" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
+                            <div><label class="block text-xs font-semibold text-gray-600 mb-1">Dosagem/Versão</label><input type="text" id="dosagem" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
+                        </div>
+                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">Descrição</label><textarea id="descricao" required rows="2" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></textarea></div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div><label class="block text-xs font-semibold text-gray-600 mb-1">Duração (dias)</label><input type="number" id="dias-duracao" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
+                            <div><label class="block text-xs font-semibold text-gray-600 mb-1">Estoque</label><input type="number" id="estoque" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div><label class="block text-xs font-semibold text-gray-600 mb-1">Preço Normal (R$)</label><input type="number" step="0.01" id="preco-original" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
+                            <div><label class="block text-xs font-semibold text-gray-600 mb-1">Qtd / Mês</label><input type="text" id="quantidade" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-600 mb-1">Tipo de Entrega</label>
+                            <select id="tipo-entrega" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm">
+                                <option value="ambos">Busca na Loja + Delivery</option>
+                                <option value="loja">Apenas Busca na Loja</option>
+                                <option value="delivery">Apenas Delivery</option>
+                            </select>
+                        </div>
+                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">Taxa Entrega (R$)</label><input type="number" step="0.01" id="taxa-entrega" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
+                        <div class="flex space-x-3 pt-2">
+                            <button type="submit" class="flex-1 bg-health hover:bg-green-700 text-white font-bold py-3 rounded-xl shadow-md transition text-sm">Salvar Produto</button>
+                            <button type="button" onclick="limparFormulario()" class="px-4 py-3 bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-xl transition text-sm">Limpar</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="mt-6">
+                    <h3 class="text-sm font-bold text-gray-500 uppercase tracking-wide mb-3">Produtos Cadastrados</h3>
+                    <div id="lista-admin" class="space-y-3"><p class="text-center text-gray-500 py-4 text-sm">Carregando...</p></div>
+                </div>
             </div>
 
-            <!-- Registrar Assinatura -->
-            <div class="bg-white p-5 rounded-2xl shadow-md border border-gray-100">
-                <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center"><span class="bg-health text-white w-6 h-6 rounded-full flex items-center justify-center text-xs mr-2">📝</span>Registrar Assinatura</h2>
-                <form id="form-assinatura" class="space-y-4">
-                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">Nome do Cliente</label><input type="text" id="cliente-nome" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
-                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">WhatsApp (55+DDD+Número)</label><input type="text" id="cliente-whatsapp" required placeholder="5511999999999" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
-                    <div class="grid grid-cols-2 gap-3">
-                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">Produto</label><select id="assinatura-medicamento" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></select></div>
-                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">Desconto (%)</label><input type="number" id="assinatura-desconto" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-3">
-                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">Data Última Entrega</label><input type="date" id="assinatura-data" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
-                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">Tipo Entrega</label><select id="assinatura-tipo" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"><option value="retirada">Retirada na Loja</option><option value="entrega">Delivery</option></select></div>
-                    </div>
-                    <button type="submit" class="w-full bg-health hover:bg-green-700 text-white font-bold py-3 rounded-xl shadow-md transition text-sm">Registrar Assinatura</button>
-                </form>
+            <!-- SEÇÃO: ASSINATURAS -->
+            <div id="secao-assinaturas" class="secao-admin">
+                <div class="bg-white p-5 rounded-2xl shadow-md border border-gray-100">
+                    <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center"><span class="bg-health text-white w-6 h-6 rounded-full flex items-center justify-center text-xs mr-2">📝</span>Registrar Assinatura</h2>
+                    <form id="form-assinatura" class="space-y-4">
+                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">Nome do Cliente</label><input type="text" id="cliente-nome" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
+                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">WhatsApp (55+DDD+Número)</label><input type="text" id="cliente-whatsapp" required placeholder="5511999999999" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div><label class="block text-xs font-semibold text-gray-600 mb-1">Produto</label><select id="assinatura-medicamento" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></select></div>
+                            <div><label class="block text-xs font-semibold text-gray-600 mb-1">Desconto (%)</label><input type="number" id="assinatura-desconto" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div><label class="block text-xs font-semibold text-gray-600 mb-1">Data Última Entrega</label><input type="date" id="assinatura-data" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
+                            <div><label class="block text-xs font-semibold text-gray-600 mb-1">Tipo Entrega</label><select id="assinatura-tipo" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"><option value="retirada">Retirada na Loja</option><option value="entrega">Delivery</option></select></div>
+                        </div>
+                        <button type="submit" class="w-full bg-health hover:bg-green-700 text-white font-bold py-3 rounded-xl shadow-md transition text-sm">Registrar Assinatura</button>
+                    </form>
+                </div>
             </div>
 
-            <!-- Solicitações -->
-            <div class="bg-white p-5 rounded-2xl shadow-md border border-gray-100">
-                <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center"><span class="bg-blue-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs mr-2">💡</span>Solicitações de Produtos</h2>
-                <div id="lista-solicitacoes" class="space-y-3"><p class="text-center text-gray-500 text-sm py-2">Carregando...</p></div>
+            <!-- SEÇÃO: SOLICITAÇÕES -->
+            <div id="secao-solicitacoes" class="secao-admin">
+                <div class="bg-white p-5 rounded-2xl shadow-md border border-gray-100">
+                    <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center"><span class="bg-blue-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs mr-2">💡</span>Solicitações de Produtos</h2>
+                    <div id="lista-solicitacoes" class="space-y-3"><p class="text-center text-gray-500 text-sm py-2">Carregando...</p></div>
+                </div>
             </div>
 
-            <div>
-                <h3 class="text-sm font-bold text-gray-500 uppercase tracking-wide mb-3">Produtos Cadastrados</h3>
-                <div id="lista-admin" class="space-y-3"><p class="text-center text-gray-500 py-4 text-sm">Carregando...</p></div>
+            <!-- SEÇÃO: CONFIGURAÇÕES -->
+            <div id="secao-configuracoes" class="secao-admin">
+                <!-- Editar Estabelecimento -->
+                <div class="bg-white p-5 rounded-2xl shadow-md border border-gray-100 mb-6">
+                    <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center"><span class="bg-purple-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs mr-2"></span>Personalizar Estabelecimento</h2>
+                    <form id="form-estabelecimento" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-600 mb-1">Nome do Estabelecimento</label>
+                            <input type="text" id="est-nome" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-600 mb-1">Tipo</label>
+                            <select id="est-tipo" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm">
+                                <option value="farmacia">Farmácia</option>
+                                <option value="pet">Pet Shop</option>
+                                <option value="proteicos">Loja de Proteicos</option>
+                                <option value="outros">Outros</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-600 mb-1">WhatsApp (55+DDD+Número)</label>
+                            <input type="text" id="est-whatsapp" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-600 mb-1">Cor Primária (hex)</label>
+                            <input type="color" id="est-cor" class="w-full h-10 rounded-lg border border-gray-300 cursor-pointer">
+                        </div>
+                        <button type="submit" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 rounded-xl shadow-md transition text-sm">Salvar Configurações</button>
+                    </form>
+                </div>
+
+                <!-- Config Descontos -->
+                <div class="bg-white p-5 rounded-2xl shadow-md border border-gray-100">
+                    <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center"><span class="bg-health text-white w-6 h-6 rounded-full flex items-center justify-center text-xs mr-2">%</span>Descontos Progressivos</h2>
+                    <div class="grid grid-cols-3 gap-3">
+                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">3 meses (%)</label><input type="number" id="desc-3" value="12" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
+                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">5 meses (%)</label><input type="number" id="desc-5" value="20" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
+                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">8 meses (%)</label><input type="number" id="desc-8" value="30" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
+                    </div>
+                    <button onclick="salvarDescontos()" class="w-full mt-4 bg-health hover:bg-green-700 text-white font-bold py-2 rounded-xl shadow-md transition text-sm">Salvar Descontos</button>
+                </div>
             </div>
+
         </div>
     </main>
 
@@ -209,50 +266,42 @@
                     document.getElementById('nome-estabelecimento').textContent = estabelecimento.nome;
                     const tipos = { farmacia: 'Farmácia', pet: 'Pet Shop', proteicos: 'Loja de Proteicos', outros: 'Estabelecimento' };
                     document.getElementById('tipo-estabelecimento').textContent = tipos[estabelecimento.tipo] || '';
-                    if (estabelecimento.cor_primaria) document.documentElement.style.setProperty('--cor-primaria', estabelecimento.cor_primaria);
+                    if (estabelecimento.cor_primaria) {
+                        document.documentElement.style.setProperty('--cor-primaria', estabelecimento.cor_primaria);
+                        document.getElementById('est-cor').value = estabelecimento.cor_primaria;
+                    }
+                    // Preencher formulário de configurações
+                    document.getElementById('est-nome').value = estabelecimento.nome;
+                    document.getElementById('est-tipo').value = estabelecimento.tipo;
+                    document.getElementById('est-whatsapp').value = estabelecimento.whatsapp;
                 }
             } catch (e) { console.log('Erro ao carregar estabelecimento'); }
         }
 
-        async function carregarDescontos() {
-            try {
-                const { data } = await db.from('config_descontos').select('*').eq('estabelecimento_id', ESTABELECIMENTO_ID).limit(1);
-                if (data && data.length > 0) {
-                    TABELA_DESCONTOS = [{ meses: 3, desconto: data[0].desc_3 }, { meses: 5, desconto: data[0].desc_5 }, { meses: 8, desconto: data[0].desc_8 }];
-                    document.getElementById('desc-3').value = data[0].desc_3; document.getElementById('desc-5').value = data[0].desc_5; document.getElementById('desc-8').value = data[0].desc_8;
-                }
-            } catch (e) { console.log('Usando descontos padrão'); }
-        }
-
-        async function carregarMedicamentos() {
-            try {
-                const { data } = await db.from('medicamentos').select('*').eq('estabelecimento_id', ESTABELECIMENTO_ID).order('created_at', { ascending: false });
-                medicamentos = data || []; medicamentosFiltrados = [...medicamentos];
-                renderizarTudo(); atualizarSelectMedicamentos();
-            } catch (error) { console.error('Erro:', error); }
-        }
-
-        async function carregarAssinaturas() {
-            try {
-                const { data } = await db.from('assinaturas').select('*, medicamentos(nome, dosagem)').eq('ativa', true).eq('estabelecimento_id', ESTABELECIMENTO_ID).order('data_proxima_entrega', { ascending: true });
-                assinaturas = data || []; renderizarCalendario();
-            } catch (error) { console.error('Erro:', error); }
-        }
-
-        async function carregarSolicitacoes() {
-            try {
-                const { data } = await db.from('solicitacoes_produtos').select('*').eq('estabelecimento_id', ESTABELECIMENTO_ID).eq('status', 'pendente').order('created_at', { ascending: false });
-                solicitacoes = data || []; renderizarSolicitacoes();
-            } catch (e) { console.log('Erro ao carregar solicitações'); }
+        function mostrarSecao(secao) {
+            // Esconder todas as seções
+            document.querySelectorAll('.secao-admin').forEach(s => s.classList.remove('ativa'));
+            // Mostrar seção selecionada
+            document.getElementById(`secao-${secao}`).classList.add('ativa');
+            // Atualizar tabs
+            document.querySelectorAll('[id^="tab-"]').forEach(t => {
+                t.classList.remove('tab-ativa');
+                t.classList.add('tab-inativa');
+            });
+            document.getElementById(`tab-${secao}`).classList.remove('tab-inativa');
+            document.getElementById(`tab-${secao}`).classList.add('tab-ativa');
+            
+            // Se for calendário, renderizar
+            if (secao === 'calendario') renderizarCalendario();
         }
 
         function alternarModo() {
             const modoCliente = document.getElementById('modo-cliente'), modoFarmacia = document.getElementById('modo-farmacia'), btn = document.querySelector('header button');
             if (modoCliente.classList.contains('hidden')) {
-                modoCliente.classList.remove('hidden'); modoFarmacia.classList.add('hidden'); btn.textContent = '🔒 Modo Admin';
+                modoCliente.classList.remove('hidden'); modoFarmacia.classList.add('hidden'); btn.textContent = ' Modo Admin';
             } else {
                 const senha = prompt("Senha de acesso (Dica: 1234)");
-                if (senha === '1234') { modoCliente.classList.add('hidden'); modoFarmacia.classList.remove('hidden'); btn.textContent = '👁️ Modo Cliente'; renderizarCalendario(); } 
+                if (senha === '1234') { modoCliente.classList.add('hidden'); modoFarmacia.classList.remove('hidden'); btn.textContent = '👁️ Modo Cliente'; mostrarSecao('calendario'); } 
                 else if (senha !== null) { alert("Senha incorreta!"); }
             }
         }
@@ -270,7 +319,6 @@
             else { content.classList.remove('open'); icon.classList.remove('open'); }
         }
 
-        // ========== CALENDÁRIO INTELIGENTE ==========
         function renderizarCalendario() {
             const ano = dataAtual.getFullYear(), mes = dataAtual.getMonth();
             const nomesMeses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
@@ -281,7 +329,6 @@
 
             for (let dia = 1; dia <= diasNoMes; dia++) {
                 const dataStr = `${ano}-${String(mes + 1).padStart(2, '0')}-${String(dia).padStart(2, '0')}`;
-                // Marca o dia se houver avisos pendentes (5 dias antes da entrega)
                 const temAviso = assinaturas.some(a => {
                     const dataEntrega = new Date(a.data_proxima_entrega);
                     const dataAviso = new Date(dataEntrega); dataAviso.setDate(dataAviso.getDate() - 5);
@@ -315,7 +362,7 @@
                 const diasRestantes = Math.ceil((new Date(dataEntregaStr) - hoje) / (1000 * 60 * 60 * 24));
                 const descontoCalculado = calcularDescontoFidelidade(cliente);
                 const linkRenovacao = `${URL_BASE}/renovar.html?token=${cliente.token_pagamento}`;
-                const msg = `Oi ${cliente.cliente_nome}! 🎉\n\nSeu ${cliente.medicamentos.nome} ${cliente.medicamentos.dosagem} acaba em ${diasRestantes} dias.\n\nComo você já é um cliente fiel (${cliente.quantidade_compras} compras), seu desconto subiu para *${descontoCalculado}% OFF*!\n\nPara renovar agora sem burocracia, basta clicar no link abaixo:\n\n👉 ${linkRenovacao}\n\nTe esperamos!`;
+                const msg = `Oi ${cliente.cliente_nome}! 🎉\n\nSeu ${cliente.medicamentos.nome} ${cliente.medicamentos.dosagem} acaba em ${diasRestantes} dias.\n\nComo você já é um cliente fiel (${cliente.quantidade_compras} compras), seu desconto subiu para *${descontoCalculado}% OFF*!\n\nPara renovar agora sem burocracia, basta clicar no link abaixo:\n\n ${linkRenovacao}\n\nTe esperamos!`;
                 
                 if (!validarTelefone(cliente.cliente_whatsapp)) {
                     html += `<div class="bg-red-50 p-4 rounded-lg border border-red-200">
@@ -394,9 +441,28 @@
                 if (existente && existente.length > 0) await db.from('config_descontos').update(configData).eq('id', existente[0].id);
                 else await db.from('config_descontos').insert([configData]);
                 TABELA_DESCONTOS = [{ meses: 3, desconto: desc3 }, { meses: 5, desconto: desc5 }, { meses: 8, desconto: desc8 }];
-                alert("Descontos salvos!"); renderizarTudo();
+                alert("Descontos salvos!");
             } catch (error) { alert("Erro ao salvar."); }
         }
+
+        // Salvar configurações do estabelecimento
+        document.getElementById('form-estabelecimento').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const dados = {
+                nome: document.getElementById('est-nome').value,
+                tipo: document.getElementById('est-tipo').value,
+                whatsapp: document.getElementById('est-whatsapp').value,
+                cor_primaria: document.getElementById('est-cor').value
+            };
+            
+            try {
+                await db.from('estabelecimentos').update(dados).eq('id', ESTABELECIMENTO_ID);
+                alert('Configurações salvas!');
+                await carregarEstabelecimento();
+            } catch (error) {
+                alert('Erro ao salvar configurações.');
+            }
+        });
 
         document.getElementById('form-medicamento').addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -458,7 +524,7 @@
             const precoComDesconto = calcularPrecoComDesconto(med.preco_original, meses), tipoEntrega = tipoEntregaSelecionado[index] || 'retirada';
             const entregaTexto = tipoEntrega === 'entrega' ? `🚚 Delivery (+R$ ${med.taxa_entrega})` : ' Retirada na Loja';
             const precoTotal = (parseFloat(precoComDesconto) + (tipoEntrega === 'entrega' ? parseFloat(med.taxa_entrega) : 0)).toFixed(2);
-            const mensagem = `* NOVO PEDIDO - ${estabelecimento ? estabelecimento.nome : 'CUPOMCLIC'}*\n\n💊 *Produto:* ${med.nome} ${med.dosagem}\n📋 ${med.descricao}\n\n📅 *Plano:* ${meses} ${meses === 1 ? 'mês' : 'meses'}\n *Desconto:* ${desconto}% OFF\n💰 *Preço c/ desconto:* R$ ${precoComDesconto}/mês\n\n *Quantidade:* ${med.quantidade}\n *Entrega:* ${entregaTexto}\n\n💳 *Total 1ª entrega:* R$ ${precoTotal}\n\n👤 *Meu nome:* [preencha]\n *Endereço:* [se delivery]\n\nObrigado!`;
+            const mensagem = `* NOVO PEDIDO - ${estabelecimento ? estabelecimento.nome : 'CUPOMCLIC'}*\n\n💊 *Produto:* ${med.nome} ${med.dosagem}\n📋 ${med.descricao}\n\n📅 *Plano:* ${meses} ${meses === 1 ? 'mês' : 'meses'}\n *Desconto:* ${desconto}% OFF\n💰 *Preço c/ desconto:* R$ ${precoComDesconto}/mês\n\n *Quantidade:* ${med.quantidade}\n *Entrega:* ${entregaTexto}\n\n💳 *Total 1ª entrega:* R$ ${precoTotal}\n\n *Meu nome:* [preencha]\n *Endereço:* [se delivery]\n\nObrigado!`;
             const numeroDestino = estabelecimento ? estabelecimento.whatsapp : '5514998771964';
             window.open(`https://wa.me/${numeroDestino}?text=${encodeURIComponent(mensagem)}`, '_blank');
         }
@@ -476,7 +542,7 @@
                     <div class="p-4 cursor-pointer" onclick="toggleAccordion(${index})">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center space-x-3 flex-grow">
-                                <div class="w-10 h-10 bg-green-50 rounded-lg flex items-center justify-center text-xl">${estaEsgotado ? '🚫' : '💊'}</div>
+                                <div class="w-10 h-10 bg-green-50 rounded-lg flex items-center justify-center text-xl">${estaEsgotado ? '' : '💊'}</div>
                                 <div class="flex-grow">
                                     <div class="flex items-center space-x-2"><h3 class="font-bold text-gray-900 text-sm">${med.nome}</h3><span class="text-xs text-health font-semibold">${med.dosagem}</span></div>
                                     <p class="text-xs text-gray-500 mt-0.5">${med.quantidade} • R$ ${med.preco_original}</p>
