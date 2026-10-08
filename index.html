@@ -58,7 +58,12 @@
                 <input type="text" id="busca-produtos" oninput="filtrarProdutos()" placeholder="🔍 Buscar produto..." class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-green-500 focus:outline-none text-sm">
             </div>
 
-            <div id="lista-cliente" class="space-y-3"><p class="text-center text-gray-500 text-sm py-4">Carregando produtos...</p></div>
+            <div id="lista-cliente" class="space-y-3">
+                <div class="text-center py-8">
+                    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mx-auto mb-2"></div>
+                    <p class="text-gray-500 text-sm">Carregando produtos...</p>
+                </div>
+            </div>
 
             <section class="bg-blue-50 border border-blue-200 rounded-xl p-4 mt-6">
                 <h3 class="font-bold text-gray-900 text-sm mb-2 flex items-center"><span class="text-lg mr-2">💡</span> Não encontrou o que procura?</h3>
@@ -86,12 +91,13 @@
             
             <!-- MENU HORIZONTAL -->
             <div class="bg-white rounded-xl shadow-sm mb-6 overflow-hidden">
-                <div class="grid grid-cols-5 gap-1 p-2">
-                    <button onclick="mostrarSecao('calendario')" id="tab-calendario" class="tab-ativa py-2 px-3 rounded-lg text-xs font-semibold transition"> Calendário</button>
-                    <button onclick="mostrarSecao('produtos')" id="tab-produtos" class="tab-inativa py-2 px-3 rounded-lg text-xs font-semibold transition">📦 Produtos</button>
-                    <button onclick="mostrarSecao('assinaturas')" id="tab-assinaturas" class="tab-inativa py-2 px-3 rounded-lg text-xs font-semibold transition">👥 Assinaturas</button>
-                    <button onclick="mostrarSecao('solicitacoes')" id="tab-solicitacoes" class="tab-inativa py-2 px-3 rounded-lg text-xs font-semibold transition">💡 Solicitações</button>
-                    <button onclick="mostrarSecao('configuracoes')" id="tab-configuracoes" class="tab-inativa py-2 px-3 rounded-lg text-xs font-semibold transition">⚙️ Config</button>
+                <div class="grid grid-cols-6 gap-1 p-2">
+                    <button onclick="mostrarSecao('calendario')" id="tab-calendario" class="tab-ativa py-2 px-2 rounded-lg text-xs font-semibold transition">📅 Calend</button>
+                    <button onclick="mostrarSecao('produtos')" id="tab-produtos" class="tab-inativa py-2 px-2 rounded-lg text-xs font-semibold transition">📦 Produtos</button>
+                    <button onclick="mostrarSecao('assinaturas')" id="tab-assinaturas" class="tab-inativa py-2 px-2 rounded-lg text-xs font-semibold transition">👥 Assinar</button>
+                    <button onclick="mostrarSecao('clientes')" id="tab-clientes" class="tab-inativa py-2 px-2 rounded-lg text-xs font-semibold transition">🔍 Clientes</button>
+                    <button onclick="mostrarSecao('solicitacoes')" id="tab-solicitacoes" class="tab-inativa py-2 px-2 rounded-lg text-xs font-semibold transition">💡 Solicit</button>
+                    <button onclick="mostrarSecao('configuracoes')" id="tab-configuracoes" class="tab-inativa py-2 px-2 rounded-lg text-xs font-semibold transition">⚙️ Config</button>
                 </div>
             </div>
 
@@ -175,6 +181,25 @@
                 </div>
             </div>
 
+            <!-- SEÇÃO: CLIENTES (NOVA!) -->
+            <div id="secao-clientes" class="secao-admin">
+                <!-- Busca e Filtros -->
+                <div class="bg-white p-4 rounded-2xl shadow-md border border-gray-100 mb-4">
+                    <h3 class="text-sm font-bold text-gray-900 mb-3">🔍 Buscar Clientes</h3>
+                    <div class="space-y-3">
+                        <input type="text" id="filtro-nome" oninput="filtrarClientes()" placeholder="Nome do cliente..." class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm">
+                        <input type="text" id="filtro-produto" oninput="filtrarClientes()" placeholder="Produto..." class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm">
+                        <input type="date" id="filtro-vencimento" onchange="filtrarClientes()" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm">
+                        <button onclick="limparFiltros()" class="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 rounded-lg transition text-sm">Limpar Filtros</button>
+                    </div>
+                </div>
+
+                <!-- Lista de Clientes -->
+                <div id="lista-clientes-admin" class="space-y-3">
+                    <p class="text-center text-gray-500 py-4 text-sm">Carregando clientes...</p>
+                </div>
+            </div>
+
             <!-- SEÇÃO: SOLICITAÇÕES -->
             <div id="secao-solicitacoes" class="secao-admin">
                 <div class="bg-white p-5 rounded-2xl shadow-md border border-gray-100">
@@ -253,14 +278,20 @@
         
         let estabelecimento = null, medicamentos = [], medicamentosFiltrados = [], assinaturas = [], solicitacoes = [];
         let tipoEntregaSelecionado = {}, dataAtual = new Date(), accordionAberto = {};
+        let clientesFiltrados = [];
 
         document.addEventListener('DOMContentLoaded', () => {
-            carregarEstabelecimento(); carregarDescontos(); carregarMedicamentos(); carregarAssinaturas(); carregarSolicitacoes();
+            carregarEstabelecimento();
+            carregarDescontos();
+            carregarMedicamentos();
+            carregarAssinaturas();
+            carregarSolicitacoes();
         });
 
         async function carregarEstabelecimento() {
             try {
-                const { data } = await db.from('estabelecimentos').select('*').eq('id', ESTABELECIMENTO_ID).limit(1);
+                const { data, error } = await db.from('estabelecimentos').select('*').eq('id', ESTABELECIMENTO_ID).limit(1);
+                if (error) throw error;
                 if (data && data.length > 0) {
                     estabelecimento = data[0];
                     document.getElementById('nome-estabelecimento').textContent = estabelecimento.nome;
@@ -270,20 +301,18 @@
                         document.documentElement.style.setProperty('--cor-primaria', estabelecimento.cor_primaria);
                         document.getElementById('est-cor').value = estabelecimento.cor_primaria;
                     }
-                    // Preencher formulário de configurações
                     document.getElementById('est-nome').value = estabelecimento.nome;
                     document.getElementById('est-tipo').value = estabelecimento.tipo;
                     document.getElementById('est-whatsapp').value = estabelecimento.whatsapp;
                 }
-            } catch (e) { console.log('Erro ao carregar estabelecimento'); }
+            } catch (e) { 
+                console.error('Erro ao carregar estabelecimento:', e);
+            }
         }
 
         function mostrarSecao(secao) {
-            // Esconder todas as seções
             document.querySelectorAll('.secao-admin').forEach(s => s.classList.remove('ativa'));
-            // Mostrar seção selecionada
             document.getElementById(`secao-${secao}`).classList.add('ativa');
-            // Atualizar tabs
             document.querySelectorAll('[id^="tab-"]').forEach(t => {
                 t.classList.remove('tab-ativa');
                 t.classList.add('tab-inativa');
@@ -291,8 +320,8 @@
             document.getElementById(`tab-${secao}`).classList.remove('tab-inativa');
             document.getElementById(`tab-${secao}`).classList.add('tab-ativa');
             
-            // Se for calendário, renderizar
             if (secao === 'calendario') renderizarCalendario();
+            if (secao === 'clientes') renderizarClientesAdmin();
         }
 
         function alternarModo() {
@@ -362,7 +391,7 @@
                 const diasRestantes = Math.ceil((new Date(dataEntregaStr) - hoje) / (1000 * 60 * 60 * 24));
                 const descontoCalculado = calcularDescontoFidelidade(cliente);
                 const linkRenovacao = `${URL_BASE}/renovar.html?token=${cliente.token_pagamento}`;
-                const msg = `Oi ${cliente.cliente_nome}! 🎉\n\nSeu ${cliente.medicamentos.nome} ${cliente.medicamentos.dosagem} acaba em ${diasRestantes} dias.\n\nComo você já é um cliente fiel (${cliente.quantidade_compras} compras), seu desconto subiu para *${descontoCalculado}% OFF*!\n\nPara renovar agora sem burocracia, basta clicar no link abaixo:\n\n ${linkRenovacao}\n\nTe esperamos!`;
+                const msg = `Oi ${cliente.cliente_nome}! 🎉\n\nSeu ${cliente.medicamentos.nome} ${cliente.medicamentos.dosagem} acaba em ${diasRestantes} dias.\n\nComo você já é um cliente fiel (${cliente.quantidade_compras} compras), seu desconto subiu para *${descontoCalculado}% OFF*!\n\nPara renovar agora sem burocracia, basta clicar no link abaixo:\n\n👉 ${linkRenovacao}\n\nTe esperamos!`;
                 
                 if (!validarTelefone(cliente.cliente_whatsapp)) {
                     html += `<div class="bg-red-50 p-4 rounded-lg border border-red-200">
@@ -445,7 +474,6 @@
             } catch (error) { alert("Erro ao salvar."); }
         }
 
-        // Salvar configurações do estabelecimento
         document.getElementById('form-estabelecimento').addEventListener('submit', async (e) => {
             e.preventDefault();
             const dados = {
@@ -471,7 +499,10 @@
             try {
                 if (editId) await db.from('medicamentos').update(novoMed).eq('id', editId); else await db.from('medicamentos').insert([novoMed]);
                 limparFormulario(); await carregarMedicamentos(); alert("Produto salvo!");
-            } catch (error) { alert("Erro ao salvar."); }
+            } catch (error) { 
+                console.error('Erro ao salvar produto:', error);
+                alert("Erro ao salvar: " + error.message); 
+            }
         });
 
         document.getElementById('form-assinatura').addEventListener('submit', async (e) => {
@@ -524,113 +555,158 @@
             const precoComDesconto = calcularPrecoComDesconto(med.preco_original, meses), tipoEntrega = tipoEntregaSelecionado[index] || 'retirada';
             const entregaTexto = tipoEntrega === 'entrega' ? `🚚 Delivery (+R$ ${med.taxa_entrega})` : ' Retirada na Loja';
             const precoTotal = (parseFloat(precoComDesconto) + (tipoEntrega === 'entrega' ? parseFloat(med.taxa_entrega) : 0)).toFixed(2);
-            const mensagem = `* NOVO PEDIDO - ${estabelecimento ? estabelecimento.nome : 'CUPOMCLIC'}*\n\n💊 *Produto:* ${med.nome} ${med.dosagem}\n📋 ${med.descricao}\n\n📅 *Plano:* ${meses} ${meses === 1 ? 'mês' : 'meses'}\n *Desconto:* ${desconto}% OFF\n💰 *Preço c/ desconto:* R$ ${precoComDesconto}/mês\n\n *Quantidade:* ${med.quantidade}\n *Entrega:* ${entregaTexto}\n\n💳 *Total 1ª entrega:* R$ ${precoTotal}\n\n *Meu nome:* [preencha]\n *Endereço:* [se delivery]\n\nObrigado!`;
+            const mensagem = `* NOVO PEDIDO - ${estabelecimento ? estabelecimento.nome : 'CUPOMCLIC'}*\n\n💊 *Produto:* ${med.nome} ${med.dosagem}\n📋 ${med.descricao}\n\n📅 *Plano:* ${meses} ${meses === 1 ? 'mês' : 'meses'}\n *Desconto:* ${desconto}% OFF\n💰 *Preço c/ desconto:* R$ ${precoComDesconto}/mês\n\n *Quantidade:* ${med.quantidade}\n🚚 *Entrega:* ${entregaTexto}\n\n💳 *Total 1ª entrega:* R$ ${precoTotal}\n\n *Meu nome:* [preencha]\n📍 *Endereço:* [se delivery]\n\nObrigado!`;
             const numeroDestino = estabelecimento ? estabelecimento.whatsapp : '5514998771964';
             window.open(`https://wa.me/${numeroDestino}?text=${encodeURIComponent(mensagem)}`, '_blank');
         }
 
         function renderizarTudo() { renderizarTimelineCliente(); renderizarListaAdmin(); }
 
-        function renderizarTimelineCliente() {
-            const listaCliente = document.getElementById('lista-cliente'); listaCliente.innerHTML = '';
-            if (medicamentosFiltrados.length === 0) { listaCliente.innerHTML = '<p class="text-center text-gray-500 py-4">Nenhum produto encontrado.</p>'; return; }
-            listaCliente.innerHTML += `<div class="text-center mb-2"><h2 class="text-base font-bold text-gray-900">Veja a lista de produtos e descontos</h2><p class="text-xs text-gray-600">Toque para ver detalhes e escolher</p></div>`;
-
-            medicamentosFiltrados.forEach((med, index) => {
-                const estaEsgotado = med.estoque <= 0, podeDelivery = med.tipo_entrega === 'ambos' || med.tipo_entrega === 'delivery', podeLoja = med.tipo_entrega === 'ambos' || med.tipo_entrega === 'loja';
-                listaCliente.innerHTML += `<div class="timeline-item bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden fade-in ${estaEsgotado ? 'opacity-60' : ''}">
-                    <div class="p-4 cursor-pointer" onclick="toggleAccordion(${index})">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center space-x-3 flex-grow">
-                                <div class="w-10 h-10 bg-green-50 rounded-lg flex items-center justify-center text-xl">${estaEsgotado ? '' : '💊'}</div>
-                                <div class="flex-grow">
-                                    <div class="flex items-center space-x-2"><h3 class="font-bold text-gray-900 text-sm">${med.nome}</h3><span class="text-xs text-health font-semibold">${med.dosagem}</span></div>
-                                    <p class="text-xs text-gray-500 mt-0.5">${med.quantidade} • R$ ${med.preco_original}</p>
-                                    ${estaEsgotado ? '<p class="esgotado mt-1">ESGOTADO</p>' : ''}
-                                </div>
-                            </div>
-                            <svg id="icon-${index}" class="w-5 h-5 text-gray-400 rotate-icon flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                        </div>
-                    </div>
-                    <div id="accordion-${index}" class="accordion-content">
-                        <div class="px-4 pb-4 space-y-3 border-t border-gray-100 pt-3">
-                            <p class="text-xs text-gray-600 leading-relaxed">${med.descricao}</p>
-                            <div class="bg-gradient-to-r from-green-50 to-green-100 border border-green-200 rounded-lg p-3">
-                                <p class="text-xs font-bold text-gray-700 mb-2">Descontos progressivos:</p>
-                                <div class="grid grid-cols-3 gap-2 text-center">
-                                    <div class="bg-white rounded p-1"><p class="text-xs text-gray-600">${TABELA_DESCONTOS[0].meses}m</p><p class="text-sm font-bold text-health">${TABELA_DESCONTOS[0].desconto}%</p></div>
-                                    <div class="bg-white rounded p-1"><p class="text-xs text-gray-600">${TABELA_DESCONTOS[1].meses}m</p><p class="text-sm font-bold text-health">${TABELA_DESCONTOS[1].desconto}%</p></div>
-                                    <div class="bg-white rounded p-1"><p class="text-xs text-gray-600">${TABELA_DESCONTOS[2].meses}m</p><p class="text-sm font-bold text-health">${TABELA_DESCONTOS[2].desconto}%</p></div>
-                                </div>
-                            </div>
-                            ${!estaEsgotado ? `
-                            <div class="space-y-2">
-                                <label class="text-xs font-semibold text-gray-600">Plano de assinatura:</label>
-                                <select id="meses-${index}" onchange="atualizarPreco(${index})" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm">
-                                    <option value="1">1 mês (sem desconto)</option>
-                                    <option value="${TABELA_DESCONTOS[0].meses}">${TABELA_DESCONTOS[0].meses} meses (${TABELA_DESCONTOS[0].desconto}% OFF)</option>
-                                    <option value="${TABELA_DESCONTOS[1].meses}">${TABELA_DESCONTOS[1].meses} meses (${TABELA_DESCONTOS[1].desconto}% OFF)</option>
-                                    <option value="${TABELA_DESCONTOS[2].meses}">${TABELA_DESCONTOS[2].meses} meses (${TABELA_DESCONTOS[2].desconto}% OFF)</option>
-                                </select>
-                            </div>
-                            <div class="bg-gray-50 p-3 rounded-lg">
-                                <div class="flex items-center justify-between">
-                                    <div><span class="text-xs text-gray-400 line-through block">R$ ${med.preco_original}</span><span class="text-xl font-extrabold text-health" id="preco-final-${index}">R$ ${med.preco_original}</span><span class="text-xs text-gray-500 block">/ ${med.quantidade} por mês</span></div>
-                                    <div class="text-right"><span class="text-xs text-gray-500 block" id="desconto-label-${index}">Economia: R$ 0,00/mês</span><span class="text-xs text-green-600 font-semibold block">Pague ao receber</span></div>
-                                </div>
-                            </div>
-                            <div class="space-y-2">
-                                <label class="text-xs font-semibold text-gray-600">Como deseja receber?</label>
-                                <div class="grid grid-cols-2 gap-2">
-                                    ${podeLoja ? `<button onclick="selecionarEntrega(${index}, 'retirada')" id="btn-retirada-${index}" class="py-2 px-3 rounded-lg border-2 border-gray-300 text-xs font-semibold transition hover:border-green-500">🏪 Buscar na Loja</button>` : ''}
-                                    ${podeDelivery ? `<button onclick="selecionarEntrega(${index}, 'entrega')" id="btn-entrega-${index}" class="py-2 px-3 rounded-lg border-2 border-gray-300 text-xs font-semibold transition hover:border-green-500">🚚 Delivery (+R$ ${med.taxa_entrega})</button>` : ''}
-                                </div>
-                            </div>
-                            <button onclick="enviarPedidoCliente(${index})" class="block w-full bg-health hover:bg-green-700 text-white text-center font-bold py-3 rounded-xl shadow-md transition text-sm">ENVIAR PEDIDO</button>
-                            ` : '<p class="text-center text-red-500 text-sm py-2">Produto temporariamente indisponível</p>'}
-                        </div>
-                    </div>
-                </div>`;
-            });
-        }
-
-        function renderizarListaAdmin() {
-            const listaAdmin = document.getElementById('lista-admin'); listaAdmin.innerHTML = '';
-            if (medicamentos.length === 0) { listaAdmin.innerHTML = '<p class="text-center text-gray-500 py-4 text-sm">Nenhum produto cadastrado.</p>'; return; }
-            medicamentos.forEach((med, index) => {
-                const estoqueBaixo = med.estoque <= 5;
-                listaAdmin.innerHTML += `<div class="bg-white p-3 rounded-xl border border-gray-200 flex justify-between items-center fade-in">
-                    <div class="flex-grow"><p class="font-bold text-sm text-gray-900">${med.nome} ${med.dosagem}</p><p class="text-xs text-gray-500">R$ ${med.preco_original} | Estoque: <span class="${estoqueBaixo ? 'text-red-500 font-bold' : ''}">${med.estoque}</span> | ${med.tipo_entrega}</p></div>
-                    <div class="flex space-x-2"><button onclick="editarMedicamento(${index})" class="p-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition">✏️</button><button onclick="excluirMedicamento(${index})" class="p-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition">🗑️</button></div>
-                </div>`;
-            });
-        }
-
-        function renderizarSolicitacoes() {
-            const lista = document.getElementById('lista-solicitacoes'); lista.innerHTML = '';
-            if (solicitacoes.length === 0) { lista.innerHTML = '<p class="text-center text-gray-500 text-sm py-2">Nenhuma solicitação pendente.</p>'; return; }
-            solicitacoes.forEach(sol => {
-                lista.innerHTML += `<div class="bg-blue-50 p-3 rounded-lg border border-blue-200">
-                    <p class="font-bold text-sm text-gray-900">${sol.cliente_nome}</p><p class="text-xs text-gray-600">📱 ${sol.cliente_whatsapp}</p><p class="text-sm text-gray-900 mt-1">💡 Quer: <strong>${sol.produto_desejado}</strong></p>
-                    ${sol.observacao ? `<p class="text-xs text-gray-600 mt-1">Obs: ${sol.observacao}</p>` : ''}
-                    <div class="flex space-x-2 mt-2"><button onclick="atualizarStatusSolicitacao(${sol.id}, 'atendido')" class="flex-1 bg-green-500 text-white text-xs font-bold py-1 rounded">Atendido</button><button onclick="atualizarStatusSolicitacao(${sol.id}, 'recusado')" class="flex-1 bg-red-500 text-white text-xs font-bold py-1 rounded">Recusar</button></div>
-                </div>`;
-            });
-        }
-
-        function atualizarPreco(index) {
-            const med = medicamentosFiltrados[index], meses = parseInt(document.getElementById(`meses-${index}`).value), precoComDesconto = calcularPrecoComDesconto(med.preco_original, meses), economia = (parseFloat(med.preco_original) - parseFloat(precoComDesconto)).toFixed(2);
-            document.getElementById(`preco-final-${index}`).textContent = `R$ ${precoComDesconto}`;
-            document.getElementById(`desconto-label-${index}`).textContent = meses > 1 ? `Economia: R$ ${economia}/mês` : 'Economia: R$ 0,00/mês';
-        }
-
-        function selecionarEntrega(index, tipo) {
-            tipoEntregaSelecionado[index] = tipo;
-            const btnRetirada = document.getElementById(`btn-retirada-${index}`), btnEntrega = document.getElementById(`btn-entrega-${index}`);
-            if (btnRetirada) {
-                if (tipo === 'retirada') { btnRetirada.classList.add('border-green-500', 'bg-green-50'); if (btnEntrega) btnEntrega.classList.remove('border-green-500', 'bg-green-50'); } 
-                else { btnEntrega.classList.add('border-green-500', 'bg-green-50'); btnRetirada.classList.remove('border-green-500', 'bg-green-50'); }
+        // ========== NOVA FUNÇÃO: RENDERIZAR CLIENTES NO ADMIN ==========
+        function renderizarClientesAdmin() {
+            const lista = document.getElementById('lista-clientes-admin');
+            lista.innerHTML = '';
+            
+            if (clientesFiltrados.length === 0) {
+                lista.innerHTML = '<p class="text-center text-gray-500 py-4 text-sm">Nenhum cliente encontrado.</p>';
+                return;
             }
+
+            clientesFiltrados.forEach((cliente, index) => {
+                const proximaEntrega = new Date(cliente.data_proxima_entrega);
+                const dataFormatada = proximaEntrega.toLocaleDateString('pt-BR');
+                
+                lista.innerHTML += `
+                    <div class="bg-white rounded-xl border border-gray-200 overflow-hidden fade-in">
+                        <div class="p-4 cursor-pointer bg-gray-50 hover:bg-gray-100 transition" onclick="toggleClienteAdmin(${index})">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-3 flex-grow">
+                                    <div class="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center text-lg">👤</div>
+                                    <div class="flex-grow">
+                                        <h3 class="font-bold text-gray-900 text-sm">${cliente.cliente_nome}</h3>
+                                        <p class="text-xs text-gray-500">${cliente.medicamentos.nome} ${cliente.medicamentos.dosagem}</p>
+                                    </div>
+                                </div>
+                                <svg id="icon-cliente-${index}" class="w-5 h-5 text-gray-400 rotate-icon flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <div id="accordion-cliente-${index}" class="accordion-content bg-white">
+                            <div class="p-4 space-y-3 border-t border-gray-100">
+                                <div class="grid grid-cols-2 gap-3 text-sm">
+                                    <div>
+                                        <p class="text-xs text-gray-500">WhatsApp</p>
+                                        <p class="font-semibold text-gray-900">${cliente.cliente_whatsapp}</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs text-gray-500">Próxima Entrega</p>
+                                        <p class="font-semibold ${new Date(cliente.data_proxima_entrega) < new Date() ? 'text-red-600' : 'text-green-600'}">${dataFormatada}</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs text-gray-500">Compras Realizadas</p>
+                                        <p class="font-semibold text-gray-900">${cliente.quantidade_compras}</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs text-gray-500">Desconto Atual</p>
+                                        <p class="font-semibold text-health">${cliente.desconto_aplicado}% OFF</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs text-gray-500">Tipo de Entrega</p>
+                                        <p class="font-semibold text-gray-900">${cliente.tipo_entrega === 'entrega' ? '🚚 Delivery' : '🏪 Retirada'}</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs text-gray-500">Status</p>
+                                        <p class="font-semibold ${cliente.ativa ? 'text-green-600' : 'text-red-600'}">${cliente.ativa ? '✅ Ativa' : '❌ Inativa'}</p>
+                                    </div>
+                                </div>
+                                <div class="flex space-x-2 pt-2">
+                                    <a href="https://wa.me/${cliente.cliente_whatsapp}" target="_blank" class="flex-1 bg-green-500 hover:bg-green-600 text-white text-center font-semibold py-2 rounded-lg transition text-sm">
+                                        💬 WhatsApp
+                                    </a>
+                                    <button onclick="editarCliente('${cliente.id}')" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white text-center font-semibold py-2 rounded-lg transition text-sm">
+                                        ✏️ Editar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function toggleClienteAdmin(index) {
+            const content = document.getElementById(`accordion-cliente-${index}`);
+            const icon = document.getElementById(`icon-cliente-${index}`);
+            if (content.classList.contains('open')) {
+                content.classList.remove('open');
+                icon.classList.remove('open');
+            } else {
+                content.classList.add('open');
+                icon.classList.add('open');
+            }
+        }
+
+        function filtrarClientes() {
+            const nomeFiltro = document.getElementById('filtro-nome').value.toLowerCase();
+            const produtoFiltro = document.getElementById('filtro-produto').value.toLowerCase();
+            const vencimentoFiltro = document.getElementById('filtro-vencimento').value;
+
+            clientesFiltrados = assinaturas.filter(cliente => {
+                const matchNome = cliente.cliente_nome.toLowerCase().includes(nomeFiltro);
+                const matchProduto = cliente.medicamentos.nome.toLowerCase().includes(produtoFiltro);
+                const matchVencimento = vencimentoFiltro ? cliente.data_proxima_entrega === vencimentoFiltro : true;
+                return matchNome && matchProduto && matchVencimento && cliente.ativa === true;
+            });
+
+            renderizarClientesAdmin();
+        }
+
+        function limparFiltros() {
+            document.getElementById('filtro-nome').value = '';
+            document.getElementById('filtro-produto').value = '';
+            document.getElementById('filtro-vencimento').value = '';
+            clientesFiltrados = [...assinaturas.filter(a => a.ativa === true)];
+            renderizarClientesAdmin();
+        }
+
+        async function editarCliente(id) {
+            alert('Funcionalidade de edição em desenvolvimento. ID: ' + id);
+        }
+
+        async function carregarMedicamentos() {
+            try {
+                const { data, error } = await db.from('medicamentos').select('*').eq('estabelecimento_id', ESTABELECIMENTO_ID).order('created_at', { ascending: false });
+                if (error) throw error;
+                medicamentos = data || [];
+                medicamentosFiltrados = [...medicamentos];
+                console.log('Medicamentos carregados:', medicamentos.length);
+                renderizarTudo();
+                atualizarSelectMedicamentos();
+            } catch (error) { 
+                console.error('Erro ao carregar medicamentos:', error);
+                document.getElementById('lista-cliente').innerHTML = `<p class="text-center text-red-500 py-4">Erro ao carregar: ${error.message}</p>`;
+            }
+        }
+
+        async function carregarAssinaturas() {
+            try {
+                const { data, error } = await db.from('assinaturas').select('*, medicamentos(nome, dosagem)').eq('ativa', true).eq('estabelecimento_id', ESTABELECIMENTO_ID).order('data_proxima_entrega', { ascending: true });
+                if (error) throw error;
+                assinaturas = data || [];
+                console.log('Assinaturas carregadas:', assinaturas.length);
+                renderizarCalendario();
+            } catch (error) { 
+                console.error('Erro ao carregar assinaturas:', error);
+            }
+        }
+
+        async function carregarSolicitacoes() {
+            try {
+                const { data } = await db.from('solicitacoes_produtos').select('*').eq('estabelecimento_id', ESTABELECIMENTO_ID).eq('status', 'pendente').order('created_at', { ascending: false });
+                solicitacoes = data || [];
+                renderizarSolicitacoes();
+            } catch (e) { console.log('Erro ao carregar solicitações'); }
         }
     </script>
 </body>
