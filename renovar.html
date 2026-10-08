@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Renovar Assinatura</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="bg-gray-50 min-h-screen flex items-center justify-center p-4">
+    <div class="max-w-md w-full bg-white rounded-2xl shadow-lg p-6 text-center">
+        <div id="carregando" class="py-8">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
+            <p class="mt-4 text-gray-600">Preparando seu desconto...</p>
+        </div>
+
+        <div id="conteudo" class="hidden">
+            <div class="mb-6">
+                <span class="text-5xl">💊</span>
+                <h1 class="text-2xl font-bold text-gray-900 mt-2">Olá, <span id="nome-cliente"></span>!</h1>
+                <p class="text-gray-600 mt-2">Seu produto está acabando, mas seu desconto só aumenta.</p>
+            </div>
+
+            <div class="bg-green-50 border border-green-200 rounded-xl p-4 mb-6 text-left">
+                <div class="flex justify-between mb-2">
+                    <span class="text-sm text-gray-600">Produto:</span>
+                    <span class="font-bold text-gray-900 text-sm" id="produto-nome"></span>
+                </div>
+                <div class="flex justify-between mb-2">
+                    <span class="text-sm text-gray-600">Compras realizadas:</span>
+                    <span class="font-bold text-gray-900 text-sm" id="compras-realizadas"></span>
+                </div>
+                <div class="flex justify-between pt-2 border-t border-green-200">
+                    <span class="text-sm font-semibold text-gray-900">Seu desconto atual:</span>
+                    <span class="text-xl font-extrabold text-green-600" id="desconto-fidelidade"></span>
+                </div>
+            </div>
+
+            <a id="btn-renovar" href="#" target="_blank" class="block w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 rounded-xl shadow-md transition text-lg">
+                💬 Renovar Assinatura
+            </a>
+            <p class="text-xs text-gray-500 mt-3">Ao clicar, o WhatsApp abrirá com seu pedido pronto.</p>
+        </div>
+
+        <div id="erro" class="hidden py-8">
+            <p class="text-red-600 font-bold">Link inválido ou expirado.</p>
+            <p class="text-gray-600 text-sm mt-2">Entre em contato com o estabelecimento.</p>
+        </div>
+    </div>
+
+    <script>
+        const SUPABASE_URL = 'https://hcgsttzjolotljqdvlat.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhjZ3N0dHpqb2xvdGxqcWR2bGF0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE0MDU5MTMsImV4cCI6MjEwNjk4MTkxM30.AWbtRx82wDp2K-yERqQy9RA8dYWXev6B14jP5isLkVM';
+        
+        const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        async function carregarDados() {
+            const params = new URLSearchParams(window.location.search);
+            const token = params.get('token');
+
+            if (!token) {
+                document.getElementById('carregando').classList.add('hidden');
+                document.getElementById('erro').classList.remove('hidden');
+                return;
+            }
+
+            try {
+                // Busca assinatura + estabelecimento + produto
+                const { data, error } = await db
+                    .from('assinaturas')
+                    .select(`
+                        *,
+                        medicamentos(nome, dosagem),
+                        estabelecimentos(nome, whatsapp)
+                    `)
+                    .eq('token_pagamento', token)
+                    .eq('ativa', true)
+                    .single();
+
+                if (error || !data) throw error;
+
+                const estabelecimento = data.estabelecimentos;
+                const produto = data.medicamentos;
+
+                // Lógica de Fidelidade (Passagem de Bastão)
+                const compras = data.quantidade_compras || 0;
+                let desconto = 0;
+                if (compras >= 8) desconto = 30;
+                else if (compras >= 5) desconto = 20 + Math.round(((compras - 5) / 3) * 10);
+                else if (compras >= 3) desconto = 12 + Math.round(((compras - 3) / 2) * 8);
+
+                // Preenche a tela
+                document.getElementById('nome-cliente').textContent = data.cliente_nome.split(' ')[0];
+                document.getElementById('produto-nome').textContent = `${produto.nome} ${produto.dosagem}`;
+                document.getElementById('compras-realizadas').textContent = compras;
+                document.getElementById('desconto-fidelidade').textContent = `${desconto}% OFF`;
+
+                // Cria mensagem para o WhatsApp do ESTABELECIMENTO (não Tokto)
+                const msgEstabelecimento = `Oi! Quero renovar minha assinatura de *${produto.nome} ${produto.dosagem}*. Já sou cliente fiel (${compras} compras) e quero usar meu desconto de *${desconto}% OFF*.`;
+                const linkZap = `https://wa.me/${estabelecimento.whatsapp}?text=${encodeURIComponent(msgEstabelecimento)}`;
+                
+                document.getElementById('btn-renovar').href = linkZap;
+
+                document.getElementById('carregando').classList.add('hidden');
+                document.getElementById('conteudo').classList.remove('hidden');
+            } catch (error) {
+                console.error(error);
+                document.getElementById('carregando').classList.add('hidden');
+                document.getElementById('erro').classList.remove('hidden');
+            }
+        }
+        carregarDados();
+    </script>
+</body>
+</html>
