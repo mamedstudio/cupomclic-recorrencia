@@ -7,9 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        :root {
-            --cor-primaria: #16a34a;
-        }
+        :root { --cor-primaria: #16a34a; }
         .bg-health { background-color: var(--cor-primaria); }
         .bg-health:hover { filter: brightness(0.9); }
         .text-health { color: var(--cor-primaria); }
@@ -38,9 +36,7 @@
                 <span class="text-xl font-extrabold text-gray-900" id="nome-estabelecimento">CUPOMCLIC</span>
                 <p class="text-xs text-gray-500" id="tipo-estabelecimento"></p>
             </div>
-            <button onclick="alternarModo()" class="text-xs bg-gray-200 hover:bg-gray-300 text-gray-700 px-3 py-1 rounded-full transition">
-                🔒 Modo Farmácia
-            </button>
+            <button onclick="alternarModo()" class="text-xs bg-gray-200 hover:bg-gray-300 text-gray-700 px-3 py-1 rounded-full transition">🔒 Modo Admin</button>
         </div>
     </header>
 
@@ -49,44 +45,30 @@
         <!-- MODO CLIENTE -->
         <div id="modo-cliente" class="space-y-6 fade-in">
             <section class="text-center space-y-2">
-                <h1 class="text-2xl font-bold text-gray-900 leading-tight">
-                    Nunca mais esqueça seu <span class="text-health">produto favorito</span>.
-                </h1>
+                <h1 class="text-2xl font-bold text-gray-900 leading-tight">Nunca mais esqueça seu <span class="text-health">produto favorito</span>.</h1>
                 <p class="text-gray-600 text-sm">Assine e ganhe descontos progressivos. Quanto mais fiel, mais desconto!</p>
             </section>
 
-            <!-- Barra de Pesquisa -->
             <div class="relative">
-                <input type="text" id="busca-produtos" oninput="filtrarProdutos()" placeholder="🔍 Buscar produto..." 
-                    class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-green-500 focus:outline-none text-sm">
+                <input type="text" id="busca-produtos" oninput="filtrarProdutos()" placeholder="🔍 Buscar produto..." class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-green-500 focus:outline-none text-sm">
             </div>
 
-            <!-- Timeline de Produtos -->
-            <div id="lista-cliente" class="space-y-3">
-                <p class="text-center text-gray-500 text-sm py-4">Carregando produtos...</p>
-            </div>
+            <div id="lista-cliente" class="space-y-3"><p class="text-center text-gray-500 text-sm py-4">Carregando produtos...</p></div>
 
-            <!-- Solicitar Produto Não Listado -->
             <section class="bg-blue-50 border border-blue-200 rounded-xl p-4 mt-6">
-                <h3 class="font-bold text-gray-900 text-sm mb-2 flex items-center">
-                    <span class="text-lg mr-2">💡</span> Não encontrou o que procura?
-                </h3>
+                <h3 class="font-bold text-gray-900 text-sm mb-2 flex items-center"><span class="text-lg mr-2">💡</span> Não encontrou o que procura?</h3>
                 <p class="text-xs text-gray-600 mb-3">Solicite um produto e nós adicionamos para você fidelizar!</p>
                 <form id="form-solicitacao" class="space-y-2">
                     <input type="text" id="sol-nome" required placeholder="Seu nome" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm">
                     <input type="text" id="sol-whatsapp" required placeholder="Seu WhatsApp (5511999999999)" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm">
                     <input type="text" id="sol-produto" required placeholder="Nome do produto desejado" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm">
                     <textarea id="sol-obs" rows="2" placeholder="Observações (opcional)" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></textarea>
-                    <button type="submit" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 rounded-lg transition text-sm">
-                        Enviar Solicitação
-                    </button>
+                    <button type="submit" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 rounded-lg transition text-sm">Enviar Solicitação</button>
                 </form>
             </section>
 
             <section class="bg-green-50 border border-green-200 rounded-xl p-4 flex items-start space-x-3 mt-6">
-                <div class="bg-green-100 p-2 rounded-full flex-shrink-0">
-                    <svg class="w-5 h-5 text-health" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
-                </div>
+                <div class="bg-green-100 p-2 rounded-full flex-shrink-0"><svg class="w-5 h-5 text-health" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg></div>
                 <div>
                     <h4 class="font-bold text-gray-900 text-sm">Zero esquecimento</h4>
                     <p class="text-xs text-gray-600 mt-1">Avisamos 5 dias antes de acabar. Seu desconto aumenta a cada compra!</p>
@@ -94,10 +76,10 @@
             </section>
         </div>
 
-        <!-- MODO FARMÁCIA (ADMIN) -->
+        <!-- MODO ADMIN (FARMÁCIA/LOJA) -->
         <div id="modo-farmacia" class="hidden space-y-6 fade-in">
             
-            <!-- Calendário -->
+            <!-- Calendário Inteligente -->
             <div class="bg-white p-5 rounded-2xl shadow-md border border-gray-100">
                 <div class="flex items-center justify-between mb-4">
                     <button onclick="mudarMes(-1)" class="p-2 hover:bg-gray-100 rounded-lg">◀</button>
@@ -109,81 +91,40 @@
                 </div>
                 <div id="calendario" class="grid grid-cols-7 gap-1"></div>
                 <div class="mt-4 flex items-center justify-center space-x-4 text-xs">
-                    <div class="flex items-center"><div class="w-4 h-4 bg-health rounded mr-2"></div><span class="text-gray-600">Entrega</span></div>
+                    <div class="flex items-center"><div class="w-4 h-4 bg-health rounded mr-2"></div><span class="text-gray-600">Dia de Avisar</span></div>
                     <div class="flex items-center"><div class="w-4 h-4 border-2 border-health rounded mr-2"></div><span class="text-gray-600">Hoje</span></div>
                 </div>
             </div>
 
             <!-- Config Descontos -->
             <div class="bg-white p-5 rounded-2xl shadow-md border border-gray-100">
-                <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center">
-                    <span class="bg-health text-white w-6 h-6 rounded-full flex items-center justify-center text-xs mr-2">%</span>
-                    Descontos Progressivos
-                </h2>
+                <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center"><span class="bg-health text-white w-6 h-6 rounded-full flex items-center justify-center text-xs mr-2">%</span>Descontos Progressivos</h2>
                 <div class="grid grid-cols-3 gap-3">
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-600 mb-1">3 meses (%)</label>
-                        <input type="number" id="desc-3" value="12" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-600 mb-1">5 meses (%)</label>
-                        <input type="number" id="desc-5" value="20" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-600 mb-1">8 meses (%)</label>
-                        <input type="number" id="desc-8" value="30" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm">
-                    </div>
+                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">3 meses (%)</label><input type="number" id="desc-3" value="12" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
+                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">5 meses (%)</label><input type="number" id="desc-5" value="20" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
+                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">8 meses (%)</label><input type="number" id="desc-8" value="30" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
                 </div>
                 <button onclick="salvarDescontos()" class="w-full mt-4 bg-health hover:bg-green-700 text-white font-bold py-2 rounded-xl shadow-md transition text-sm">Salvar Descontos</button>
             </div>
 
-            <!-- Formulário Medicamento -->
+            <!-- Formulário Produto -->
             <div class="bg-white p-5 rounded-2xl shadow-md border border-gray-100">
-                <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center">
-                    <span class="bg-health text-white w-6 h-6 rounded-full flex items-center justify-center text-xs mr-2">+</span>
-                    Adicionar Produto
-                </h2>
+                <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center"><span class="bg-health text-white w-6 h-6 rounded-full flex items-center justify-center text-xs mr-2">+</span>Adicionar Produto</h2>
                 <form id="form-medicamento" class="space-y-4">
                     <input type="hidden" id="edit-id" value="">
-                    
                     <div class="grid grid-cols-2 gap-3">
-                        <div>
-                            <label class="block text-xs font-semibold text-gray-600 mb-1">Nome</label>
-                            <input type="text" id="nome" required placeholder="Ex: Losartana" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-gray-600 mb-1">Dosagem/Versão</label>
-                            <input type="text" id="dosagem" required placeholder="Ex: 50mg" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm">
-                        </div>
+                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">Nome</label><input type="text" id="nome" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
+                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">Dosagem/Versão</label><input type="text" id="dosagem" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
                     </div>
-
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-600 mb-1">Descrição</label>
-                        <textarea id="descricao" required rows="2" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></textarea>
-                    </div>
-
+                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">Descrição</label><textarea id="descricao" required rows="2" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></textarea></div>
                     <div class="grid grid-cols-2 gap-3">
-                        <div>
-                            <label class="block text-xs font-semibold text-gray-600 mb-1">Duração (dias)</label>
-                            <input type="number" id="dias-duracao" required placeholder="30" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-gray-600 mb-1">Estoque</label>
-                            <input type="number" id="estoque" required placeholder="100" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm">
-                        </div>
+                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">Duração (dias)</label><input type="number" id="dias-duracao" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
+                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">Estoque</label><input type="number" id="estoque" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
                     </div>
-
                     <div class="grid grid-cols-2 gap-3">
-                        <div>
-                            <label class="block text-xs font-semibold text-gray-600 mb-1">Preço Normal (R$)</label>
-                            <input type="number" step="0.01" id="preco-original" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-gray-600 mb-1">Qtd / Mês</label>
-                            <input type="text" id="quantidade" required placeholder="1 caixa" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm">
-                        </div>
+                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">Preço Normal (R$)</label><input type="number" step="0.01" id="preco-original" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
+                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">Qtd / Mês</label><input type="text" id="quantidade" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
                     </div>
-
                     <div>
                         <label class="block text-xs font-semibold text-gray-600 mb-1">Tipo de Entrega</label>
                         <select id="tipo-entrega" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm">
@@ -192,12 +133,7 @@
                             <option value="delivery">Apenas Delivery</option>
                         </select>
                     </div>
-
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-600 mb-1">Taxa Entrega (R$) - se aplicável</label>
-                        <input type="number" step="0.01" id="taxa-entrega" required placeholder="0,00" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm">
-                    </div>
-
+                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">Taxa Entrega (R$)</label><input type="number" step="0.01" id="taxa-entrega" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
                     <div class="flex space-x-3 pt-2">
                         <button type="submit" class="flex-1 bg-health hover:bg-green-700 text-white font-bold py-3 rounded-xl shadow-md transition text-sm">Salvar Produto</button>
                         <button type="button" onclick="limparFormulario()" class="px-4 py-3 bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-xl transition text-sm">Limpar</button>
@@ -207,113 +143,62 @@
 
             <!-- Registrar Assinatura -->
             <div class="bg-white p-5 rounded-2xl shadow-md border border-gray-100">
-                <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center">
-                    <span class="bg-health text-white w-6 h-6 rounded-full flex items-center justify-center text-xs mr-2"></span>
-                    Registrar Assinatura
-                </h2>
+                <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center"><span class="bg-health text-white w-6 h-6 rounded-full flex items-center justify-center text-xs mr-2">📝</span>Registrar Assinatura</h2>
                 <form id="form-assinatura" class="space-y-4">
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-600 mb-1">Nome do Cliente</label>
-                        <input type="text" id="cliente-nome" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-600 mb-1">WhatsApp</label>
-                        <input type="text" id="cliente-whatsapp" required placeholder="5511999999999" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm">
+                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">Nome do Cliente</label><input type="text" id="cliente-nome" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
+                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">WhatsApp (55+DDD+Número)</label><input type="text" id="cliente-whatsapp" required placeholder="5511999999999" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">Produto</label><select id="assinatura-medicamento" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></select></div>
+                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">Desconto (%)</label><input type="number" id="assinatura-desconto" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
                     </div>
                     <div class="grid grid-cols-2 gap-3">
-                        <div>
-                            <label class="block text-xs font-semibold text-gray-600 mb-1">Produto</label>
-                            <select id="assinatura-medicamento" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></select>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-gray-600 mb-1">Desconto (%)</label>
-                            <input type="number" id="assinatura-desconto" required placeholder="20" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm">
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-3">
-                        <div>
-                            <label class="block text-xs font-semibold text-gray-600 mb-1">Data Última Entrega</label>
-                            <input type="date" id="assinatura-data" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-gray-600 mb-1">Tipo Entrega</label>
-                            <select id="assinatura-tipo" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm">
-                                <option value="retirada">Retirada na Loja</option>
-                                <option value="entrega">Delivery</option>
-                            </select>
-                        </div>
+                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">Data Última Entrega</label><input type="date" id="assinatura-data" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
+                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">Tipo Entrega</label><select id="assinatura-tipo" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"><option value="retirada">Retirada na Loja</option><option value="entrega">Delivery</option></select></div>
                     </div>
                     <button type="submit" class="w-full bg-health hover:bg-green-700 text-white font-bold py-3 rounded-xl shadow-md transition text-sm">Registrar Assinatura</button>
                 </form>
             </div>
 
-            <!-- Solicitações Recebidas -->
+            <!-- Solicitações -->
             <div class="bg-white p-5 rounded-2xl shadow-md border border-gray-100">
-                <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center">
-                    <span class="bg-blue-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs mr-2">💡</span>
-                    Solicitações de Produtos
-                </h2>
-                <div id="lista-solicitacoes" class="space-y-3">
-                    <p class="text-center text-gray-500 text-sm py-2">Carregando...</p>
-                </div>
+                <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center"><span class="bg-blue-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs mr-2">💡</span>Solicitações de Produtos</h2>
+                <div id="lista-solicitacoes" class="space-y-3"><p class="text-center text-gray-500 text-sm py-2">Carregando...</p></div>
             </div>
 
-            <!-- Lista Admin -->
             <div>
                 <h3 class="text-sm font-bold text-gray-500 uppercase tracking-wide mb-3">Produtos Cadastrados</h3>
-                <div id="lista-admin" class="space-y-3">
-                    <p class="text-center text-gray-500 py-4 text-sm">Carregando...</p>
-                </div>
+                <div id="lista-admin" class="space-y-3"><p class="text-center text-gray-500 py-4 text-sm">Carregando...</p></div>
             </div>
         </div>
-
     </main>
 
     <!-- Modal Calendário -->
     <div id="modal-clientes" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl max-w-md w-full max-h-[80vh] overflow-y-auto">
             <div class="p-5 border-b border-gray-200 flex justify-between items-center">
-                <h3 class="text-lg font-bold text-gray-900" id="modal-titulo">Clientes do Dia</h3>
+                <h3 class="text-lg font-bold text-gray-900" id="modal-titulo">Avisos do Dia</h3>
                 <button onclick="fecharModal()" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
             </div>
             <div id="modal-conteudo" class="p-5 space-y-3"></div>
         </div>
     </div>
 
-    <footer class="text-center py-6 text-gray-400 text-xs bg-white border-t border-gray-100 mt-auto">
-        &copy; 2026 CUPOMCLIC. Powered by SaaS.
-    </footer>
+    <footer class="text-center py-6 text-gray-400 text-xs bg-white border-t border-gray-100 mt-auto">&copy; 2026 CUPOMCLIC. Powered by SaaS.</footer>
 
     <script>
-        // ========== CONFIGURAÇÃO ==========
         const SUPABASE_URL = 'https://hcgsttzjolotljqdvlat.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhjZ3N0dHpqb2xvdGxqcWR2bGF0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE0MDU5MTMsImV4cCI6MjEwNjk4MTkxM30.AWbtRx82wDp2K-yERqQy9RA8dYWXev6B14jP5isLkVM';
-        
-        // ID do estabelecimento padrão (RAFARMA) - em produção viria da URL
         const ESTABELECIMENTO_ID = 1;
+        const URL_BASE = 'https://cupomclic-recorrencia.vercel.app';
 
-        let TABELA_DESCONTOS = [
-            { meses: 3, desconto: 12 },
-            { meses: 5, desconto: 20 },
-            { meses: 8, desconto: 30 }
-        ];
-
+        let TABELA_DESCONTOS = [{ meses: 3, desconto: 12 }, { meses: 5, desconto: 20 }, { meses: 8, desconto: 30 }];
         const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        let estabelecimento = null;
-        let medicamentos = [];
-        let medicamentosFiltrados = [];
-        let assinaturas = [];
-        let solicitacoes = [];
-        let tipoEntregaSelecionado = {};
-        let dataAtual = new Date();
-        let accordionAberto = {};
+        
+        let estabelecimento = null, medicamentos = [], medicamentosFiltrados = [], assinaturas = [], solicitacoes = [];
+        let tipoEntregaSelecionado = {}, dataAtual = new Date(), accordionAberto = {};
 
         document.addEventListener('DOMContentLoaded', () => {
-            carregarEstabelecimento();
-            carregarDescontos();
-            carregarMedicamentos();
-            carregarAssinaturas();
-            carregarSolicitacoes();
+            carregarEstabelecimento(); carregarDescontos(); carregarMedicamentos(); carregarAssinaturas(); carregarSolicitacoes();
         });
 
         async function carregarEstabelecimento() {
@@ -322,13 +207,9 @@
                 if (data && data.length > 0) {
                     estabelecimento = data[0];
                     document.getElementById('nome-estabelecimento').textContent = estabelecimento.nome;
-                    
                     const tipos = { farmacia: 'Farmácia', pet: 'Pet Shop', proteicos: 'Loja de Proteicos', outros: 'Estabelecimento' };
                     document.getElementById('tipo-estabelecimento').textContent = tipos[estabelecimento.tipo] || '';
-                    
-                    if (estabelecimento.cor_primaria) {
-                        document.documentElement.style.setProperty('--cor-primaria', estabelecimento.cor_primaria);
-                    }
+                    if (estabelecimento.cor_primaria) document.documentElement.style.setProperty('--cor-primaria', estabelecimento.cor_primaria);
                 }
             } catch (e) { console.log('Erro ao carregar estabelecimento'); }
         }
@@ -337,560 +218,352 @@
             try {
                 const { data } = await db.from('config_descontos').select('*').eq('estabelecimento_id', ESTABELECIMENTO_ID).limit(1);
                 if (data && data.length > 0) {
-                    TABELA_DESCONTOS = [
-                        { meses: 3, desconto: data[0].desc_3 },
-                        { meses: 5, desconto: data[0].desc_5 },
-                        { meses: 8, desconto: data[0].desc_8 }
-                    ];
-                    document.getElementById('desc-3').value = data[0].desc_3;
-                    document.getElementById('desc-5').value = data[0].desc_5;
-                    document.getElementById('desc-8').value = data[0].desc_8;
+                    TABELA_DESCONTOS = [{ meses: 3, desconto: data[0].desc_3 }, { meses: 5, desconto: data[0].desc_5 }, { meses: 8, desconto: data[0].desc_8 }];
+                    document.getElementById('desc-3').value = data[0].desc_3; document.getElementById('desc-5').value = data[0].desc_5; document.getElementById('desc-8').value = data[0].desc_8;
                 }
             } catch (e) { console.log('Usando descontos padrão'); }
         }
 
         async function carregarMedicamentos() {
             try {
-                const { data, error } = await db.from('medicamentos').select('*').eq('estabelecimento_id', ESTABELECIMENTO_ID).order('created_at', { ascending: false });
-                if (error) throw error;
-                medicamentos = data || [];
-                medicamentosFiltrados = [...medicamentos];
-                renderizarTudo();
-                atualizarSelectMedicamentos();
+                const { data } = await db.from('medicamentos').select('*').eq('estabelecimento_id', ESTABELECIMENTO_ID).order('created_at', { ascending: false });
+                medicamentos = data || []; medicamentosFiltrados = [...medicamentos];
+                renderizarTudo(); atualizarSelectMedicamentos();
             } catch (error) { console.error('Erro:', error); }
         }
 
         async function carregarAssinaturas() {
             try {
-                const { data, error } = await db.from('assinaturas').select('*, medicamentos(nome, dosagem)').eq('ativa', true).eq('estabelecimento_id', ESTABELECIMENTO_ID).order('data_proxima_entrega', { ascending: true });
-                if (error) throw error;
-                assinaturas = data || [];
-                renderizarCalendario();
+                const { data } = await db.from('assinaturas').select('*, medicamentos(nome, dosagem)').eq('ativa', true).eq('estabelecimento_id', ESTABELECIMENTO_ID).order('data_proxima_entrega', { ascending: true });
+                assinaturas = data || []; renderizarCalendario();
             } catch (error) { console.error('Erro:', error); }
         }
 
         async function carregarSolicitacoes() {
             try {
                 const { data } = await db.from('solicitacoes_produtos').select('*').eq('estabelecimento_id', ESTABELECIMENTO_ID).eq('status', 'pendente').order('created_at', { ascending: false });
-                solicitacoes = data || [];
-                renderizarSolicitacoes();
+                solicitacoes = data || []; renderizarSolicitacoes();
             } catch (e) { console.log('Erro ao carregar solicitações'); }
         }
 
         function alternarModo() {
-            const modoCliente = document.getElementById('modo-cliente');
-            const modoFarmacia = document.getElementById('modo-farmacia');
-            const btn = document.querySelector('header button');
-
+            const modoCliente = document.getElementById('modo-cliente'), modoFarmacia = document.getElementById('modo-farmacia'), btn = document.querySelector('header button');
             if (modoCliente.classList.contains('hidden')) {
-                modoCliente.classList.remove('hidden');
-                modoFarmacia.classList.add('hidden');
-                btn.textContent = '🔒 Modo Farmácia';
+                modoCliente.classList.remove('hidden'); modoFarmacia.classList.add('hidden'); btn.textContent = '🔒 Modo Admin';
             } else {
                 const senha = prompt("Senha de acesso (Dica: 1234)");
-                if (senha === '1234') {
-                    modoCliente.classList.add('hidden');
-                    modoFarmacia.classList.remove('hidden');
-                    btn.textContent = '👁️ Modo Cliente';
-                    renderizarCalendario();
-                } else if (senha !== null) { alert("Senha incorreta!"); }
+                if (senha === '1234') { modoCliente.classList.add('hidden'); modoFarmacia.classList.remove('hidden'); btn.textContent = '👁️ Modo Cliente'; renderizarCalendario(); } 
+                else if (senha !== null) { alert("Senha incorreta!"); }
             }
         }
 
         function filtrarProdutos() {
             const busca = document.getElementById('busca-produtos').value.toLowerCase();
-            medicamentosFiltrados = medicamentos.filter(m => 
-                m.nome.toLowerCase().includes(busca) || m.dosagem.toLowerCase().includes(busca)
-            );
+            medicamentosFiltrados = medicamentos.filter(m => m.nome.toLowerCase().includes(busca) || m.dosagem.toLowerCase().includes(busca));
             renderizarTimelineCliente();
         }
 
         function toggleAccordion(index) {
             accordionAberto[index] = !accordionAberto[index];
-            const content = document.getElementById(`accordion-${index}`);
-            const icon = document.getElementById(`icon-${index}`);
-            if (accordionAberto[index]) {
-                content.classList.add('open');
-                icon.classList.add('open');
-            } else {
-                content.classList.remove('open');
-                icon.classList.remove('open');
-            }
+            const content = document.getElementById(`accordion-${index}`), icon = document.getElementById(`icon-${index}`);
+            if (accordionAberto[index]) { content.classList.add('open'); icon.classList.add('open'); } 
+            else { content.classList.remove('open'); icon.classList.remove('open'); }
         }
 
+        // ========== CALENDÁRIO INTELIGENTE ==========
         function renderizarCalendario() {
-            const ano = dataAtual.getFullYear();
-            const mes = dataAtual.getMonth();
+            const ano = dataAtual.getFullYear(), mes = dataAtual.getMonth();
             const nomesMeses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
             document.getElementById('mes-atual').textContent = `${nomesMeses[mes]} ${ano}`;
-
-            const primeiroDia = new Date(ano, mes, 1).getDay();
-            const diasNoMes = new Date(ano, mes + 1, 0).getDate();
-            const hoje = new Date();
-
+            const primeiroDia = new Date(ano, mes, 1).getDay(), diasNoMes = new Date(ano, mes + 1, 0).getDate(), hoje = new Date();
             let html = '';
             for (let i = 0; i < primeiroDia; i++) html += '<div></div>';
 
             for (let dia = 1; dia <= diasNoMes; dia++) {
                 const dataStr = `${ano}-${String(mes + 1).padStart(2, '0')}-${String(dia).padStart(2, '0')}`;
-                const temEntrega = assinaturas.some(a => a.data_proxima_entrega === dataStr);
+                // Marca o dia se houver avisos pendentes (5 dias antes da entrega)
+                const temAviso = assinaturas.some(a => {
+                    const dataEntrega = new Date(a.data_proxima_entrega);
+                    const dataAviso = new Date(dataEntrega); dataAviso.setDate(dataAviso.getDate() - 5);
+                    return dataAviso.toISOString().split('T')[0] === dataStr && a.ativa === true;
+                });
                 const ehHoje = hoje.getDate() === dia && hoje.getMonth() === mes && hoje.getFullYear() === ano;
-
                 let classes = 'dia-clicavel p-2 rounded-lg text-sm text-center transition';
-                if (temEntrega) classes += ' dia-marcado';
+                if (temAviso) classes += ' dia-marcado';
                 if (ehHoje) classes += ' dia-hoje';
-
                 html += `<div class="${classes}" onclick="abrirDia('${dataStr}')">${dia}</div>`;
             }
             document.getElementById('calendario').innerHTML = html;
         }
 
-        function mudarMes(direcao) {
-            dataAtual.setMonth(dataAtual.getMonth() + direcao);
-            renderizarCalendario();
-        }
+        function mudarMes(direcao) { dataAtual.setMonth(dataAtual.getMonth() + direcao); renderizarCalendario(); }
 
         function abrirDia(dataStr) {
-            const clientesDoDia = assinaturas.filter(a => a.data_proxima_entrega === dataStr);
-            if (clientesDoDia.length === 0) { alert('Nenhuma entrega programada.'); return; }
+            const hoje = new Date();
+            const dataClicada = new Date(dataStr);
+            const dataEntrega = new Date(dataClicada); dataEntrega.setDate(dataEntrega.getDate() + 5);
+            const dataEntregaStr = dataEntrega.toISOString().split('T')[0];
+
+            const clientesDoDia = assinaturas.filter(a => a.data_proxima_entrega === dataEntregaStr && a.ativa === true);
+            if (clientesDoDia.length === 0) { alert('Nenhum aviso pendente para este dia.'); return; }
 
             const [ano, mes, dia] = dataStr.split('-');
-            document.getElementById('modal-titulo').textContent = `Entregas em ${dia}/${mes}/${ano}`;
+            document.getElementById('modal-titulo').textContent = `Avisos em ${dia}/${mes}/${ano} (Entrega em ${dataEntrega.getDate()}/${dataEntrega.getMonth()+1})`;
 
             let html = '';
             clientesDoDia.forEach(cliente => {
-                const diasRestantes = Math.ceil((new Date(dataStr) - new Date()) / (1000 * 60 * 60 * 24));
-                
-                // CALCULAR DESCONTO PROGRESSIVO (PASSAGEM DE BASTÃO)
+                const diasRestantes = Math.ceil((new Date(dataEntregaStr) - hoje) / (1000 * 60 * 60 * 24));
                 const descontoCalculado = calcularDescontoFidelidade(cliente);
+                const linkRenovacao = `${URL_BASE}/renovar.html?token=${cliente.token_pagamento}`;
+                const msg = `Oi ${cliente.cliente_nome}! 🎉\n\nSeu ${cliente.medicamentos.nome} ${cliente.medicamentos.dosagem} acaba em ${diasRestantes} dias.\n\nComo você já é um cliente fiel (${cliente.quantidade_compras} compras), seu desconto subiu para *${descontoCalculado}% OFF*!\n\nPara renovar agora sem burocracia, basta clicar no link abaixo:\n\n👉 ${linkRenovacao}\n\nTe esperamos!`;
                 
-                const msg = `Oi ${cliente.cliente_nome}! 🎉\n\nSua ${cliente.medicamentos.nome} ${cliente.medicamentos.dosagem} acaba em ${diasRestantes} dias.\n\n Você já fez ${cliente.quantidade_compras} compra(s) conosco!\n Seu desconto especial desta vez: *${descontoCalculado}% OFF*\n\nPosso separar a próxima caixa? Responda SIM para confirmar.`;
-                const linkZap = `https://wa.me/${cliente.cliente_whatsapp}?text=${encodeURIComponent(msg)}`;
-
-                html += `
-                    <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                if (!validarTelefone(cliente.cliente_whatsapp)) {
+                    html += `<div class="bg-red-50 p-4 rounded-lg border border-red-200">
                         <div class="flex justify-between items-start mb-2">
                             <div>
                                 <p class="font-bold text-gray-900">${cliente.cliente_nome}</p>
                                 <p class="text-xs text-gray-600">${cliente.medicamentos.nome} ${cliente.medicamentos.dosagem}</p>
-                                <p class="text-xs text-health font-semibold">${descontoCalculado}% OFF | ${cliente.tipo_entrega === 'entrega' ? '🚚 Delivery' : '🏪 Loja'}</p>
-                                <p class="text-xs text-gray-500 mt-1">🔄 ${cliente.quantidade_compras} compras realizadas</p>
+                                <p class="text-xs text-red-600 font-bold mt-1">⚠️ Telefone inválido: ${cliente.cliente_whatsapp}</p>
+                                <p class="text-xs text-gray-500 mt-1">Formato: 55 + DDD + número (13 dígitos)</p>
+                            </div>
+                            <span class="text-xs bg-red-100 text-red-600 px-2 py-1 rounded-full font-semibold">${diasRestantes} dias</span>
+                        </div>
+                        <button onclick="corrigirTelefone('${cliente.id}', '${cliente.cliente_nome}')" class="block w-full bg-red-500 hover:bg-red-600 text-white text-center font-bold py-2 rounded-lg transition text-sm mt-2">Corrigir Telefone</button>
+                    </div>`;
+                } else {
+                    const linkZap = `https://wa.me/${cliente.cliente_whatsapp}?text=${encodeURIComponent(msg)}`;
+                    html += `<div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                        <div class="flex justify-between items-start mb-2">
+                            <div>
+                                <p class="font-bold text-gray-900">${cliente.cliente_nome}</p>
+                                <p class="text-xs text-gray-600">${cliente.medicamentos.nome} ${cliente.medicamentos.dosagem}</p>
+                                <p class="text-xs text-health font-semibold">${descontoCalculado}% OFF | ${cliente.tipo_entrega === 'entrega' ? '🚚 Delivery' : ' Loja'}</p>
+                                <p class="text-xs text-gray-500 mt-1">🔄 ${cliente.quantidade_compras} compras</p>
                             </div>
                             <span class="text-xs bg-green-100 text-health px-2 py-1 rounded-full font-semibold">${diasRestantes} dias</span>
                         </div>
-                        <a href="${linkZap}" target="_blank" class="block w-full bg-health hover:bg-green-700 text-white text-center font-bold py-2 rounded-lg transition text-sm mt-2">
-                            Enviar WhatsApp
-                        </a>
-                    </div>
-                `;
+                        <a href="${linkZap}" target="_blank" class="block w-full bg-health hover:bg-green-700 text-white text-center font-bold py-2 rounded-lg transition text-sm mt-2">Enviar Lembrete</a>
+                    </div>`;
+                }
             });
-
             document.getElementById('modal-conteudo').innerHTML = html;
             document.getElementById('modal-clientes').classList.remove('hidden');
         }
 
-        // ========== LÓGICA DE DESCONTO PROGRESSIVO (PASSAGEM DE BASTÃO) ==========
+        function validarTelefone(telefone) {
+            if (!telefone) return false;
+            const numeros = telefone.replace(/\D/g, '');
+            return numeros.length === 13 && numeros.startsWith('55');
+        }
+
+        async function corrigirTelefone(assinaturaId, nomeCliente) {
+            const novoTelefone = prompt(`Corrigir telefone de ${nomeCliente}:\n\nFormato: 55 + DDD + número (ex: 5511999999999)`);
+            if (novoTelefone) {
+                const telefoneLimpo = novoTelefone.replace(/\D/g, '');
+                if (validarTelefone(telefoneLimpo)) {
+                    try {
+                        await db.from('assinaturas').update({ cliente_whatsapp: telefoneLimpo }).eq('id', assinaturaId);
+                        alert('Telefone corrigido!'); await carregarAssinaturas(); renderizarCalendario();
+                    } catch (error) { alert('Erro ao corrigir telefone.'); }
+                } else { alert('Telefone ainda está inválido. Use o formato: 55 + DDD + número (13 dígitos)'); }
+            }
+        }
+
+        function fecharModal() { document.getElementById('modal-clientes').classList.add('hidden'); }
+
         function calcularDescontoFidelidade(cliente) {
             const compras = cliente.quantidade_compras || 0;
-            const ultimoDesconto = cliente.ultimo_desconto || 0;
-            
-            // Define a faixa atual baseada no número de compras
             let faixaAtual = 0;
-            if (compras >= 8) faixaAtual = 2;
-            else if (compras >= 5) faixaAtual = 1;
-            else if (compras >= 3) faixaAtual = 0;
-            
+            if (compras >= 8) faixaAtual = 2; else if (compras >= 5) faixaAtual = 1; else if (compras >= 3) faixaAtual = 0;
             const descontoFaixa = TABELA_DESCONTOS[faixaAtual].desconto;
             const proximaFaixa = TABELA_DESCONTOS[Math.min(faixaAtual + 1, TABELA_DESCONTOS.length - 1)].desconto;
-            
-            // Se ainda não atingiu a próxima faixa, faz transição gradual
             if (faixaAtual < TABELA_DESCONTOS.length - 1) {
                 const comprasParaProximaFaixa = TABELA_DESCONTOS[faixaAtual + 1].meses;
                 const comprasNaFaixaAtual = compras - (faixaAtual > 0 ? TABELA_DESCONTOS[faixaAtual - 1].meses : 0);
                 const progresso = Math.min(comprasNaFaixaAtual / (comprasParaProximaFaixa - (faixaAtual > 0 ? TABELA_DESCONTOS[faixaAtual].meses : 0)), 1);
-                
-                // Interpolação linear entre desconto atual e próximo
-                const descontoCalculado = Math.round(descontoFaixa + (proximaFaixa - descontoFaixa) * progresso);
-                return descontoCalculado;
+                return Math.round(descontoFaixa + (proximaFaixa - descontoFaixa) * progresso);
             }
-            
             return descontoFaixa;
         }
 
-        function fecharModal() {
-            document.getElementById('modal-clientes').classList.add('hidden');
-        }
-
         async function salvarDescontos() {
-            const desc3 = parseInt(document.getElementById('desc-3').value);
-            const desc5 = parseInt(document.getElementById('desc-5').value);
-            const desc8 = parseInt(document.getElementById('desc-8').value);
-
+            const desc3 = parseInt(document.getElementById('desc-3').value), desc5 = parseInt(document.getElementById('desc-5').value), desc8 = parseInt(document.getElementById('desc-8').value);
             try {
                 const { data: existente } = await db.from('config_descontos').select('id').eq('estabelecimento_id', ESTABELECIMENTO_ID).limit(1);
                 const configData = { desc_3: desc3, desc_5: desc5, desc_8: desc8, estabelecimento_id: ESTABELECIMENTO_ID };
-
-                if (existente && existente.length > 0) {
-                    await db.from('config_descontos').update(configData).eq('id', existente[0].id);
-                } else {
-                    await db.from('config_descontos').insert([configData]);
-                }
-
-                TABELA_DESCONTOS = [
-                    { meses: 3, desconto: desc3 },
-                    { meses: 5, desconto: desc5 },
-                    { meses: 8, desconto: desc8 }
-                ];
-                alert("Descontos salvos!");
-                renderizarTudo();
+                if (existente && existente.length > 0) await db.from('config_descontos').update(configData).eq('id', existente[0].id);
+                else await db.from('config_descontos').insert([configData]);
+                TABELA_DESCONTOS = [{ meses: 3, desconto: desc3 }, { meses: 5, desconto: desc5 }, { meses: 8, desconto: desc8 }];
+                alert("Descontos salvos!"); renderizarTudo();
             } catch (error) { alert("Erro ao salvar."); }
         }
 
         document.getElementById('form-medicamento').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const novoMed = {
-                nome: document.getElementById('nome').value,
-                dosagem: document.getElementById('dosagem').value,
-                descricao: document.getElementById('descricao').value,
-                dias_duracao: parseInt(document.getElementById('dias-duracao').value),
-                estoque: parseInt(document.getElementById('estoque').value),
-                preco_original: document.getElementById('preco-original').value,
-                quantidade: document.getElementById('quantidade').value,
-                tipo_entrega: document.getElementById('tipo-entrega').value,
-                taxa_entrega: document.getElementById('taxa-entrega').value,
-                estabelecimento_id: ESTABELECIMENTO_ID
-            };
-
+            const novoMed = { nome: document.getElementById('nome').value, dosagem: document.getElementById('dosagem').value, descricao: document.getElementById('descricao').value, dias_duracao: parseInt(document.getElementById('dias-duracao').value), estoque: parseInt(document.getElementById('estoque').value), preco_original: document.getElementById('preco-original').value, quantidade: document.getElementById('quantidade').value, tipo_entrega: document.getElementById('tipo-entrega').value, taxa_entrega: document.getElementById('taxa-entrega').value, estabelecimento_id: ESTABELECIMENTO_ID };
             const editId = document.getElementById('edit-id').value;
             try {
-                if (editId) {
-                    await db.from('medicamentos').update(novoMed).eq('id', editId);
-                } else {
-                    await db.from('medicamentos').insert([novoMed]);
-                }
-                limparFormulario();
-                await carregarMedicamentos();
-                alert("Produto salvo!");
+                if (editId) await db.from('medicamentos').update(novoMed).eq('id', editId); else await db.from('medicamentos').insert([novoMed]);
+                limparFormulario(); await carregarMedicamentos(); alert("Produto salvo!");
             } catch (error) { alert("Erro ao salvar."); }
         });
 
         document.getElementById('form-assinatura').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const medicamentoId = parseInt(document.getElementById('assinatura-medicamento').value);
-            const medicamento = medicamentos.find(m => m.id === medicamentoId);
-            const dataUltimaEntrega = document.getElementById('assinatura-data').value;
-            
-            const dataUltima = new Date(dataUltimaEntrega);
-            const dataProxima = new Date(dataUltima);
-            dataProxima.setDate(dataProxima.getDate() + medicamento.dias_duracao);
-            const dataProximaStr = dataProxima.toISOString().split('T')[0];
-
-            const novaAssinatura = {
-                cliente_nome: document.getElementById('cliente-nome').value,
-                cliente_whatsapp: document.getElementById('cliente-whatsapp').value,
-                medicamento_id: medicamentoId,
-                dias_duracao: medicamento.dias_duracao,
-                data_ultima_entrega: dataUltimaEntrega,
-                data_proxima_entrega: dataProximaStr,
-                desconto_aplicado: parseInt(document.getElementById('assinatura-desconto').value),
-                tipo_entrega: document.getElementById('assinatura-tipo').value,
-                estabelecimento_id: ESTABELECIMENTO_ID,
-                quantidade_compras: 0,
-                ultimo_desconto: parseInt(document.getElementById('assinatura-desconto').value),
-                ativa: true
-            };
-
+            const medicamentoId = parseInt(document.getElementById('assinatura-medicamento').value), medicamento = medicamentos.find(m => m.id === medicamentoId), dataUltimaEntrega = document.getElementById('assinatura-data').value;
+            const dataUltima = new Date(dataUltimaEntrega), dataProxima = new Date(dataUltima); dataProxima.setDate(dataProxima.getDate() + medicamento.dias_duracao);
+            const novaAssinatura = { cliente_nome: document.getElementById('cliente-nome').value, cliente_whatsapp: document.getElementById('cliente-whatsapp').value, medicamento_id: medicamentoId, dias_duracao: medicamento.dias_duracao, data_ultima_entrega: dataUltimaEntrega, data_proxima_entrega: dataProxima.toISOString().split('T')[0], desconto_aplicado: parseInt(document.getElementById('assinatura-desconto').value), tipo_entrega: document.getElementById('assinatura-tipo').value, estabelecimento_id: ESTABELECIMENTO_ID, quantidade_compras: 0, ultimo_desconto: parseInt(document.getElementById('assinatura-desconto').value), ativa: true };
             try {
-                await db.from('assinaturas').insert([novaAssinatura]);
-                document.getElementById('form-assinatura').reset();
-                await carregarAssinaturas();
-                alert("Assinatura registrada!");
+                await db.from('assinaturas').insert([novaAssinatura]); document.getElementById('form-assinatura').reset(); await carregarAssinaturas(); alert("Assinatura registrada!");
             } catch (error) { alert("Erro ao registrar."); }
         });
 
         document.getElementById('form-solicitacao').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const solicitacao = {
-                estabelecimento_id: ESTABELECIMENTO_ID,
-                cliente_nome: document.getElementById('sol-nome').value,
-                cliente_whatsapp: document.getElementById('sol-whatsapp').value,
-                produto_desejado: document.getElementById('sol-produto').value,
-                observacao: document.getElementById('sol-obs').value,
-                status: 'pendente'
-            };
-
-            try {
-                await db.from('solicitacoes_produtos').insert([solicitacao]);
-                document.getElementById('form-solicitacao').reset();
-                await carregarSolicitacoes();
-                alert("Solicitação enviada! Entraremos em contato.");
-            } catch (error) { alert("Erro ao enviar."); }
+            const solicitacao = { estabelecimento_id: ESTABELECIMENTO_ID, cliente_nome: document.getElementById('sol-nome').value, cliente_whatsapp: document.getElementById('sol-whatsapp').value, produto_desejado: document.getElementById('sol-produto').value, observacao: document.getElementById('sol-obs').value, status: 'pendente' };
+            try { await db.from('solicitacoes_produtos').insert([solicitacao]); document.getElementById('form-solicitacao').reset(); await carregarSolicitacoes(); alert("Solicitação enviada!"); } catch (error) { alert("Erro ao enviar."); }
         });
 
         async function atualizarStatusSolicitacao(id, status) {
-            try {
-                await db.from('solicitacoes_produtos').update({ status }).eq('id', id);
-                await carregarSolicitacoes();
-            } catch (e) { alert("Erro ao atualizar."); }
+            try { await db.from('solicitacoes_produtos').update({ status }).eq('id', id); await carregarSolicitacoes(); } catch (e) { alert("Erro ao atualizar."); }
         }
 
         function atualizarSelectMedicamentos() {
-            const select = document.getElementById('assinatura-medicamento');
-            select.innerHTML = '<option value="">Selecione...</option>';
-            medicamentos.forEach(med => {
-                select.innerHTML += `<option value="${med.id}">${med.nome} ${med.dosagem}</option>`;
-            });
+            const select = document.getElementById('assinatura-medicamento'); select.innerHTML = '<option value="">Selecione...</option>';
+            medicamentos.forEach(med => { select.innerHTML += `<option value="${med.id}">${med.nome} ${med.dosagem}</option>`; });
         }
 
         function editarMedicamento(index) {
             const med = medicamentos[index];
-            document.getElementById('nome').value = med.nome;
-            document.getElementById('dosagem').value = med.dosagem;
-            document.getElementById('descricao').value = med.descricao;
-            document.getElementById('dias-duracao').value = med.dias_duracao;
-            document.getElementById('estoque').value = med.estoque;
-            document.getElementById('preco-original').value = med.preco_original;
-            document.getElementById('quantidade').value = med.quantidade;
-            document.getElementById('tipo-entrega').value = med.tipo_entrega;
-            document.getElementById('taxa-entrega').value = med.taxa_entrega;
-            document.getElementById('edit-id').value = med.id;
+            document.getElementById('nome').value = med.nome; document.getElementById('dosagem').value = med.dosagem; document.getElementById('descricao').value = med.descricao; document.getElementById('dias-duracao').value = med.dias_duracao; document.getElementById('estoque').value = med.estoque; document.getElementById('preco-original').value = med.preco_original; document.getElementById('quantidade').value = med.quantidade; document.getElementById('tipo-entrega').value = med.tipo_entrega; document.getElementById('taxa-entrega').value = med.taxa_entrega; document.getElementById('edit-id').value = med.id;
             document.getElementById('form-medicamento').scrollIntoView({ behavior: 'smooth' });
         }
 
         async function excluirMedicamento(index) {
             if (confirm("Excluir este produto?")) {
                 const med = medicamentos[index];
-                try {
-                    await db.from('medicamentos').delete().eq('id', med.id);
-                    await carregarMedicamentos();
-                } catch (error) { alert("Erro ao excluir."); }
+                try { await db.from('medicamentos').delete().eq('id', med.id); await carregarMedicamentos(); } catch (error) { alert("Erro ao excluir."); }
             }
         }
 
-        function limparFormulario() {
-            document.getElementById('form-medicamento').reset();
-            document.getElementById('edit-id').value = "";
-        }
+        function limparFormulario() { document.getElementById('form-medicamento').reset(); document.getElementById('edit-id').value = ""; }
 
         function calcularPrecoComDesconto(precoOriginal, meses) {
             const desconto = TABELA_DESCONTOS.find(d => d.meses === meses)?.desconto || 0;
-            const preco = parseFloat(precoOriginal);
-            return (preco * (1 - desconto / 100)).toFixed(2);
+            return (parseFloat(precoOriginal) * (1 - desconto / 100)).toFixed(2);
         }
 
         function enviarPedidoCliente(index) {
-            const med = medicamentosFiltrados[index];
-            const meses = parseInt(document.getElementById(`meses-${index}`).value);
-            const desconto = TABELA_DESCONTOS.find(d => d.meses === meses)?.desconto || 0;
-            const precoComDesconto = calcularPrecoComDesconto(med.preco_original, meses);
-            const tipoEntrega = tipoEntregaSelecionado[index] || 'retirada';
+            const med = medicamentosFiltrados[index], meses = parseInt(document.getElementById(`meses-${index}`).value), desconto = TABELA_DESCONTOS.find(d => d.meses === meses)?.desconto || 0;
+            const precoComDesconto = calcularPrecoComDesconto(med.preco_original, meses), tipoEntrega = tipoEntregaSelecionado[index] || 'retirada';
             const entregaTexto = tipoEntrega === 'entrega' ? `🚚 Delivery (+R$ ${med.taxa_entrega})` : ' Retirada na Loja';
             const precoTotal = (parseFloat(precoComDesconto) + (tipoEntrega === 'entrega' ? parseFloat(med.taxa_entrega) : 0)).toFixed(2);
-
-            const mensagem = `* NOVO PEDIDO - ${estabelecimento ? estabelecimento.nome : 'CUPOMCLIC'}*
-
-💊 *Produto:* ${med.nome} ${med.dosagem}
-📋 ${med.descricao}
-
-📅 *Plano:* ${meses} ${meses === 1 ? 'mês' : 'meses'}
- *Desconto:* ${desconto}% OFF
- *Preço c/ desconto:* R$ ${precoComDesconto}/mês
-
- *Quantidade:* ${med.quantidade}
-🚚 *Entrega:* ${entregaTexto}
-
-💳 *Total 1ª entrega:* R$ ${precoTotal}
-
-👤 *Meu nome:* [preencha]
-📍 *Endereço:* [se delivery]
-
-Obrigado!`;
-
+            const mensagem = `* NOVO PEDIDO - ${estabelecimento ? estabelecimento.nome : 'CUPOMCLIC'}*\n\n💊 *Produto:* ${med.nome} ${med.dosagem}\n📋 ${med.descricao}\n\n📅 *Plano:* ${meses} ${meses === 1 ? 'mês' : 'meses'}\n *Desconto:* ${desconto}% OFF\n💰 *Preço c/ desconto:* R$ ${precoComDesconto}/mês\n\n *Quantidade:* ${med.quantidade}\n *Entrega:* ${entregaTexto}\n\n💳 *Total 1ª entrega:* R$ ${precoTotal}\n\n👤 *Meu nome:* [preencha]\n *Endereço:* [se delivery]\n\nObrigado!`;
             const numeroDestino = estabelecimento ? estabelecimento.whatsapp : '5514998771964';
-            const linkZap = `https://wa.me/${numeroDestino}?text=${encodeURIComponent(mensagem)}`;
-            window.open(linkZap, '_blank');
+            window.open(`https://wa.me/${numeroDestino}?text=${encodeURIComponent(mensagem)}`, '_blank');
         }
 
-        function renderizarTudo() {
-            renderizarTimelineCliente();
-            renderizarListaAdmin();
-        }
+        function renderizarTudo() { renderizarTimelineCliente(); renderizarListaAdmin(); }
 
         function renderizarTimelineCliente() {
-            const listaCliente = document.getElementById('lista-cliente');
-            listaCliente.innerHTML = '';
-
-            if (medicamentosFiltrados.length === 0) {
-                listaCliente.innerHTML = '<p class="text-center text-gray-500 py-4">Nenhum produto encontrado.</p>';
-                return;
-            }
-
-            listaCliente.innerHTML += `
-                <div class="text-center mb-2">
-                    <h2 class="text-base font-bold text-gray-900">Veja a lista de produtos e descontos</h2>
-                    <p class="text-xs text-gray-600">Toque para ver detalhes e escolher</p>
-                </div>
-            `;
+            const listaCliente = document.getElementById('lista-cliente'); listaCliente.innerHTML = '';
+            if (medicamentosFiltrados.length === 0) { listaCliente.innerHTML = '<p class="text-center text-gray-500 py-4">Nenhum produto encontrado.</p>'; return; }
+            listaCliente.innerHTML += `<div class="text-center mb-2"><h2 class="text-base font-bold text-gray-900">Veja a lista de produtos e descontos</h2><p class="text-xs text-gray-600">Toque para ver detalhes e escolher</p></div>`;
 
             medicamentosFiltrados.forEach((med, index) => {
-                const estaEsgotado = med.estoque <= 0;
-                const podeDelivery = med.tipo_entrega === 'ambos' || med.tipo_entrega === 'delivery';
-                const podeLoja = med.tipo_entrega === 'ambos' || med.tipo_entrega === 'loja';
-
-                listaCliente.innerHTML += `
-                    <div class="timeline-item bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden fade-in ${estaEsgotado ? 'opacity-60' : ''}">
-                        <div class="p-4 cursor-pointer" onclick="toggleAccordion(${index})">
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center space-x-3 flex-grow">
-                                    <div class="w-10 h-10 bg-green-50 rounded-lg flex items-center justify-center text-xl">
-                                        ${estaEsgotado ? '🚫' : '💊'}
-                                    </div>
-                                    <div class="flex-grow">
-                                        <div class="flex items-center space-x-2">
-                                            <h3 class="font-bold text-gray-900 text-sm">${med.nome}</h3>
-                                            <span class="text-xs text-health font-semibold">${med.dosagem}</span>
-                                        </div>
-                                        <p class="text-xs text-gray-500 mt-0.5">${med.quantidade} • R$ ${med.preco_original}</p>
-                                        ${estaEsgotado ? '<p class="esgotado mt-1">ESGOTADO</p>' : ''}
-                                    </div>
+                const estaEsgotado = med.estoque <= 0, podeDelivery = med.tipo_entrega === 'ambos' || med.tipo_entrega === 'delivery', podeLoja = med.tipo_entrega === 'ambos' || med.tipo_entrega === 'loja';
+                listaCliente.innerHTML += `<div class="timeline-item bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden fade-in ${estaEsgotado ? 'opacity-60' : ''}">
+                    <div class="p-4 cursor-pointer" onclick="toggleAccordion(${index})">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-3 flex-grow">
+                                <div class="w-10 h-10 bg-green-50 rounded-lg flex items-center justify-center text-xl">${estaEsgotado ? '🚫' : '💊'}</div>
+                                <div class="flex-grow">
+                                    <div class="flex items-center space-x-2"><h3 class="font-bold text-gray-900 text-sm">${med.nome}</h3><span class="text-xs text-health font-semibold">${med.dosagem}</span></div>
+                                    <p class="text-xs text-gray-500 mt-0.5">${med.quantidade} • R$ ${med.preco_original}</p>
+                                    ${estaEsgotado ? '<p class="esgotado mt-1">ESGOTADO</p>' : ''}
                                 </div>
-                                <svg id="icon-${index}" class="w-5 h-5 text-gray-400 rotate-icon flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                                </svg>
                             </div>
-                        </div>
-
-                        <div id="accordion-${index}" class="accordion-content">
-                            <div class="px-4 pb-4 space-y-3 border-t border-gray-100 pt-3">
-                                <p class="text-xs text-gray-600 leading-relaxed">${med.descricao}</p>
-                                
-                                <div class="bg-gradient-to-r from-green-50 to-green-100 border border-green-200 rounded-lg p-3">
-                                    <p class="text-xs font-bold text-gray-700 mb-2">Descontos progressivos:</p>
-                                    <div class="grid grid-cols-3 gap-2 text-center">
-                                        <div class="bg-white rounded p-1"><p class="text-xs text-gray-600">${TABELA_DESCONTOS[0].meses}m</p><p class="text-sm font-bold text-health">${TABELA_DESCONTOS[0].desconto}%</p></div>
-                                        <div class="bg-white rounded p-1"><p class="text-xs text-gray-600">${TABELA_DESCONTOS[1].meses}m</p><p class="text-sm font-bold text-health">${TABELA_DESCONTOS[1].desconto}%</p></div>
-                                        <div class="bg-white rounded p-1"><p class="text-xs text-gray-600">${TABELA_DESCONTOS[2].meses}m</p><p class="text-sm font-bold text-health">${TABELA_DESCONTOS[2].desconto}%</p></div>
-                                    </div>
-                                </div>
-
-                                ${!estaEsgotado ? `
-                                <div class="space-y-2">
-                                    <label class="text-xs font-semibold text-gray-600">Plano de assinatura:</label>
-                                    <select id="meses-${index}" onchange="atualizarPreco(${index})" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm">
-                                        <option value="1">1 mês (sem desconto)</option>
-                                        <option value="${TABELA_DESCONTOS[0].meses}">${TABELA_DESCONTOS[0].meses} meses (${TABELA_DESCONTOS[0].desconto}% OFF)</option>
-                                        <option value="${TABELA_DESCONTOS[1].meses}">${TABELA_DESCONTOS[1].meses} meses (${TABELA_DESCONTOS[1].desconto}% OFF)</option>
-                                        <option value="${TABELA_DESCONTOS[2].meses}">${TABELA_DESCONTOS[2].meses} meses (${TABELA_DESCONTOS[2].desconto}% OFF)</option>
-                                    </select>
-                                </div>
-
-                                <div class="bg-gray-50 p-3 rounded-lg">
-                                    <div class="flex items-center justify-between">
-                                        <div>
-                                            <span class="text-xs text-gray-400 line-through block">R$ ${med.preco_original}</span>
-                                            <span class="text-xl font-extrabold text-health" id="preco-final-${index}">R$ ${med.preco_original}</span>
-                                            <span class="text-xs text-gray-500 block">/ ${med.quantidade} por mês</span>
-                                        </div>
-                                        <div class="text-right">
-                                            <span class="text-xs text-gray-500 block" id="desconto-label-${index}">Economia: R$ 0,00/mês</span>
-                                            <span class="text-xs text-green-600 font-semibold block">Pague ao receber</span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="space-y-2">
-                                    <label class="text-xs font-semibold text-gray-600">Como deseja receber?</label>
-                                    <div class="grid grid-cols-2 gap-2">
-                                        ${podeLoja ? `<button onclick="selecionarEntrega(${index}, 'retirada')" id="btn-retirada-${index}" class="py-2 px-3 rounded-lg border-2 border-gray-300 text-xs font-semibold transition hover:border-green-500">🏪 Buscar na Loja</button>` : ''}
-                                        ${podeDelivery ? `<button onclick="selecionarEntrega(${index}, 'entrega')" id="btn-entrega-${index}" class="py-2 px-3 rounded-lg border-2 border-gray-300 text-xs font-semibold transition hover:border-green-500">🚚 Delivery (+R$ ${med.taxa_entrega})</button>` : ''}
-                                    </div>
-                                </div>
-
-                                <button onclick="enviarPedidoCliente(${index})" class="block w-full bg-health hover:bg-green-700 text-white text-center font-bold py-3 rounded-xl shadow-md transition text-sm">
-                                    ENVIAR PEDIDO
-                                </button>
-                                ` : '<p class="text-center text-red-500 text-sm py-2">Produto temporariamente indisponível</p>'}
-                            </div>
+                            <svg id="icon-${index}" class="w-5 h-5 text-gray-400 rotate-icon flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                         </div>
                     </div>
-                `;
+                    <div id="accordion-${index}" class="accordion-content">
+                        <div class="px-4 pb-4 space-y-3 border-t border-gray-100 pt-3">
+                            <p class="text-xs text-gray-600 leading-relaxed">${med.descricao}</p>
+                            <div class="bg-gradient-to-r from-green-50 to-green-100 border border-green-200 rounded-lg p-3">
+                                <p class="text-xs font-bold text-gray-700 mb-2">Descontos progressivos:</p>
+                                <div class="grid grid-cols-3 gap-2 text-center">
+                                    <div class="bg-white rounded p-1"><p class="text-xs text-gray-600">${TABELA_DESCONTOS[0].meses}m</p><p class="text-sm font-bold text-health">${TABELA_DESCONTOS[0].desconto}%</p></div>
+                                    <div class="bg-white rounded p-1"><p class="text-xs text-gray-600">${TABELA_DESCONTOS[1].meses}m</p><p class="text-sm font-bold text-health">${TABELA_DESCONTOS[1].desconto}%</p></div>
+                                    <div class="bg-white rounded p-1"><p class="text-xs text-gray-600">${TABELA_DESCONTOS[2].meses}m</p><p class="text-sm font-bold text-health">${TABELA_DESCONTOS[2].desconto}%</p></div>
+                                </div>
+                            </div>
+                            ${!estaEsgotado ? `
+                            <div class="space-y-2">
+                                <label class="text-xs font-semibold text-gray-600">Plano de assinatura:</label>
+                                <select id="meses-${index}" onchange="atualizarPreco(${index})" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm">
+                                    <option value="1">1 mês (sem desconto)</option>
+                                    <option value="${TABELA_DESCONTOS[0].meses}">${TABELA_DESCONTOS[0].meses} meses (${TABELA_DESCONTOS[0].desconto}% OFF)</option>
+                                    <option value="${TABELA_DESCONTOS[1].meses}">${TABELA_DESCONTOS[1].meses} meses (${TABELA_DESCONTOS[1].desconto}% OFF)</option>
+                                    <option value="${TABELA_DESCONTOS[2].meses}">${TABELA_DESCONTOS[2].meses} meses (${TABELA_DESCONTOS[2].desconto}% OFF)</option>
+                                </select>
+                            </div>
+                            <div class="bg-gray-50 p-3 rounded-lg">
+                                <div class="flex items-center justify-between">
+                                    <div><span class="text-xs text-gray-400 line-through block">R$ ${med.preco_original}</span><span class="text-xl font-extrabold text-health" id="preco-final-${index}">R$ ${med.preco_original}</span><span class="text-xs text-gray-500 block">/ ${med.quantidade} por mês</span></div>
+                                    <div class="text-right"><span class="text-xs text-gray-500 block" id="desconto-label-${index}">Economia: R$ 0,00/mês</span><span class="text-xs text-green-600 font-semibold block">Pague ao receber</span></div>
+                                </div>
+                            </div>
+                            <div class="space-y-2">
+                                <label class="text-xs font-semibold text-gray-600">Como deseja receber?</label>
+                                <div class="grid grid-cols-2 gap-2">
+                                    ${podeLoja ? `<button onclick="selecionarEntrega(${index}, 'retirada')" id="btn-retirada-${index}" class="py-2 px-3 rounded-lg border-2 border-gray-300 text-xs font-semibold transition hover:border-green-500">🏪 Buscar na Loja</button>` : ''}
+                                    ${podeDelivery ? `<button onclick="selecionarEntrega(${index}, 'entrega')" id="btn-entrega-${index}" class="py-2 px-3 rounded-lg border-2 border-gray-300 text-xs font-semibold transition hover:border-green-500">🚚 Delivery (+R$ ${med.taxa_entrega})</button>` : ''}
+                                </div>
+                            </div>
+                            <button onclick="enviarPedidoCliente(${index})" class="block w-full bg-health hover:bg-green-700 text-white text-center font-bold py-3 rounded-xl shadow-md transition text-sm">ENVIAR PEDIDO</button>
+                            ` : '<p class="text-center text-red-500 text-sm py-2">Produto temporariamente indisponível</p>'}
+                        </div>
+                    </div>
+                </div>`;
             });
         }
 
         function renderizarListaAdmin() {
-            const listaAdmin = document.getElementById('lista-admin');
-            listaAdmin.innerHTML = '';
-
-            if (medicamentos.length === 0) {
-                listaAdmin.innerHTML = '<p class="text-center text-gray-500 py-4 text-sm">Nenhum produto cadastrado.</p>';
-                return;
-            }
-
+            const listaAdmin = document.getElementById('lista-admin'); listaAdmin.innerHTML = '';
+            if (medicamentos.length === 0) { listaAdmin.innerHTML = '<p class="text-center text-gray-500 py-4 text-sm">Nenhum produto cadastrado.</p>'; return; }
             medicamentos.forEach((med, index) => {
                 const estoqueBaixo = med.estoque <= 5;
-                listaAdmin.innerHTML += `
-                    <div class="bg-white p-3 rounded-xl border border-gray-200 flex justify-between items-center fade-in">
-                        <div class="flex-grow">
-                            <p class="font-bold text-sm text-gray-900">${med.nome} ${med.dosagem}</p>
-                            <p class="text-xs text-gray-500">R$ ${med.preco_original} | Estoque: <span class="${estoqueBaixo ? 'text-red-500 font-bold' : ''}">${med.estoque}</span> | ${med.tipo_entrega}</p>
-                        </div>
-                        <div class="flex space-x-2">
-                            <button onclick="editarMedicamento(${index})" class="p-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition">✏️</button>
-                            <button onclick="excluirMedicamento(${index})" class="p-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition">🗑️</button>
-                        </div>
-                    </div>
-                `;
+                listaAdmin.innerHTML += `<div class="bg-white p-3 rounded-xl border border-gray-200 flex justify-between items-center fade-in">
+                    <div class="flex-grow"><p class="font-bold text-sm text-gray-900">${med.nome} ${med.dosagem}</p><p class="text-xs text-gray-500">R$ ${med.preco_original} | Estoque: <span class="${estoqueBaixo ? 'text-red-500 font-bold' : ''}">${med.estoque}</span> | ${med.tipo_entrega}</p></div>
+                    <div class="flex space-x-2"><button onclick="editarMedicamento(${index})" class="p-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition">✏️</button><button onclick="excluirMedicamento(${index})" class="p-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition">🗑️</button></div>
+                </div>`;
             });
         }
 
         function renderizarSolicitacoes() {
-            const lista = document.getElementById('lista-solicitacoes');
-            lista.innerHTML = '';
-
-            if (solicitacoes.length === 0) {
-                lista.innerHTML = '<p class="text-center text-gray-500 text-sm py-2">Nenhuma solicitação pendente.</p>';
-                return;
-            }
-
+            const lista = document.getElementById('lista-solicitacoes'); lista.innerHTML = '';
+            if (solicitacoes.length === 0) { lista.innerHTML = '<p class="text-center text-gray-500 text-sm py-2">Nenhuma solicitação pendente.</p>'; return; }
             solicitacoes.forEach(sol => {
-                lista.innerHTML += `
-                    <div class="bg-blue-50 p-3 rounded-lg border border-blue-200">
-                        <p class="font-bold text-sm text-gray-900">${sol.cliente_nome}</p>
-                        <p class="text-xs text-gray-600">📱 ${sol.cliente_whatsapp}</p>
-                        <p class="text-sm text-gray-900 mt-1">💡 Quer: <strong>${sol.produto_desejado}</strong></p>
-                        ${sol.observacao ? `<p class="text-xs text-gray-600 mt-1">Obs: ${sol.observacao}</p>` : ''}
-                        <div class="flex space-x-2 mt-2">
-                            <button onclick="atualizarStatusSolicitacao(${sol.id}, 'atendido')" class="flex-1 bg-green-500 text-white text-xs font-bold py-1 rounded">Atendido</button>
-                            <button onclick="atualizarStatusSolicitacao(${sol.id}, 'recusado')" class="flex-1 bg-red-500 text-white text-xs font-bold py-1 rounded">Recusar</button>
-                        </div>
-                    </div>
-                `;
+                lista.innerHTML += `<div class="bg-blue-50 p-3 rounded-lg border border-blue-200">
+                    <p class="font-bold text-sm text-gray-900">${sol.cliente_nome}</p><p class="text-xs text-gray-600">📱 ${sol.cliente_whatsapp}</p><p class="text-sm text-gray-900 mt-1">💡 Quer: <strong>${sol.produto_desejado}</strong></p>
+                    ${sol.observacao ? `<p class="text-xs text-gray-600 mt-1">Obs: ${sol.observacao}</p>` : ''}
+                    <div class="flex space-x-2 mt-2"><button onclick="atualizarStatusSolicitacao(${sol.id}, 'atendido')" class="flex-1 bg-green-500 text-white text-xs font-bold py-1 rounded">Atendido</button><button onclick="atualizarStatusSolicitacao(${sol.id}, 'recusado')" class="flex-1 bg-red-500 text-white text-xs font-bold py-1 rounded">Recusar</button></div>
+                </div>`;
             });
         }
 
         function atualizarPreco(index) {
-            const med = medicamentosFiltrados[index];
-            const meses = parseInt(document.getElementById(`meses-${index}`).value);
-            const precoComDesconto = calcularPrecoComDesconto(med.preco_original, meses);
-            const economia = (parseFloat(med.preco_original) - parseFloat(precoComDesconto)).toFixed(2);
-            
+            const med = medicamentosFiltrados[index], meses = parseInt(document.getElementById(`meses-${index}`).value), precoComDesconto = calcularPrecoComDesconto(med.preco_original, meses), economia = (parseFloat(med.preco_original) - parseFloat(precoComDesconto)).toFixed(2);
             document.getElementById(`preco-final-${index}`).textContent = `R$ ${precoComDesconto}`;
             document.getElementById(`desconto-label-${index}`).textContent = meses > 1 ? `Economia: R$ ${economia}/mês` : 'Economia: R$ 0,00/mês';
         }
 
         function selecionarEntrega(index, tipo) {
             tipoEntregaSelecionado[index] = tipo;
-            const btnRetirada = document.getElementById(`btn-retirada-${index}`);
-            const btnEntrega = document.getElementById(`btn-entrega-${index}`);
-            
+            const btnRetirada = document.getElementById(`btn-retirada-${index}`), btnEntrega = document.getElementById(`btn-entrega-${index}`);
             if (btnRetirada) {
-                if (tipo === 'retirada') {
-                    btnRetirada.classList.add('border-green-500', 'bg-green-50');
-                    if (btnEntrega) btnEntrega.classList.remove('border-green-500', 'bg-green-50');
-                } else {
-                    btnEntrega.classList.add('border-green-500', 'bg-green-50');
-                    btnRetirada.classList.remove('border-green-500', 'bg-green-50');
-                }
+                if (tipo === 'retirada') { btnRetirada.classList.add('border-green-500', 'bg-green-50'); if (btnEntrega) btnEntrega.classList.remove('border-green-500', 'bg-green-50'); } 
+                else { btnEntrega.classList.add('border-green-500', 'bg-green-50'); btnRetirada.classList.remove('border-green-500', 'bg-green-50'); }
             }
         }
     </script>
