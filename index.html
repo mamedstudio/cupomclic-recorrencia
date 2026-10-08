@@ -425,20 +425,49 @@
         }
 
         function aplicarBackgroundEstabelecimento(tipo) {
-            const header = document.getElementById('header-principal');
-            const icon1 = document.getElementById('header-icon-1');
-            const icon2 = document.getElementById('header-icon-2');
-            
-            header.classList.remove('bg-farmacia', 'bg-farmacia-manipulacao', 'bg-pet', 'bg-proteicos', 'bg-outros');
-            
-            switch(tipo) {
-                case 'farmacia':
-                    header.classList.add('bg-farmacia', 'header-colorido');
-                    icon1.textContent = '💊';
-                    icon2.textContent = '⚕️';
-                    break;
-                case 'pet':
-                    header.classList.add('bg-pet', 'header-colorido');
+           const header = document.getElementById('header-principal');
+           const icon1 = document.getElementById('header-icon-1');
+           const icon2 = document.getElementById('header-icon-2');
+    
+          header.classList.remove('bg-farmacia', 'bg-farmacia-manipulacao', 'bg-pet', 'bg-proteicos', 'bg-outros');
+    
+    // Detecta manipulação pelo slug OU pelo nome
+    const ehManipulacao = slugLoja === 'farma-magistral' || 
+                          (estabelecimento && estabelecimento.nome.toLowerCase().includes('manipula'));
+    
+    if (ehManipulacao) {
+        header.classList.add('bg-farmacia-manipulacao', 'header-colorido');
+        icon1.textContent = '🧪';
+        icon2.textContent = '️';
+    } else {
+        switch(tipo) {
+            case 'farmacia':
+                header.classList.add('bg-farmacia', 'header-colorido');
+                icon1.textContent = '💊';
+                icon2.textContent = '️';
+                break;
+            case 'pet':
+                header.classList.add('bg-pet', 'header-colorido');
+                icon1.textContent = '🐾';
+                icon2.textContent = '';
+                break;
+            case 'proteicos':
+                header.classList.add('bg-proteicos', 'header-colorido');
+                icon1.textContent = '💪';
+                icon2.textContent = '🏋️';
+                break;
+            case 'outros':
+                header.classList.add('bg-outros', 'header-colorido');
+                icon1.textContent = '🏪';
+                icon2.textContent = '⭐';
+                break;
+            default:
+                header.classList.add('bg-farmacia', 'header-colorido');
+                icon1.textContent = '💊';
+                icon2.textContent = '️';
+        }
+    }
+}, 'header-colorido');
                     icon1.textContent = '🐾';
                     icon2.textContent = '🐕';
                     break;
