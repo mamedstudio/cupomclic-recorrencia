@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Boi Brabo - Ofertas da Semana</title>
+    <title>Boi Brabo - Ofertas da Semana | CupomClic</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         :root { --cor-primaria: #7f1d1d; }
@@ -16,15 +16,14 @@
 <body class="bg-gray-50 min-h-screen">
 
     <!-- HEADER COM LOGO -->
-    <header class="bg-gradient-to-r from-red-900 to-red-700 text-white py-6 px-6 shadow-lg">
+    <header class="bg-gradient-to-r from-red-900 via-red-800 to-black text-white py-6 px-6 shadow-lg">
         <div class="max-w-md mx-auto flex items-center space-x-4">
-            <!-- Logo placeholder (substitua pela logo do Boi Brabo) -->
-            <div class="w-16 h-16 bg-black rounded-full flex items-center justify-center shadow-md border-2 border-white">
-                <span class="text-3xl">🐂</span>
-            </div>
+            <img src="https://raw.githubusercontent.com/mamedstudio/cupomclic-recorrencia/main/boi-brabo.png" 
+                 alt="Logo Boi Brabo" 
+                 class="w-16 h-16 rounded-full bg-black p-1 shadow-md border-2 border-white object-contain">
             <div>
-                <h1 class="text-2xl font-bold">BOI BRABO</h1>
-                <p class="text-red-200 text-sm">O Shopping da Carne - Unidade Bauru</p>
+                <h1 class="text-2xl font-bold tracking-wide">BOI BRABO</h1>
+                <p class="text-red-200 text-xs">O Shopping da Carne • Unidade Bauru</p>
             </div>
         </div>
     </header>
@@ -39,11 +38,11 @@
             </div>
 
             <!-- Oferta 1: Picanha -->
-            <div class="bg-white rounded-2xl shadow-lg border-2 border-red-100 overflow-hidden mb-4 fade-in">
+            <div class="bg-white rounded-2xl shadow-lg border-2 border-red-100 overflow-hidden mb-4 fade-in relative">
                 <div class="absolute top-3 left-3 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md z-10">
                     30% OFF
                 </div>
-                <div class="h-48 bg-gradient-to-br from-red-100 to-red-200 flex items-center justify-center relative">
+                <div class="h-48 bg-gradient-to-br from-red-100 to-red-200 flex items-center justify-center">
                     <span class="text-6xl">🥩</span>
                 </div>
                 <div class="p-4">
@@ -62,7 +61,7 @@
             </div>
 
             <!-- Oferta 2: Costela -->
-            <div class="bg-white rounded-2xl shadow-lg border-2 border-red-100 overflow-hidden mb-4 fade-in">
+            <div class="bg-white rounded-2xl shadow-lg border-2 border-red-100 overflow-hidden mb-4 fade-in relative">
                 <div class="absolute top-3 left-3 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md z-10">
                     25% OFF
                 </div>
@@ -85,7 +84,7 @@
             </div>
 
             <!-- Oferta 3: Linguiça -->
-            <div class="bg-white rounded-2xl shadow-lg border-2 border-red-100 overflow-hidden fade-in">
+            <div class="bg-white rounded-2xl shadow-lg border-2 border-red-100 overflow-hidden fade-in relative">
                 <div class="absolute top-3 left-3 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md z-10">
                     35% OFF
                 </div>
@@ -124,7 +123,7 @@
 
             <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
                 <div class="flex items-center space-x-3">
-                    <div class="w-12 h-12 bg-red-50 rounded-lg flex items-center justify-center text-2xl">🥩</div>
+                    <div class="w-12 h-12 bg-red-50 rounded-lg flex items-center justify-center text-2xl"></div>
                     <div class="flex-grow">
                         <h3 class="font-bold text-gray-900 text-sm">Patinho Moído</h3>
                         <p class="text-xs text-gray-500">1kg • R$ 38,00</p>
@@ -145,8 +144,11 @@
         </section>
     </main>
 
-    <footer class="text-center py-6 text-gray-400 text-xs bg-white border-t border-gray-100 mt-8">
-        <p>&copy; 2026 CUPOMCLIC. Powered by SaaS.</p>
+    <footer class="text-center py-6 bg-white border-t border-gray-100 mt-8">
+        <img src="https://raw.githubusercontent.com/mamedstudio/cupomclic-recorrencia/main/cupomclic-logo.png" 
+             alt="CupomClic" 
+             class="h-8 mx-auto mb-2 object-contain">
+        <p class="text-gray-400 text-xs">&copy; 2026 CUPOMCLIC. Powered by SaaS.</p>
     </footer>
 
 </body>
