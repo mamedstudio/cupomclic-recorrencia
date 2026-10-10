@@ -3,15 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    
-    <!-- PWA / APP INSTALLER META TAGS -->
     <meta name="theme-color" content="#8B1A1A">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="JL Sabores">
     <link rel="manifest" href="/manifest.json">
     <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/mamedstudio/cupomclic-recorrencia/main/jl-sabores-nobres.png">
-    
     <title>JL Sabores Nobres - Ofertas da Semana | CupomClic</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -28,8 +25,7 @@
         .card-detalhes.open { max-height: 800px; }
         .foto-zoom { transition: transform 0.3s ease; cursor: zoom-in; }
         .foto-zoom:hover { transform: scale(1.05); }
-        .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
-}
+        .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
@@ -45,12 +41,10 @@
     </header>
 
     <main class="max-w-md mx-auto px-4 py-6">
+        <!-- OFERTAS DA SEMANA -->
         <section class="mb-8">
             <div class="flex items-center justify-between mb-5">
-    <h2 class="text-2xl font-black text-gray-900 flex items-center">
-        <span class="mr-2"></span> Ofertas da Semana
-    </h2>
-    <!-- Badge "Até Domingo" removido -->
+                <h2 class="text-2xl font-black text-gray-900 flex items-center"><span class="mr-2">🔥</span> Ofertas da Semana</h2>
             </div>
             <div id="lista-ofertas">
                 <div class="text-center py-8"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600 mx-auto"></div></div>
@@ -63,11 +57,19 @@
             <div class="flex-grow border-t border-gray-200"></div>
         </div>
 
-        <section class="space-y-4">
-            <div class="text-center space-y-1">
+        <!-- PRODUTOS DIA A DIA -->
+        <section class="mb-8">
+            <div class="text-center space-y-1 mb-5">
                 <h1 class="text-lg font-bold text-gray-900">Produtos gourmet <span class="text-red-700">toda semana</span>.</h1>
                 <p class="text-gray-500 text-xs">Garanta preço exclusivo e qualidade superior!</p>
             </div>
+            <div id="lista-dia-a-dia">
+                <div class="text-center py-8"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600 mx-auto"></div></div>
+            </div>
+        </section>
+
+        <!-- DESCONTO VIP -->
+        <section class="space-y-4">
             <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
                 <div class="flex items-center space-x-3 mb-3">
                     <div class="w-12 h-12 bg-red-50 rounded-lg flex items-center justify-center text-2xl">🥩</div>
@@ -104,12 +106,13 @@
         const slugLoja = 'jl-sabores-nobres';
         const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         
-        let loja = null, ofertas = [], tabelaDescontos = [{meses: 3, desconto: 10}, {meses: 5, desconto: 18}, {meses: 8, desconto: 25}];
+        let loja = null, ofertas = [], produtosDiaADia = [], tabelaDescontos = [{meses: 3, desconto: 10}, {meses: 5, desconto: 18}, {meses: 8, desconto: 25}];
 
         document.addEventListener('DOMContentLoaded', async () => {
             await carregarLoja();
             await carregarDescontos();
             await carregarOfertas();
+            await carregarDiaADia();
         });
 
         async function carregarLoja() {
@@ -157,6 +160,16 @@
             }
         }
 
+        async function carregarDiaADia() {
+            try {
+                const { data } = await db.from('produtos').select('*').eq('estabelecimento_id', loja?.id).eq('tipo', 'dia_a_dia').eq('ativo', true).order('nome', { ascending: true });
+                produtosDiaADia = data || [];
+                renderizarDiaADia();
+            } catch (error) { 
+                document.getElementById('lista-dia-a-dia').innerHTML = '<p class="text-center text-gray-500 py-4 text-sm">Erro ao carregar produtos.</p>';
+            }
+        }
+
         function renderizarOfertas() {
             const container = document.getElementById('lista-ofertas');
             container.innerHTML = '';
@@ -179,15 +192,15 @@
                     <div class="p-4 flex items-center cursor-pointer" onclick="toggleDetalhes('detalhes-${index}')">
                         ${thumbnail}
                         <div class="flex-grow min-w-0 pr-2">
-                             <h3 class="font-bold text-gray-900 text-sm leading-tight line-clamp-2 mb-1">${oferta.nome}</h3>
-                             <p class="text-xs text-gray-500 truncate">${oferta.subtitulo || ''}</p>
-                             <div class="flex items-baseline flex-wrap gap-2 mt-1">
-                                 ${!isUnico && oferta.preco_original ? `<span class="text-gray-400 text-xs line-through">R$ ${parseFloat(oferta.preco_original).toFixed(2)}</span>` : ''}
-                                 <span class="text-lg font-black text-green-600">R$ ${parseFloat(precoExibicao).toFixed(2)}</span>
-                                 ${desconto > 0 ? `<span class="bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">${desconto}% OFF</span>` : ''}
-                       </div>
-                       ${oferta.valido_ate ? `<p class="text-[10px] text-gray-400 mt-1">📅 Válido até ${new Date(oferta.valido_ate).toLocaleDateString('pt-BR')}</p>` : ''}
-                       </div>
+                            <h3 class="font-bold text-gray-900 text-sm leading-tight line-clamp-2 mb-1">${oferta.nome}</h3>
+                            <p class="text-xs text-gray-500 truncate">${oferta.subtitulo || ''}</p>
+                            <div class="flex items-baseline flex-wrap gap-2 mt-1">
+                                ${!isUnico && oferta.preco_original ? `<span class="text-gray-400 text-xs line-through">R$ ${parseFloat(oferta.preco_original).toFixed(2)}</span>` : ''}
+                                <span class="text-lg font-black text-green-600">R$ ${parseFloat(precoExibicao).toFixed(2)}</span>
+                                ${desconto > 0 ? `<span class="bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">${desconto}% OFF</span>` : ''}
+                            </div>
+                            ${oferta.valido_ate ? `<p class="text-[10px] text-gray-400 mt-1">📅 Válido até ${new Date(oferta.valido_ate).toLocaleDateString('pt-BR')}</p>` : ''}
+                        </div>
                         <button class="text-white font-bold py-2 px-4 rounded-lg text-sm ml-3 flex-shrink-0" style="background-color: ${loja?.cor_tema || '#8B1A1A'}">EU QUERO</button>
                     </div>
                     <div id="detalhes-${index}" class="card-detalhes border-t border-gray-100">
@@ -204,11 +217,44 @@
                             </div>` : ''}
                             <div class="text-xs text-gray-500 bg-gray-50 p-2 rounded">
                                 📅 Válido até: <strong>${dataValidade}</strong>
-                                ${oferta.tipo_entrega_produto === 'delivery' ? ' • 🚚 Delivery' : oferta.tipo_entrega_produto === 'retirada' ? ' • 🏪 Retirada' : ' • 🚚🏪 Delivery + Retirada'}
+                                ${oferta.tipo_entrega_produto === 'delivery' ? ' • 🚚 Delivery' : oferta.tipo_entrega_produto === 'retirada' ? ' • 🏪 Retirada' : ' • 🚚 Delivery + Retirada'}
                                 ${oferta.taxa_entrega_produto > 0 ? ` • Taxa: R$ ${parseFloat(oferta.taxa_entrega_produto).toFixed(2)}` : ''}
                             </div>
                             <a href="${oferta.link_cupomclic || '#'}" target="_blank" class="block w-full text-white text-center font-bold py-3 rounded-xl shadow-sm transition text-sm" style="background-color: ${loja?.cor_tema || '#8B1A1A'}">COMPRAR AGORA</a>
                         </div>
+                    </div>
+                </div>`;
+            });
+        }
+
+        function renderizarDiaADia() {
+            const container = document.getElementById('lista-dia-a-dia');
+            container.innerHTML = '';
+            
+            if (produtosDiaADia.length === 0) {
+                container.innerHTML = '<p class="text-center text-gray-500 py-8 text-sm">Nenhum produto disponível no momento. Volte em breve!</p>';
+                return;
+            }
+            
+            produtosDiaADia.forEach((produto, index) => {
+                const isUnico = produto.tipo_preco === 'unico';
+                const precoExibicao = produto.preco_promocional || produto.preco_original;
+                
+                const thumbnail = produto.foto_url ? `<img src="${produto.foto_url}" class="w-14 h-14 rounded-lg object-cover mr-3 flex-shrink-0" onerror="this.src='https://via.placeholder.com/100x100/8B1A1A/FFFFFF?text=Produto'">` : `<div class="w-14 h-14 rounded-lg bg-gray-200 flex items-center justify-center mr-3 flex-shrink-0 text-xl">📦</div>`;
+
+                container.innerHTML += `
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mb-3 fade-in">
+                    <div class="p-4 flex items-center">
+                        ${thumbnail}
+                        <div class="flex-grow min-w-0 pr-2">
+                            <h3 class="font-bold text-gray-900 text-sm leading-tight line-clamp-2 mb-1">${produto.nome}</h3>
+                            <p class="text-xs text-gray-500 truncate">${produto.subtitulo || ''}</p>
+                            <div class="flex items-baseline flex-wrap gap-2 mt-1">
+                                ${!isUnico && produto.preco_original ? `<span class="text-gray-400 text-xs line-through">R$ ${parseFloat(produto.preco_original).toFixed(2)}</span>` : ''}
+                                <span class="text-base font-black text-green-600">R$ ${parseFloat(precoExibicao).toFixed(2)}</span>
+                            </div>
+                        </div>
+                        <a href="${produto.link_cupomclic || '#'}" target="_blank" class="text-white font-bold py-2 px-3 rounded-lg text-xs ml-3 flex-shrink-0" style="background-color: ${loja?.cor_tema || '#8B1A1A'}">COMPRAR</a>
                     </div>
                 </div>`;
             });
