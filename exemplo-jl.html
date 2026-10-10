@@ -54,7 +54,7 @@
                  onerror="this.style.display='none'">
             <div>
                 <h1 class="text-xl font-black tracking-wide font-serif">JL SABORES NOBRES</h1>
-                <p class="text-red-200 text-xs font-medium">Carnes Premium • Qualidade Superior</p>
+                <p class="text-red-200 text-xs font-medium">Empório Gourmet • Carnes Premium</p>
             </div>
         </div>
     </header>
@@ -72,17 +72,21 @@
 
             <!-- Oferta 1: Picanha Premium -->
             <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden mb-3 fade-in card-oferta">
-                <!-- Card Compacto -->
-                <div class="p-4 flex items-center justify-between cursor-pointer" onclick="toggleDetalhes('detalhes-1')">
+                <!-- Card Compacto com Thumbnail -->
+                <div class="p-4 flex items-center cursor-pointer" onclick="toggleDetalhes('detalhes-1')">
+                    <img src="https://images.unsplash.com/photo-1600891964092-4316c288032e?w=100&h=100&fit=crop&q=80" 
+                         alt="Picanha" 
+                         class="w-16 h-16 rounded-lg object-cover mr-3 flex-shrink-0"
+                         onerror="this.src='https://via.placeholder.com/100x100/8B1A1A/FFFFFF?text=Picanha'">
                     <div class="flex-grow">
                         <div class="flex items-center space-x-2 mb-1">
                             <h3 class="font-bold text-gray-900 text-base">Picanha Premium</h3>
                             <span class="bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">28% OFF</span>
                         </div>
                         <p class="text-xs text-gray-500">Peça inteira • Angus certificado</p>
-                        <div class="flex items-baseline space-x-2 mt-2">
+                        <div class="flex items-baseline space-x-2 mt-1">
                             <span class="text-gray-400 text-xs line-through">R$ 95,00/kg</span>
-                            <span class="text-xl font-black text-green-600">R$ 68,40<span class="text-xs">/kg</span></span>
+                            <span class="text-lg font-black text-green-600">R$ 68,40<span class="text-xs">/kg</span></span>
                         </div>
                     </div>
                     <button class="btn-loja text-white font-bold py-2 px-4 rounded-lg text-sm ml-3 flex-shrink-0">
@@ -128,18 +132,22 @@
                 </div>
             </div>
 
-            <!-- Oferta 2: Filé Mignon -->
+            <!-- Oferta 2: Cachaça Artesanal -->
             <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden mb-3 fade-in card-oferta">
-                <div class="p-4 flex items-center justify-between cursor-pointer" onclick="toggleDetalhes('detalhes-2')">
+                <div class="p-4 flex items-center cursor-pointer" onclick="toggleDetalhes('detalhes-2')">
+                    <img src="https://images.unsplash.com/photo-1569529465841-dfecdab7503b?w=100&h=100&fit=crop&q=80" 
+                         alt="Cachaça" 
+                         class="w-16 h-16 rounded-lg object-cover mr-3 flex-shrink-0"
+                         onerror="this.src='https://via.placeholder.com/100x100/8B1A1A/FFFFFF?text=Cachaca'">
                     <div class="flex-grow">
                         <div class="flex items-center space-x-2 mb-1">
-                            <h3 class="font-bold text-gray-900 text-base">Filé Mignon</h3>
-                            <span class="bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">22% OFF</span>
+                            <h3 class="font-bold text-gray-900 text-base">Cachaça Artesanal</h3>
+                            <span class="bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">20% OFF</span>
                         </div>
-                        <p class="text-xs text-gray-500">Posta • Maciez incomparável</p>
-                        <div class="flex items-baseline space-x-2 mt-2">
-                            <span class="text-gray-400 text-xs line-through">R$ 110,00/kg</span>
-                            <span class="text-xl font-black text-green-600">R$ 85,80<span class="text-xs">/kg</span></span>
+                        <p class="text-xs text-gray-500">Envelhecida • 750ml</p>
+                        <div class="flex items-baseline space-x-2 mt-1">
+                            <span class="text-gray-400 text-xs line-through">R$ 89,90</span>
+                            <span class="text-lg font-black text-green-600">R$ 71,92</span>
                         </div>
                     </div>
                     <button class="btn-loja text-white font-bold py-2 px-4 rounded-lg text-sm ml-3 flex-shrink-0">
@@ -148,6 +156,186 @@
                 </div>
                 
                 <div id="detalhes-2" class="card-detalhes border-t border-gray-100">
+                    <div class="p-4 space-y-3">
+                        <div class="relative">
+                            <img src="https://images.unsplash.com/photo-1569529465841-dfecdab7503b?w=600&h=400&fit=crop&q=80" 
+                                 alt="Cachaça Artesanal" 
+                                 class="w-full h-48 object-cover rounded-lg foto-zoom"
+                                 onerror="this.src='https://via.placeholder.com/600x400/8B1A1A/FFFFFF?text=Cachaca+Artesanal'">
+                            <div class="absolute bottom-2 right-2">
+                                <div class="badge-restam flex items-end justify-center pb-1">
+                                    <div class="text-center text-white">
+                                        <p class="text-[7px] font-bold leading-tight">RESTAM</p>
+                                        <p class="text-sm font-black leading-tight">12</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-gray-900 text-sm mb-1">Descrição</h4>
+                            <p class="text-xs text-gray-600 leading-relaxed">Cachaça artesanal envelhecida em barril de carvalho por 3 anos. Sabor suave e aroma intenso, perfeita para apreciar pura ou em caipirinhas especiais.</p>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2 text-xs">
+                            <div class="bg-gray-50 p-2 rounded">
+                                <p class="text-gray-500">Volume</p>
+                                <p class="font-bold text-gray-900">750ml</p>
+                            </div>
+                            <div class="bg-gray-50 p-2 rounded">
+                                <p class="text-gray-500">Envelhecimento</p>
+                                <p class="font-bold text-gray-900">3 anos</p>
+                            </div>
+                        </div>
+                        <a href="#" class="block w-full btn-loja text-white text-center font-bold py-3 rounded-xl shadow-sm transition text-sm">
+                            COMPRAR AGORA
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Oferta 3: Creme de Amendoim -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden mb-3 fade-in card-oferta">
+                <div class="p-4 flex items-center cursor-pointer" onclick="toggleDetalhes('detalhes-3')">
+                    <img src="https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=100&h=100&fit=crop&q=80" 
+                         alt="Creme de Amendoim" 
+                         class="w-16 h-16 rounded-lg object-cover mr-3 flex-shrink-0"
+                         onerror="this.src='https://via.placeholder.com/100x100/8B1A1A/FFFFFF?text=Creme+Amendoim'">
+                    <div class="flex-grow">
+                        <div class="flex items-center space-x-2 mb-1">
+                            <h3 class="font-bold text-gray-900 text-base">Creme de Amendoim</h3>
+                            <span class="bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">25% OFF</span>
+                        </div>
+                        <p class="text-xs text-gray-500">Integral • 500g</p>
+                        <div class="flex items-baseline space-x-2 mt-1">
+                            <span class="text-gray-400 text-xs line-through">R$ 32,00</span>
+                            <span class="text-lg font-black text-green-600">R$ 24,00</span>
+                        </div>
+                    </div>
+                    <button class="btn-loja text-white font-bold py-2 px-4 rounded-lg text-sm ml-3 flex-shrink-0">
+                        EU QUERO
+                    </button>
+                </div>
+                
+                <div id="detalhes-3" class="card-detalhes border-t border-gray-100">
+                    <div class="p-4 space-y-3">
+                        <div class="relative">
+                            <img src="https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=600&h=400&fit=crop&q=80" 
+                                 alt="Creme de Amendoim" 
+                                 class="w-full h-48 object-cover rounded-lg foto-zoom"
+                                 onerror="this.src='https://via.placeholder.com/600x400/8B1A1A/FFFFFF?text=Creme+de+Amendoim'">
+                            <div class="absolute bottom-2 right-2">
+                                <div class="badge-restam flex items-end justify-center pb-1">
+                                    <div class="text-center text-white">
+                                        <p class="text-[7px] font-bold leading-tight">RESTAM</p>
+                                        <p class="text-sm font-black leading-tight">20</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-gray-900 text-sm mb-1">Descrição</h4>
+                            <p class="text-xs text-gray-600 leading-relaxed">Creme de amendoim integral, sem adição de açúcar. Rico em proteínas e gorduras boas, perfeito para atletas e dietas saudáveis.</p>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2 text-xs">
+                            <div class="bg-gray-50 p-2 rounded">
+                                <p class="text-gray-500">Peso</p>
+                                <p class="font-bold text-gray-900">500g</p>
+                            </div>
+                            <div class="bg-gray-50 p-2 rounded">
+                                <p class="text-gray-500">Tipo</p>
+                                <p class="font-bold text-gray-900">Integral</p>
+                            </div>
+                        </div>
+                        <a href="#" class="block w-full btn-loja text-white text-center font-bold py-3 rounded-xl shadow-sm transition text-sm">
+                            COMPRAR AGORA
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Oferta 4: Pimenta Artesanal -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden mb-3 fade-in card-oferta">
+                <div class="p-4 flex items-center cursor-pointer" onclick="toggleDetalhes('detalhes-4')">
+                    <img src="https://images.unsplash.com/photo-1583623025817-d180a2221d0a?w=100&h=100&fit=crop&q=80" 
+                         alt="Pimenta" 
+                         class="w-16 h-16 rounded-lg object-cover mr-3 flex-shrink-0"
+                         onerror="this.src='https://via.placeholder.com/100x100/8B1A1A/FFFFFF?text=Pimenta'">
+                    <div class="flex-grow">
+                        <div class="flex items-center space-x-2 mb-1">
+                            <h3 class="font-bold text-gray-900 text-base">Molho de Pimenta</h3>
+                            <span class="bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">30% OFF</span>
+                        </div>
+                        <p class="text-xs text-gray-500">Artesanal • 250ml</p>
+                        <div class="flex items-baseline space-x-2 mt-1">
+                            <span class="text-gray-400 text-xs line-through">R$ 28,00</span>
+                            <span class="text-lg font-black text-green-600">R$ 19,60</span>
+                        </div>
+                    </div>
+                    <button class="btn-loja text-white font-bold py-2 px-4 rounded-lg text-sm ml-3 flex-shrink-0">
+                        EU QUERO
+                    </button>
+                </div>
+                
+                <div id="detalhes-4" class="card-detalhes border-t border-gray-100">
+                    <div class="p-4 space-y-3">
+                        <div class="relative">
+                            <img src="https://images.unsplash.com/photo-1583623025817-d180a2221d0a?w=600&h=400&fit=crop&q=80" 
+                                 alt="Molho de Pimenta" 
+                                 class="w-full h-48 object-cover rounded-lg foto-zoom"
+                                 onerror="this.src='https://via.placeholder.com/600x400/8B1A1A/FFFFFF?text=Molho+de+Pimenta'">
+                            <div class="absolute bottom-2 right-2">
+                                <div class="badge-restam flex items-end justify-center pb-1">
+                                    <div class="text-center text-white">
+                                        <p class="text-[7px] font-bold leading-tight">RESTAM</p>
+                                        <p class="text-sm font-black leading-tight">15</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-gray-900 text-sm mb-1">Descrição</h4>
+                            <p class="text-xs text-gray-600 leading-relaxed">Molho de pimenta artesanal feito com pimentas selecionadas. Intensidade média, perfeito para carnes, pizzas e lanches.</p>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2 text-xs">
+                            <div class="bg-gray-50 p-2 rounded">
+                                <p class="text-gray-500">Volume</p>
+                                <p class="font-bold text-gray-900">250ml</p>
+                            </div>
+                            <div class="bg-gray-50 p-2 rounded">
+                                <p class="text-gray-500">Intensidade</p>
+                                <p class="font-bold text-gray-900">Média</p>
+                            </div>
+                        </div>
+                        <a href="#" class="block w-full btn-loja text-white text-center font-bold py-3 rounded-xl shadow-sm transition text-sm">
+                            COMPRAR AGORA
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Oferta 5: Filé Mignon -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden mb-3 fade-in card-oferta">
+                <div class="p-4 flex items-center cursor-pointer" onclick="toggleDetalhes('detalhes-5')">
+                    <img src="https://images.unsplash.com/photo-1558030006-450675393462?w=100&h=100&fit=crop&q=80" 
+                         alt="Filé Mignon" 
+                         class="w-16 h-16 rounded-lg object-cover mr-3 flex-shrink-0"
+                         onerror="this.src='https://via.placeholder.com/100x100/8B1A1A/FFFFFF?text=File+Mignon'">
+                    <div class="flex-grow">
+                        <div class="flex items-center space-x-2 mb-1">
+                            <h3 class="font-bold text-gray-900 text-base">Filé Mignon</h3>
+                            <span class="bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">22% OFF</span>
+                        </div>
+                        <p class="text-xs text-gray-500">Posta • Maciez incomparável</p>
+                        <div class="flex items-baseline space-x-2 mt-1">
+                            <span class="text-gray-400 text-xs line-through">R$ 110,00/kg</span>
+                            <span class="text-lg font-black text-green-600">R$ 85,80<span class="text-xs">/kg</span></span>
+                        </div>
+                    </div>
+                    <button class="btn-loja text-white font-bold py-2 px-4 rounded-lg text-sm ml-3 flex-shrink-0">
+                        EU QUERO
+                    </button>
+                </div>
+                
+                <div id="detalhes-5" class="card-detalhes border-t border-gray-100">
                     <div class="p-4 space-y-3">
                         <div class="relative">
                             <img src="https://images.unsplash.com/photo-1558030006-450675393462?w=600&h=400&fit=crop&q=80" 
@@ -183,75 +371,19 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Oferta 3: Costela Premium -->
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden mb-3 fade-in card-oferta">
-                <div class="p-4 flex items-center justify-between cursor-pointer" onclick="toggleDetalhes('detalhes-3')">
-                    <div class="flex-grow">
-                        <div class="flex items-center space-x-2 mb-1">
-                            <h3 class="font-bold text-gray-900 text-base">Costela Premium</h3>
-                            <span class="bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">30% OFF</span>
-                        </div>
-                        <p class="text-xs text-gray-500">Para churrasco • 1kg</p>
-                        <div class="flex items-baseline space-x-2 mt-2">
-                            <span class="text-gray-400 text-xs line-through">R$ 52,00/kg</span>
-                            <span class="text-xl font-black text-green-600">R$ 36,40<span class="text-xs">/kg</span></span>
-                        </div>
-                    </div>
-                    <button class="btn-loja text-white font-bold py-2 px-4 rounded-lg text-sm ml-3 flex-shrink-0">
-                        EU QUERO
-                    </button>
-                </div>
-                
-                <div id="detalhes-3" class="card-detalhes border-t border-gray-100">
-                    <div class="p-4 space-y-3">
-                        <div class="relative">
-                            <img src="https://images.unsplash.com/photo-1544025162-d76694265947?w=600&h=400&fit=crop&q=80" 
-                                 alt="Costela Premium" 
-                                 class="w-full h-48 object-cover rounded-lg foto-zoom"
-                                 onerror="this.src='https://via.placeholder.com/600x400/8B1A1A/FFFFFF?text=Costela+Premium'">
-                            <div class="absolute bottom-2 right-2">
-                                <div class="badge-restam flex items-end justify-center pb-1">
-                                    <div class="text-center text-white">
-                                        <p class="text-[7px] font-bold leading-tight">RESTAM</p>
-                                        <p class="text-sm font-black leading-tight">10</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-gray-900 text-sm mb-1">Descrição</h4>
-                            <p class="text-xs text-gray-600 leading-relaxed">Costela bovina de primeira, ideal para assar no bafo. Sabor e suculência garantidos para seu churrasco de fim de semana.</p>
-                        </div>
-                        <div class="grid grid-cols-2 gap-2 text-xs">
-                            <div class="bg-gray-50 p-2 rounded">
-                                <p class="text-gray-500">Peso</p>
-                                <p class="font-bold text-gray-900">1kg</p>
-                            </div>
-                            <div class="bg-gray-50 p-2 rounded">
-                                <p class="text-gray-500">Preparo</p>
-                                <p class="font-bold text-gray-900">Bafo ou Brasa</p>
-                            </div>
-                        </div>
-                        <a href="#" class="block w-full btn-loja text-white text-center font-bold py-3 rounded-xl shadow-sm transition text-sm">
-                            COMPRAR AGORA
-                        </a>
-                    </div>
-                </div>
-            </div>
         </section>
 
         <!-- DIVISOR -->
         <div class="relative flex py-6 items-center">
             <div class="flex-grow border-t border-gray-200"></div>
-            <span class="flex-shrink-0 mx-4 text-gray-400 text-xs font-semibold uppercase tracking-wider">Carnes para o dia a dia</span>
+            <span class="flex-shrink-0 mx-4 text-gray-400 text-xs font-semibold uppercase tracking-wider">Ofertas do dia a dia</span>
             <div class="flex-grow border-t border-gray-200"></div>
         </div>
 
         <!-- DescontoVIP -->
         <section class="space-y-4">
             <div class="text-center space-y-1">
-                <h1 class="text-lg font-bold text-gray-900">Carnes nobres <span class="text-red-700">toda semana</span>.</h1>
+                <h1 class="text-lg font-bold text-gray-900">Produtos gourmet <span class="text-red-700">toda semana</span>.</h1>
                 <p class="text-gray-500 text-xs">Garanta preço exclusivo e qualidade superior!</p>
             </div>
 
