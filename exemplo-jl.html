@@ -9,25 +9,43 @@
     <style>
         body { font-family: 'Inter', sans-serif; }
         .font-serif { font-family: 'Playfair Display', serif; }
-        :root { --cor-primaria: #8B1A1A; }
         .fade-in { animation: fadeIn 0.4s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
         .badge-restam { 
-            background: linear-gradient(135deg, #16a34a 0%, #22c55e 100%);
+            background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
             border-radius: 50% 50% 0 0;
             width: 50px;
             height: 25px;
         }
-        .card-oferta { transition: transform 0.2s, box-shadow 0.2s; }
+        .card-oferta { transition: all 0.3s ease; }
         .card-oferta:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
         .header-jl { 
             background: linear-gradient(135deg, #8B1A1A 0%, #6B0F0F 50%, #4A0A0A 100%);
+        }
+        .btn-loja { background-color: #8B1A1A; }
+        .btn-loja:hover { background-color: #6B0F0F; }
+        
+        /* Card expandido */
+        .card-detalhes {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+        }
+        .card-detalhes.open {
+            max-height: 800px;
+        }
+        .foto-zoom {
+            transition: transform 0.3s ease;
+            cursor: zoom-in;
+        }
+        .foto-zoom:hover {
+            transform: scale(1.05);
         }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
 
-    <!-- HEADER BORDÔ (identidade JL Sabores Nobres) -->
+    <!-- HEADER BORDÔ -->
     <header class="header-jl text-white py-6 px-6 shadow-lg">
         <div class="max-w-md mx-auto flex items-center space-x-4">
             <img src="https://raw.githubusercontent.com/mamedstudio/cupomclic-recorrencia/main/jl-sabores-nobres.png" 
@@ -47,139 +65,177 @@
         <section class="mb-8">
             <div class="flex items-center justify-between mb-5">
                 <h2 class="text-2xl font-black text-gray-900 flex items-center">
-                    <span class="mr-2">🔥</span> Ofertas da Semana
+                    <span class="mr-2"></span> Ofertas da Semana
                 </h2>
                 <span class="text-xs font-semibold bg-red-50 text-red-600 px-3 py-1.5 rounded-full border border-red-100">Até Domingo</span>
             </div>
 
             <!-- Oferta 1: Picanha Premium -->
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden mb-4 fade-in card-oferta">
-                <div class="flex">
-                    <div class="flex-grow p-4 flex flex-col justify-between">
-                        <div>
-                            <div class="flex items-start justify-between mb-2">
-                                <div class="flex-grow pr-2">
-                                    <h3 class="font-bold text-gray-900 text-base leading-tight">Picanha Premium</h3>
-                                    <p class="text-xs text-gray-500 mt-0.5">Peça inteira • Angus certificado</p>
-                                </div>
-                                <span class="bg-red-600 text-white text-[10px] font-bold px-2 py-1 rounded-full flex-shrink-0">28% OFF</span>
-                            </div>
-                            <p class="text-xs text-gray-600 mb-3 line-clamp-2 leading-relaxed">Picanha Angus de primeira linha, marmoreio intenso para um churrasco inesquecível.</p>
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden mb-3 fade-in card-oferta">
+                <!-- Card Compacto -->
+                <div class="p-4 flex items-center justify-between cursor-pointer" onclick="toggleDetalhes('detalhes-1')">
+                    <div class="flex-grow">
+                        <div class="flex items-center space-x-2 mb-1">
+                            <h3 class="font-bold text-gray-900 text-base">Picanha Premium</h3>
+                            <span class="bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">28% OFF</span>
                         </div>
-                        <div>
-                            <div class="flex items-baseline space-x-2 mb-3">
-                                <span class="text-gray-400 text-xs line-through">R$ 95,00/kg</span>
-                                <span class="text-2xl font-black text-green-600">R$ 68,40<span class="text-sm">/kg</span></span>
-                            </div>
-                            <a href="#" class="block w-full bg-orange-500 hover:bg-orange-600 text-white text-center font-bold py-2.5 rounded-xl shadow-sm transition text-sm">
-                                Comprar
-                            </a>
+                        <p class="text-xs text-gray-500">Peça inteira • Angus certificado</p>
+                        <div class="flex items-baseline space-x-2 mt-2">
+                            <span class="text-gray-400 text-xs line-through">R$ 95,00/kg</span>
+                            <span class="text-xl font-black text-green-600">R$ 68,40<span class="text-xs">/kg</span></span>
                         </div>
                     </div>
-                    <div class="relative w-36 flex-shrink-0 bg-gray-100">
-                        <img src="https://images.unsplash.com/photo-1600891964092-4316c288032e?w=400&h=500&fit=crop&q=80" 
-                             alt="Picanha Premium" 
-                             class="w-full h-full object-cover"
-                             onerror="this.src='https://via.placeholder.com/300x400/8B1A1A/FFFFFF?text=Picanha'">
-                        <div class="absolute bottom-6 right-2">
-                            <div class="badge-restam flex items-end justify-center pb-1">
-                                <div class="text-center text-white">
-                                    <p class="text-[7px] font-bold leading-tight">RESTAM</p>
-                                    <p class="text-sm font-black leading-tight">8</p>
+                    <button class="btn-loja text-white font-bold py-2 px-4 rounded-lg text-sm ml-3 flex-shrink-0">
+                        EU QUERO
+                    </button>
+                </div>
+                
+                <!-- Detalhes Expandidos -->
+                <div id="detalhes-1" class="card-detalhes border-t border-gray-100">
+                    <div class="p-4 space-y-3">
+                        <div class="relative">
+                            <img src="https://images.unsplash.com/photo-1600891964092-4316c288032e?w=600&h=400&fit=crop&q=80" 
+                                 alt="Picanha Premium" 
+                                 class="w-full h-48 object-cover rounded-lg foto-zoom"
+                                 onerror="this.src='https://via.placeholder.com/600x400/8B1A1A/FFFFFF?text=Picanha+Premium'">
+                            <div class="absolute bottom-2 right-2">
+                                <div class="badge-restam flex items-end justify-center pb-1">
+                                    <div class="text-center text-white">
+                                        <p class="text-[7px] font-bold leading-tight">RESTAM</p>
+                                        <p class="text-sm font-black leading-tight">8</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="absolute bottom-0 left-0 right-0 bg-green-700 text-white text-center py-1.5 text-xs font-bold">
-                            Carnes Nobres
+                        <div>
+                            <h4 class="font-bold text-gray-900 text-sm mb-1">Descrição</h4>
+                            <p class="text-xs text-gray-600 leading-relaxed">Picanha Angus de primeira linha, marmoreio intenso para um churrasco inesquecível. Peça inteira com aproximadamente 1,2kg.</p>
                         </div>
+                        <div class="grid grid-cols-2 gap-2 text-xs">
+                            <div class="bg-gray-50 p-2 rounded">
+                                <p class="text-gray-500">Peso médio</p>
+                                <p class="font-bold text-gray-900">1,2kg</p>
+                            </div>
+                            <div class="bg-gray-50 p-2 rounded">
+                                <p class="text-gray-500">Origem</p>
+                                <p class="font-bold text-gray-900">Angus Certificado</p>
+                            </div>
+                        </div>
+                        <a href="#" class="block w-full btn-loja text-white text-center font-bold py-3 rounded-xl shadow-sm transition text-sm">
+                            COMPRAR AGORA
+                        </a>
                     </div>
                 </div>
             </div>
 
             <!-- Oferta 2: Filé Mignon -->
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden mb-4 fade-in card-oferta">
-                <div class="flex">
-                    <div class="flex-grow p-4 flex flex-col justify-between">
-                        <div>
-                            <div class="flex items-start justify-between mb-2">
-                                <div class="flex-grow pr-2">
-                                    <h3 class="font-bold text-gray-900 text-base leading-tight">Filé Mignon</h3>
-                                    <p class="text-xs text-gray-500 mt-0.5">Posta • Maciez incomparável</p>
-                                </div>
-                                <span class="bg-red-600 text-white text-[10px] font-bold px-2 py-1 rounded-full flex-shrink-0">22% OFF</span>
-                            </div>
-                            <p class="text-xs text-gray-600 mb-3 line-clamp-2 leading-relaxed">Filé mignon selecionado, corte nobre perfeito para bife ou strogonoff. Textura aveludada.</p>
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden mb-3 fade-in card-oferta">
+                <div class="p-4 flex items-center justify-between cursor-pointer" onclick="toggleDetalhes('detalhes-2')">
+                    <div class="flex-grow">
+                        <div class="flex items-center space-x-2 mb-1">
+                            <h3 class="font-bold text-gray-900 text-base">Filé Mignon</h3>
+                            <span class="bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">22% OFF</span>
                         </div>
-                        <div>
-                            <div class="flex items-baseline space-x-2 mb-3">
-                                <span class="text-gray-400 text-xs line-through">R$ 110,00/kg</span>
-                                <span class="text-2xl font-black text-green-600">R$ 85,80<span class="text-sm">/kg</span></span>
-                            </div>
-                            <a href="#" class="block w-full bg-orange-500 hover:bg-orange-600 text-white text-center font-bold py-2.5 rounded-xl shadow-sm transition text-sm">
-                                Comprar
-                            </a>
+                        <p class="text-xs text-gray-500">Posta • Maciez incomparável</p>
+                        <div class="flex items-baseline space-x-2 mt-2">
+                            <span class="text-gray-400 text-xs line-through">R$ 110,00/kg</span>
+                            <span class="text-xl font-black text-green-600">R$ 85,80<span class="text-xs">/kg</span></span>
                         </div>
                     </div>
-                    <div class="relative w-36 flex-shrink-0 bg-gray-100">
-                        <img src="https://images.unsplash.com/photo-1558030006-450675393462?w=400&h=500&fit=crop&q=80" 
-                             alt="Filé Mignon" 
-                             class="w-full h-full object-cover"
-                             onerror="this.src='https://via.placeholder.com/300x400/8B1A1A/FFFFFF?text=File+Mignon'">
-                        <div class="absolute bottom-6 right-2">
-                            <div class="badge-restam flex items-end justify-center pb-1">
-                                <div class="text-center text-white">
-                                    <p class="text-[7px] font-bold leading-tight">RESTAM</p>
-                                    <p class="text-sm font-black leading-tight">5</p>
+                    <button class="btn-loja text-white font-bold py-2 px-4 rounded-lg text-sm ml-3 flex-shrink-0">
+                        EU QUERO
+                    </button>
+                </div>
+                
+                <div id="detalhes-2" class="card-detalhes border-t border-gray-100">
+                    <div class="p-4 space-y-3">
+                        <div class="relative">
+                            <img src="https://images.unsplash.com/photo-1558030006-450675393462?w=600&h=400&fit=crop&q=80" 
+                                 alt="Filé Mignon" 
+                                 class="w-full h-48 object-cover rounded-lg foto-zoom"
+                                 onerror="this.src='https://via.placeholder.com/600x400/8B1A1A/FFFFFF?text=File+Mignon'">
+                            <div class="absolute bottom-2 right-2">
+                                <div class="badge-restam flex items-end justify-center pb-1">
+                                    <div class="text-center text-white">
+                                        <p class="text-[7px] font-bold leading-tight">RESTAM</p>
+                                        <p class="text-sm font-black leading-tight">5</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="absolute bottom-0 left-0 right-0 bg-green-700 text-white text-center py-1.5 text-xs font-bold">
-                            Premium
+                        <div>
+                            <h4 class="font-bold text-gray-900 text-sm mb-1">Descrição</h4>
+                            <p class="text-xs text-gray-600 leading-relaxed">Filé mignon selecionado, corte nobre perfeito para bife ou strogonoff. Textura aveludada e sabor delicado.</p>
                         </div>
+                        <div class="grid grid-cols-2 gap-2 text-xs">
+                            <div class="bg-gray-50 p-2 rounded">
+                                <p class="text-gray-500">Peso médio</p>
+                                <p class="font-bold text-gray-900">800g</p>
+                            </div>
+                            <div class="bg-gray-50 p-2 rounded">
+                                <p class="text-gray-500">Corte</p>
+                                <p class="font-bold text-gray-900">Posta inteira</p>
+                            </div>
+                        </div>
+                        <a href="#" class="block w-full btn-loja text-white text-center font-bold py-3 rounded-xl shadow-sm transition text-sm">
+                            COMPRAR AGORA
+                        </a>
                     </div>
                 </div>
             </div>
 
             <!-- Oferta 3: Costela Premium -->
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden fade-in card-oferta">
-                <div class="flex">
-                    <div class="flex-grow p-4 flex flex-col justify-between">
-                        <div>
-                            <div class="flex items-start justify-between mb-2">
-                                <div class="flex-grow pr-2">
-                                    <h3 class="font-bold text-gray-900 text-base leading-tight">Costela Premium</h3>
-                                    <p class="text-xs text-gray-500 mt-0.5">Para churrasco • 1kg</p>
-                                </div>
-                                <span class="bg-red-600 text-white text-[10px] font-bold px-2 py-1 rounded-full flex-shrink-0">30% OFF</span>
-                            </div>
-                            <p class="text-xs text-gray-600 mb-3 line-clamp-2 leading-relaxed">Costela bovina de primeira, ideal para assar no bafo. Sabor e suculência garantidos.</p>
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden mb-3 fade-in card-oferta">
+                <div class="p-4 flex items-center justify-between cursor-pointer" onclick="toggleDetalhes('detalhes-3')">
+                    <div class="flex-grow">
+                        <div class="flex items-center space-x-2 mb-1">
+                            <h3 class="font-bold text-gray-900 text-base">Costela Premium</h3>
+                            <span class="bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">30% OFF</span>
                         </div>
-                        <div>
-                            <div class="flex items-baseline space-x-2 mb-3">
-                                <span class="text-gray-400 text-xs line-through">R$ 52,00/kg</span>
-                                <span class="text-2xl font-black text-green-600">R$ 36,40<span class="text-sm">/kg</span></span>
-                            </div>
-                            <a href="#" class="block w-full bg-orange-500 hover:bg-orange-600 text-white text-center font-bold py-2.5 rounded-xl shadow-sm transition text-sm">
-                                Comprar
-                            </a>
+                        <p class="text-xs text-gray-500">Para churrasco • 1kg</p>
+                        <div class="flex items-baseline space-x-2 mt-2">
+                            <span class="text-gray-400 text-xs line-through">R$ 52,00/kg</span>
+                            <span class="text-xl font-black text-green-600">R$ 36,40<span class="text-xs">/kg</span></span>
                         </div>
                     </div>
-                    <div class="relative w-36 flex-shrink-0 bg-gray-100">
-                        <img src="https://images.unsplash.com/photo-1544025162-d76694265947?w=400&h=500&fit=crop&q=80" 
-                             alt="Costela Premium" 
-                             class="w-full h-full object-cover"
-                             onerror="this.src='https://via.placeholder.com/300x400/8B1A1A/FFFFFF?text=Costela'">
-                        <div class="absolute bottom-6 right-2">
-                            <div class="badge-restam flex items-end justify-center pb-1">
-                                <div class="text-center text-white">
-                                    <p class="text-[7px] font-bold leading-tight">RESTAM</p>
-                                    <p class="text-sm font-black leading-tight">10</p>
+                    <button class="btn-loja text-white font-bold py-2 px-4 rounded-lg text-sm ml-3 flex-shrink-0">
+                        EU QUERO
+                    </button>
+                </div>
+                
+                <div id="detalhes-3" class="card-detalhes border-t border-gray-100">
+                    <div class="p-4 space-y-3">
+                        <div class="relative">
+                            <img src="https://images.unsplash.com/photo-1544025162-d76694265947?w=600&h=400&fit=crop&q=80" 
+                                 alt="Costela Premium" 
+                                 class="w-full h-48 object-cover rounded-lg foto-zoom"
+                                 onerror="this.src='https://via.placeholder.com/600x400/8B1A1A/FFFFFF?text=Costela+Premium'">
+                            <div class="absolute bottom-2 right-2">
+                                <div class="badge-restam flex items-end justify-center pb-1">
+                                    <div class="text-center text-white">
+                                        <p class="text-[7px] font-bold leading-tight">RESTAM</p>
+                                        <p class="text-sm font-black leading-tight">10</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="absolute bottom-0 left-0 right-0 bg-green-700 text-white text-center py-1.5 text-xs font-bold">
-                            Churrasco
+                        <div>
+                            <h4 class="font-bold text-gray-900 text-sm mb-1">Descrição</h4>
+                            <p class="text-xs text-gray-600 leading-relaxed">Costela bovina de primeira, ideal para assar no bafo. Sabor e suculência garantidos para seu churrasco de fim de semana.</p>
                         </div>
+                        <div class="grid grid-cols-2 gap-2 text-xs">
+                            <div class="bg-gray-50 p-2 rounded">
+                                <p class="text-gray-500">Peso</p>
+                                <p class="font-bold text-gray-900">1kg</p>
+                            </div>
+                            <div class="bg-gray-50 p-2 rounded">
+                                <p class="text-gray-500">Preparo</p>
+                                <p class="font-bold text-gray-900">Bafo ou Brasa</p>
+                            </div>
+                        </div>
+                        <a href="#" class="block w-full btn-loja text-white text-center font-bold py-3 rounded-xl shadow-sm transition text-sm">
+                            COMPRAR AGORA
+                        </a>
                     </div>
                 </div>
             </div>
@@ -201,7 +257,7 @@
 
             <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
                 <div class="flex items-center space-x-3 mb-3">
-                    <div class="w-12 h-12 bg-red-50 rounded-lg flex items-center justify-center text-2xl"></div>
+                    <div class="w-12 h-12 bg-red-50 rounded-lg flex items-center justify-center text-2xl">🥩</div>
                     <div class="flex-grow">
                         <h3 class="font-bold text-gray-900 text-sm">Patinho Moído Premium</h3>
                         <p class="text-xs text-gray-500">1kg • R$ 42,00</p>
@@ -213,14 +269,15 @@
                         DescontoVIP: Próxima compra com preço exclusivo e garantido.
                     </p>
                     <div class="grid grid-cols-3 gap-2 text-center">
-                        <div class="bg-white rounded p-1.5 border border-yellow-100"><p class="text-xs text-gray-600">3m</p><p class="text-sm font-bold text-red-700">10%</p></div>
-                        <div class="bg-white rounded p-1.5 border border-yellow-100"><p class="text-xs text-gray-600">5m</p><p class="text-sm font-bold text-red-700">18%</p></div>
-                        <div class="bg-white rounded p-1.5 border border-yellow-100"><p class="text-xs text-gray-600">8m</p><p class="text-sm font-bold text-red-700">25%</p></div>
+                        <div class="bg-white rounded p-1.5 border border-yellow-100"><p class="text-xs text-gray-600">3 meses</p><p class="text-sm font-bold text-red-700">10%</p></div>
+                        <div class="bg-white rounded p-1.5 border border-yellow-100"><p class="text-xs text-gray-600">5 meses</p><p class="text-sm font-bold text-red-700">18%</p></div>
+                        <div class="bg-white rounded p-1.5 border border-yellow-100"><p class="text-xs text-gray-600">8 meses</p><p class="text-sm font-bold text-red-700">25%</p></div>
                     </div>
                 </div>
-                <button class="block w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white text-center font-bold py-3 rounded-xl shadow-sm transition text-sm">
+                <button class="block w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white text-center font-bold py-3 rounded-xl shadow-sm transition text-sm mb-2">
                     QUERO MEU DESCONTO VIP
                 </button>
+                <p class="text-center text-xs text-gray-500 font-medium">Agende suas compras</p>
             </div>
         </section>
     </main>
@@ -232,6 +289,13 @@
              onerror="this.style.display='none'">
         <p class="text-gray-400 text-xs">&copy; 2026 CUPOMCLIC. Powered by SaaS.</p>
     </footer>
+
+    <script>
+        function toggleDetalhes(id) {
+            const detalhes = document.getElementById(id);
+            detalhes.classList.toggle('open');
+        }
+    </script>
 
 </body>
 </html>
