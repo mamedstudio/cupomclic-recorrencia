@@ -9,13 +9,7 @@
     <script>
         tailwind.config = {
             darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        dark: { bg: '#0f172a', card: '#1e293b', border: '#334155', text: '#f1f5f9', muted: '#94a3b8' }
-                    }
-                }
-            }
+            theme: { extend: { colors: { dark: { bg: '#0f172a', card: '#1e293b', border: '#334155', text: '#f1f5f9', muted: '#94a3b8' } } } }
         }
     </script>
     <style>
@@ -65,34 +59,25 @@
         html.dark .bg-green-100 { background-color: #14532d; color: #bbf7d0; }
         html.dark .bg-blue-100 { background-color: #1e3a8a; color: #bfdbfe; }
         html.dark .bg-yellow-100 { background-color: #713f12; color: #fde68a; }
-        html.dark .bg-gray-50.p-2 { background-color: #0f172a; }
         html.dark footer.bg-white { background-color: #1e293b; }
         html.dark #modal-alerta .bg-white { background-color: #1e293b; }
         html.dark #modal-alerta .border-gray-200 { border-color: #334155; }
         html.dark .bg-yellow-50.p-3 { background-color: #422006; }
-        html.dark .bg-gradient-to-r.from-yellow-50 { background: linear-gradient(to right, #422006, #713f12); }
         html.dark .border-yellow-200, html.dark .border-yellow-300, html.dark .border-yellow-100 { border-color: #713f12; }
         html.dark .border-red-100, html.dark .border-red-200 { border-color: #7f1d1d; }
         html.dark .border-green-100 { border-color: #14532d; }
         html.dark .border-yellow-400 { border-color: #ca8a04; }
-        html.dark .bg-red-50.border-red-200 { background-color: #450a0a; border-color: #7f1d1d; }
-        html.dark .bg-blue-50.p-3 { background-color: #172554; }
-        html.dark .border-blue-200 { border-color: #1e3a8a; }
         html.dark .bg-blue-50.text-blue-600 { background-color: #1e3a8a; color: #93c5fd; }
         html.dark .bg-red-50.text-red-600 { background-color: #7f1d1d; color: #fca5a5; }
         html.dark .bg-green-50.text-green-600 { background-color: #14532d; color: #86efac; }
         html.dark .bg-yellow-50.text-yellow-600 { background-color: #713f12; color: #fde047; }
         html.dark .bg-gray-200.hover\:bg-gray-300 { background-color: #334155; }
-        html.dark .bg-gray-200.hover\:bg-gray-300:hover { background-color: #475569; }
         html.dark .bg-purple-600 { background-color: #6b21a8; }
         html.dark .bg-purple-600:hover { background-color: #581c87; }
         html.dark .bg-gradient-to-r.from-yellow-500 { background: linear-gradient(to right, #d97706, #ea580c); }
-        html.dark .bg-gradient-to-r.from-yellow-500:hover { background: linear-gradient(to right, #b45309, #c2410c); }
         html.dark .bg-gradient-to-br.from-yellow-400 { background: linear-gradient(to bottom right, #ca8a04, #ea580c); }
         html.dark .bg-blue-500 { background-color: #1d4ed8; }
         html.dark .bg-purple-500 { background-color: #7e22ce; }
-        html.dark .text-gray-500.text-xs.bg-white { background-color: #1e293b; }
-        html.dark .border-t.border-gray-100 { border-color: #334155; }
         html.dark .text-red-700 { color: #fca5a5; }
         html.dark .text-green-600 { color: #86efac; }
         html.dark .text-yellow-600 { color: #fde047; }
@@ -104,7 +89,6 @@
         html.dark .bg-red-600 { background-color: #dc2626; }
         html.dark .bg-green-700 { background-color: #15803d; }
         html.dark .bg-yellow-500 { background-color: #eab308; }
-        html.dark .border-yellow-300 { border-color: #a16207; }
         html.dark .text-red-700.bg-red-100 { background-color: #7f1d1d; color: #fecaca; }
         html.dark .text-green-700.bg-green-100 { background-color: #14532d; color: #bbf7d0; }
         html.dark .text-blue-700.bg-blue-100 { background-color: #1e3a8a; color: #bfdbfe; }
@@ -113,7 +97,6 @@
         html.dark .bg-gradient-to-r.from-yellow-50.to-orange-50 { background: linear-gradient(to right, #422006, #7c2d12); }
         html.dark .bg-white.rounded { background-color: #0f172a; }
         html.dark .bg-white.rounded-xl, html.dark .bg-white.rounded-2xl { background-color: #1e293b; }
-        html.dark .bg-gray-200.rounded-full, html.dark .bg-gray-100.rounded-lg, html.dark .bg-gray-50.p-2.rounded { background-color: #334155; }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 font-sans antialiased min-h-screen flex flex-col">
@@ -149,11 +132,96 @@
 
     <main id="painel-admin" class="hidden max-w-md mx-auto px-4 py-6 flex-grow w-full fade-in">
         <div class="bg-white rounded-xl shadow-sm mb-6 overflow-hidden border border-gray-200">
-            <div class="grid grid-cols-4 gap-1 p-2">
-                <button onclick="mostrarSecao('produtos')" id="tab-produtos" class="tab-ativa py-2 px-1 rounded-lg text-[10px] sm:text-xs font-semibold transition">📦 Produtos</button>
+            <div class="grid grid-cols-5 gap-1 p-2">
+                <button onclick="mostrarSecao('dashboard')" id="tab-dashboard" class="tab-inativa py-2 px-1 rounded-lg text-[10px] sm:text-xs font-semibold transition">📊</button>
+                <button onclick="mostrarSecao('produtos')" id="tab-produtos" class="tab-ativa py-2 px-1 rounded-lg text-[10px] sm:text-xs font-semibold transition"> Produtos</button>
                 <button onclick="mostrarSecao('assinantes')" id="tab-assinantes" class="tab-inativa py-2 px-1 rounded-lg text-[10px] sm:text-xs font-semibold transition">👑 VIP</button>
                 <button onclick="mostrarSecao('descontos')" id="tab-descontos" class="tab-inativa py-2 px-1 rounded-lg text-[10px] sm:text-xs font-semibold transition">% VIP</button>
                 <button onclick="mostrarSecao('configuracoes')" id="tab-configuracoes" class="tab-inativa py-2 px-1 rounded-lg text-[10px] sm:text-xs font-semibold transition">⚙️</button>
+            </div>
+        </div>
+
+        <!-- SEÇÃO: DASHBOARD -->
+        <div id="secao-dashboard" class="secao-admin">
+            <div class="mb-4">
+                <h2 class="text-lg font-bold text-gray-900 mb-1">📊 Dashboard</h2>
+                <p class="text-xs text-gray-500">Visão geral do seu negócio</p>
+            </div>
+
+            <!-- CARDS DE MÉTRICAS -->
+            <div class="grid grid-cols-2 gap-3 mb-4">
+                <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-2xl">📦</span>
+                        <span class="text-[10px] bg-red-100 text-red-700 px-2 py-0.5 rounded-full font-bold">TOTAL</span>
+                    </div>
+                    <p class="text-2xl font-black text-gray-900" id="dash-total-produtos">0</p>
+                    <p class="text-xs text-gray-500">Produtos ativos</p>
+                </div>
+                <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-2xl">👑</span>
+                        <span class="text-[10px] bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-full font-bold">VIP</span>
+                    </div>
+                    <p class="text-2xl font-black text-gray-900" id="dash-total-vip">0</p>
+                    <p class="text-xs text-gray-500">Assinantes</p>
+                </div>
+                <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-2xl">🔥</span>
+                        <span class="text-[10px] bg-red-100 text-red-700 px-2 py-0.5 rounded-full font-bold">SEMANA</span>
+                    </div>
+                    <p class="text-2xl font-black text-gray-900" id="dash-ofertas-semana">0</p>
+                    <p class="text-xs text-gray-500">Ofertas ativas</p>
+                </div>
+                <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-2xl">🛒</span>
+                        <span class="text-[10px] bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-bold">DIA A DIA</span>
+                    </div>
+                    <p class="text-2xl font-black text-gray-900" id="dash-dia-a-dia">0</p>
+                    <p class="text-xs text-gray-500">Produtos fixos</p>
+                </div>
+            </div>
+
+            <!-- ALERTAS IMPORTANTES -->
+            <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm mb-4">
+                <h3 class="text-sm font-bold text-gray-900 mb-3 flex items-center">
+                    <span class="mr-2">⚠️</span> Atenção Necessária
+                </h3>
+                <div id="dash-alertas" class="space-y-2">
+                    <p class="text-center text-gray-500 py-4 text-xs">Carregando...</p>
+                </div>
+            </div>
+
+            <!-- DISTRIBUIÇÃO POR TIPO -->
+            <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm mb-4">
+                <h3 class="text-sm font-bold text-gray-900 mb-3 flex items-center">
+                    <span class="mr-2">📊</span> Produtos por Tipo
+                </h3>
+                <div class="space-y-2" id="dash-distribuicao">
+                    <p class="text-center text-gray-500 py-4 text-xs">Carregando...</p>
+                </div>
+            </div>
+
+            <!-- PRÓXIMOS ALERTAS VIP -->
+            <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm mb-4">
+                <h3 class="text-sm font-bold text-gray-900 mb-3 flex items-center">
+                    <span class="mr-2">🔔</span> Próximos Alertas VIP
+                </h3>
+                <div id="dash-proximos-alertas" class="space-y-2">
+                    <p class="text-center text-gray-500 py-4 text-xs">Carregando...</p>
+                </div>
+            </div>
+
+            <!-- TOP FAVORITOS -->
+            <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+                <h3 class="text-sm font-bold text-gray-900 mb-3 flex items-center">
+                    <span class="mr-2">❤️</span> Produtos Mais Desejados
+                </h3>
+                <div id="dash-top-favoritos" class="space-y-2">
+                    <p class="text-center text-gray-500 py-4 text-xs">Carregando...</p>
+                </div>
             </div>
         </div>
 
@@ -299,7 +367,6 @@
                 </form>
             </div>
 
-            <!-- FILTROS PRODUTOS -->
             <div class="bg-white p-4 rounded-2xl shadow-md border border-gray-200 mb-4">
                 <h3 class="text-sm font-bold text-gray-900 mb-3 flex items-center"><span class="mr-2">🔍</span> Buscar e Filtrar Produtos</h3>
                 <div class="space-y-3">
@@ -329,7 +396,7 @@
             </div>
         </div>
 
-        <!-- SEÇÃO: ASSINANTES VIP (COM FILTROS) -->
+        <!-- SEÇÃO: ASSINANTES VIP -->
         <div id="secao-assinantes" class="secao-admin">
             <div class="bg-white p-5 rounded-2xl shadow-md border border-gray-200 mb-6">
                 <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center"><span class="badge-vip text-white w-6 h-6 rounded-full flex items-center justify-center text-xs mr-2">👑</span>Cadastrar Assinante VIP</h2>
@@ -352,7 +419,6 @@
                 </form>
             </div>
 
-            <!-- FILTROS VIP (NOVO!) -->
             <div class="bg-white p-4 rounded-2xl shadow-md border border-gray-200 mb-4">
                 <h3 class="text-sm font-bold text-gray-900 mb-3 flex items-center"><span class="mr-2">🔍</span> Buscar Assinantes VIP</h3>
                 <div class="space-y-3">
@@ -362,7 +428,7 @@
                     </div>
                     <div class="grid grid-cols-3 gap-2">
                         <button onclick="filtrarStatusAssinante('todos')" id="filtro-vip-todos" class="filtro-vip bg-health text-white text-xs font-semibold py-2 rounded-lg transition">Todos</button>
-                        <button onclick="filtrarStatusAssinante('alertar')" id="filtro-vip-alertar" class="filtro-vip bg-yellow-100 text-yellow-700 text-xs font-semibold py-2 rounded-lg transition">🔔 Alertar</button>
+                        <button onclick="filtrarStatusAssinante('alertar')" id="filtro-vip-alertar" class="filtro-vip bg-yellow-100 text-yellow-700 text-xs font-semibold py-2 rounded-lg transition"> Alertar</button>
                         <button onclick="filtrarStatusAssinante('ok')" id="filtro-vip-ok" class="filtro-vip bg-green-100 text-green-700 text-xs font-semibold py-2 rounded-lg transition">✅ OK</button>
                     </div>
                     <div class="flex items-center justify-between pt-2 border-t border-gray-200">
@@ -409,7 +475,7 @@
                             </div>
                         </div>
                     </div>
-                    <button type="submit" class="w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white font-bold py-3 rounded-xl shadow-md transition text-sm">💾 Salvar Descontos VIP</button>
+                    <button type="submit" class="w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white font-bold py-3 rounded-xl shadow-md transition text-sm"> Salvar Descontos VIP</button>
                 </form>
             </div>
         </div>
@@ -437,7 +503,6 @@
         </div>
     </main>
 
-    <!-- MODAL DE ALERTA -->
     <div id="modal-alerta" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl max-w-md w-full max-h-[80vh] overflow-y-auto">
             <div class="p-5 border-b border-gray-200 flex justify-between items-center">
@@ -451,10 +516,8 @@
     <footer class="text-center py-6 text-gray-400 text-xs bg-white border-t border-gray-100 mt-auto">&copy; 2026 CUPOMCLIC. Powered by SaaS.</footer>
 
     <script>
-        // SUA ANON KEY ATUALIZADA
         const SUPABASE_URL = 'https://rzapsmtasfdqedlzmyvh.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ6YXBzbXRhc2ZkcWVkbHpteXZoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE0MDQ0NTksImV4cCI6MjEwNjk4MDQ1OX0.EkBMhJwM1aH8TH9aO6JZxkgco2XwSjfu_BsTPZjGfMs';
-
         const slugLoja = 'jl-sabores-nobres';
         let TABELA_DESCONTOS = [{ meses: 3, desconto: 10 }, { meses: 5, desconto: 18 }, { meses: 8, desconto: 25 }];
         const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -466,12 +529,9 @@
         let dataAtual = new Date();
         let arquivoSelecionado = null;
 
-        // FILTROS PRODUTOS
         let filtroTipoAtual = 'todos';
         let termoBusca = '';
         let ordenacaoAtual = 'recente';
-
-        // FILTROS ASSINANTES
         let termoBuscaAssinante = '';
         let filtroStatusAssinante = 'todos';
 
@@ -479,21 +539,16 @@
             const html = document.documentElement;
             const isDark = html.classList.toggle('dark');
             localStorage.setItem('darkMode', isDark ? 'true' : 'false');
-            atualizarIconeDarkMode(isDark);
-        }
-
-        function atualizarIconeDarkMode(isDark) {
-            document.getElementById('icon-dark-mode').textContent = isDark ? '☀️' : '🌙';
+            document.getElementById('icon-dark-mode').textContent = isDark ? '️' : '🌙';
         }
 
         function carregarPreferenciaDarkMode() {
             if (localStorage.getItem('darkMode') === 'true') {
                 document.documentElement.classList.add('dark');
-                atualizarIconeDarkMode(true);
+                document.getElementById('icon-dark-mode').textContent = '☀️';
             }
         }
 
-        // --- FILTROS PRODUTOS ---
         function filtrarTipo(tipo) {
             filtroTipoAtual = tipo;
             document.querySelectorAll('.filtro-tipo').forEach(btn => { btn.classList.remove('bg-health', 'text-white'); btn.classList.add('bg-gray-100', 'text-gray-700'); });
@@ -510,8 +565,8 @@
         function ordenarPor(criterio) {
             ordenacaoAtual = criterio;
             const btn = document.getElementById('btn-ordenar');
-            const textos = { recente: '🕐 Mais recente', nome: '🔤 Nome A-Z', preco: '💲 Menor preço', estoque: '⚠️ Menor estoque' };
-            btn.textContent = textos[criterio] || '🕐 Mais recente';
+            const textos = { recente: ' Mais recente', nome: '🔤 Nome A-Z', preco: '💲 Menor preço', estoque: '⚠️ Menor estoque' };
+            btn.textContent = textos[criterio] || ' Mais recente';
             renderizarListaAdmin();
         }
 
@@ -528,7 +583,6 @@
             let filtrados = [...produtos];
             if (filtroTipoAtual !== 'todos') filtrados = filtrados.filter(p => p.tipo === filtroTipoAtual);
             if (termoBusca) filtrados = filtrados.filter(p => (p.nome && p.nome.toLowerCase().includes(termoBusca)) || (p.subtitulo && p.subtitulo.toLowerCase().includes(termoBusca)) || (p.categoria && p.categoria.toLowerCase().includes(termoBusca)));
-            
             if (ordenacaoAtual === 'nome') filtrados.sort((a, b) => (a.nome || '').localeCompare(b.nome || ''));
             else if (ordenacaoAtual === 'preco') filtrados.sort((a, b) => (parseFloat(a.preco_promocional || a.preco_original) || 0) - (parseFloat(b.preco_promocional || b.preco_original) || 0));
             else if (ordenacaoAtual === 'estoque') filtrados.sort((a, b) => (a.estoque_restam || 9999) - (b.estoque_restam || 9999));
@@ -536,7 +590,6 @@
             return filtrados;
         }
 
-        // --- FILTROS ASSINANTES (NOVO!) ---
         function filtrarStatusAssinante(status) {
             filtroStatusAssinante = status;
             document.querySelectorAll('.filtro-vip').forEach(btn => { btn.classList.remove('bg-health', 'text-white'); btn.classList.add('bg-gray-100', 'text-gray-700'); });
@@ -560,27 +613,128 @@
         function getAssinantesFiltrados() {
             let filtrados = [...assinantes];
             const hoje = new Date();
+            if (filtroStatusAssinante === 'alertar') filtrados = filtrados.filter(a => { const prox = a.data_proximo_alerta ? new Date(a.data_proximo_alerta) : null; return prox && prox <= hoje; });
+            else if (filtroStatusAssinante === 'ok') filtrados = filtrados.filter(a => { const prox = a.data_proximo_alerta ? new Date(a.data_proximo_alerta) : null; return !prox || prox > hoje; });
+            if (termoBuscaAssinante) filtrados = filtrados.filter(a => (a.nome && a.nome.toLowerCase().includes(termoBuscaAssinante)) || (a.whatsapp && a.whatsapp.includes(termoBuscaAssinante)) || (a.produtos?.nome && a.produtos.nome.toLowerCase().includes(termoBuscaAssinante)));
+            return filtrados;
+        }
+
+        // ========== DASHBOARD ==========
+        function atualizarDashboard() {
+            const totalProdutos = produtos.length;
+            const ofertasSemana = produtos.filter(p => p.tipo === 'oferta_semanal').length;
+            const diaADia = produtos.filter(p => p.tipo === 'dia_a_dia').length;
+            const recorrencia = produtos.filter(p => p.tipo === 'recorrencia').length;
+            const totalVIP = assinantes.length;
+            const hoje = new Date();
+            const alertasPendentes = assinantes.filter(a => { const prox = a.data_proximo_alerta ? new Date(a.data_proximo_alerta) : null; return prox && prox <= hoje; });
+            const estoqueBaixo = produtos.filter(p => p.estoque_restam !== null && p.estoque_restam !== undefined && p.estoque_restam <= 5 && p.estoque_restam > 0);
+            const semEstoque = produtos.filter(p => p.estoque_restam === 0);
+
+            document.getElementById('dash-total-produtos').textContent = totalProdutos;
+            document.getElementById('dash-total-vip').textContent = totalVIP;
+            document.getElementById('dash-ofertas-semana').textContent = ofertasSemana;
+            document.getElementById('dash-dia-a-dia').textContent = diaADia;
+
+            // Alertas
+            const alertasDiv = document.getElementById('dash-alertas');
+            let alertasHTML = '';
+            if (alertasPendentes.length > 0) alertasHTML += `<div class="flex items-center p-2 bg-yellow-50 rounded-lg border border-yellow-200"><span class="text-xl mr-2"></span><div class="flex-grow"><p class="text-xs font-bold text-gray-900">${alertasPendentes.length} alerta(s) pendente(s)</p><p class="text-[10px] text-gray-600">Clientes prontos para receber mensagem</p></div></div>`;
+            if (estoqueBaixo.length > 0) alertasHTML += `<div class="flex items-center p-2 bg-orange-50 rounded-lg border border-orange-200"><span class="text-xl mr-2">⚠️</span><div class="flex-grow"><p class="text-xs font-bold text-gray-900">${estoqueBaixo.length} produto(s) com estoque baixo</p><p class="text-[10px] text-gray-600">Menos de 5 unidades</p></div></div>`;
+            if (semEstoque.length > 0) alertasHTML += `<div class="flex items-center p-2 bg-red-50 rounded-lg border border-red-200"><span class="text-xl mr-2">🚫</span><div class="flex-grow"><p class="text-xs font-bold text-gray-900">${semEstoque.length} produto(s) sem estoque</p><p class="text-[10px] text-gray-600">Precisa reabastecer</p></div></div>`;
+            if (!alertasHTML) alertasHTML = '<p class="text-center text-gray-500 py-4 text-xs">✅ Tudo em ordem! Nenhum alerta pendente.</p>';
+            alertasDiv.innerHTML = alertasHTML;
+
+            // Distribuição
+            const distDiv = document.getElementById('dash-distribuicao');
+            const maxCount = Math.max(ofertasSemana, diaADia, recorrencia, 1);
+            distDiv.innerHTML = `
+                <div class="space-y-2">
+                    <div>
+                        <div class="flex justify-between text-xs mb-1"><span class="text-gray-700">🔥 Oferta da Semana</span><span class="font-bold text-gray-900">${ofertasSemana}</span></div>
+                        <div class="w-full bg-gray-200 rounded-full h-2"><div class="bg-red-600 h-2 rounded-full" style="width: ${(ofertasSemana/maxCount)*100}%"></div></div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-xs mb-1"><span class="text-gray-700">🛒 Dia a Dia</span><span class="font-bold text-gray-900">${diaADia}</span></div>
+                        <div class="w-full bg-gray-200 rounded-full h-2"><div class="bg-blue-600 h-2 rounded-full" style="width: ${(diaADia/maxCount)*100}%"></div></div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-xs mb-1"><span class="text-gray-700">📦 Recorrência</span><span class="font-bold text-gray-900">${recorrencia}</span></div>
+                        <div class="w-full bg-gray-200 rounded-full h-2"><div class="bg-green-600 h-2 rounded-full" style="width: ${(recorrencia/maxCount)*100}%"></div></div>
+                    </div>
+                </div>`;
+
+            // Próximos alertas
+            const proxDiv = document.getElementById('dash-proximos-alertas');
+            const proximosAlertas = [...assinantes]
+                .filter(a => a.data_proximo_alerta)
+                .sort((a, b) => new Date(a.data_proximo_alerta) - new Date(b.data_proximo_alerta))
+                .slice(0, 5);
             
-            if (filtroStatusAssinante === 'alertar') {
-                filtrados = filtrados.filter(a => {
-                    const prox = a.data_proximo_alerta ? new Date(a.data_proximo_alerta) : null;
-                    return prox && prox <= hoje;
-                });
-            } else if (filtroStatusAssinante === 'ok') {
-                filtrados = filtrados.filter(a => {
-                    const prox = a.data_proximo_alerta ? new Date(a.data_proximo_alerta) : null;
-                    return !prox || prox > hoje;
-                });
+            if (proximosAlertas.length === 0) {
+                proxDiv.innerHTML = '<p class="text-center text-gray-500 py-4 text-xs">Nenhum alerta agendado.</p>';
+            } else {
+                proxDiv.innerHTML = proximosAlertas.map(ass => {
+                    const data = new Date(ass.data_proximo_alerta);
+                    const diasRestantes = Math.ceil((data - hoje) / (1000 * 60 * 60 * 24));
+                    const urgente = diasRestantes <= 0;
+                    const cor = urgente ? 'text-red-600' : diasRestantes <= 3 ? 'text-yellow-600' : 'text-gray-700';
+                    const texto = urgente ? 'HOJE' : diasRestantes === 1 ? 'Amanhã' : `Em ${diasRestantes} dias`;
+                    return `<div class="flex items-center p-2 bg-gray-50 rounded-lg">
+                        <div class="w-8 h-8 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center text-white text-xs font-bold mr-2">👑</div>
+                        <div class="flex-grow min-w-0">
+                            <p class="text-xs font-bold text-gray-900 truncate">${ass.nome}</p>
+                            <p class="text-[10px] text-gray-500 truncate">${ass.produtos?.nome || 'Produto'}</p>
+                        </div>
+                        <span class="text-xs font-bold ${cor}">${texto}</span>
+                    </div>`;
+                }).join('');
             }
 
-            if (termoBuscaAssinante) {
-                filtrados = filtrados.filter(a => 
-                    (a.nome && a.nome.toLowerCase().includes(termoBuscaAssinante)) ||
-                    (a.whatsapp && a.whatsapp.includes(termoBuscaAssinante)) ||
-                    (a.produtos?.nome && a.produtos.nome.toLowerCase().includes(termoBuscaAssinante))
-                );
+            // Carregar Top Favoritos
+            atualizarTopFavoritos();
+        }
+
+        async function atualizarTopFavoritos() {
+            const div = document.getElementById('dash-top-favoritos');
+            if (!div) return;
+            
+            try {
+                const { data } = await db.from('favoritos').select('produto_id, produtos(nome, foto_url)').eq('estabelecimento_id', ESTABELECIMENTO_ID);
+                
+                if (!data || data.length === 0) {
+                    div.innerHTML = '<p class="text-center text-gray-500 py-4 text-xs">Nenhum favorito ainda. Seus clientes vão adorar essa feature!</p>';
+                    return;
+                }
+                
+                // Agrupar por produto e contar
+                const contagem = {};
+                data.forEach(f => {
+                    contagem[f.produto_id] = (contagem[f.produto_id] || 0) + 1;
+                });
+                
+                // Ordenar por mais favoritados
+                const ranking = Object.entries(contagem)
+                    .sort((a, b) => b[1] - a[1])
+                    .slice(0, 5);
+                
+                div.innerHTML = ranking.map(([produtoId, count], index) => {
+                    const produto = data.find(f => f.produto_id === produtoId)?.produtos;
+                    const nome = produto?.nome || 'Produto';
+                    const medalha = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '' : `${index + 1}º`;
+                    return `
+                    <div class="flex items-center p-2 bg-gray-50 rounded-lg">
+                        <span class="text-lg mr-2">${medalha}</span>
+                        <div class="flex-grow min-w-0">
+                            <p class="text-xs font-bold text-gray-900 truncate">${nome}</p>
+                            <p class="text-[10px] text-gray-500">${count} pessoa${count > 1 ? 's' : ''} favoritaram</p>
+                        </div>
+                    </div>`;
+                }).join('');
+            } catch (e) {
+                console.error('Erro ao carregar favoritos:', e);
+                div.innerHTML = '<p class="text-center text-gray-500 py-4 text-xs">Erro ao carregar favoritos. Verifique se a tabela foi criada.</p>';
             }
-            return filtrados;
         }
 
         document.addEventListener('DOMContentLoaded', async () => {
@@ -606,7 +760,7 @@
             await carregarDescontosVIP();
             await carregarProdutos();
             await carregarAssinantes();
-            mostrarSecao('produtos');
+            mostrarSecao('dashboard');
         }
 
         async function carregarEstabelecimento() {
@@ -677,6 +831,7 @@
                 produtos = data || [];
                 renderizarListaAdmin();
                 atualizarSelectProdutos();
+                atualizarDashboard();
             } catch (error) { console.error('Erro produtos:', error); }
         }
 
@@ -686,6 +841,7 @@
                 assinantes = data || [];
                 renderizarListaAssinantes();
                 renderizarCalendarioVIP();
+                atualizarDashboard();
             } catch (error) { console.error('Erro assinantes:', error); }
         }
 
@@ -696,9 +852,9 @@
             document.getElementById('tab-' + secao).classList.remove('tab-inativa');
             document.getElementById('tab-' + secao).classList.add('tab-ativa');
             if (secao === 'assinantes') { renderizarCalendarioVIP(); renderizarListaAssinantes(); }
+            if (secao === 'dashboard') atualizarDashboard();
         }
 
-        // UPLOAD DE IMAGEM
         function setupDragAndDrop() {
             const uploadArea = document.getElementById('upload-area');
             ['dragenter', 'dragover'].forEach(e => uploadArea.addEventListener(e, ev => { ev.preventDefault(); uploadArea.classList.add('dragover'); }));
@@ -875,7 +1031,7 @@
                 const isDiaADia = prod.tipo === 'dia_a_dia';
                 const isUnico = prod.tipo_preco === 'unico';
                 const desconto = (prod.preco_original && prod.preco_promocional && !isUnico) ? Math.round(((prod.preco_original - prod.preco_promocional) / prod.preco_original) * 100) : 0;
-                const entregaIcon = prod.tipo_entrega_produto === 'delivery' ? '🚚' : prod.tipo_entrega_produto === 'retirada' ? '🏪' : '🚚🏪';
+                const entregaIcon = prod.tipo_entrega_produto === 'delivery' ? '🚚' : prod.tipo_entrega_produto === 'retirada' ? '🏪' : '🚚';
                 
                 let badgeTipo = isOferta ? '<span class="text-[10px] px-2 py-0.5 rounded-full bg-red-100 text-red-700">OFERTA SEMANA</span>' :
                                 isDiaADia ? '<span class="text-[10px] px-2 py-0.5 rounded-full bg-blue-100 text-blue-700">DIA A DIA</span>' :
@@ -894,7 +1050,7 @@
                         <p class="text-xs text-gray-500">R$ ${prod.preco_promocional || prod.preco_original} ${desconto > 0 ? '| ' + desconto + '% OFF' : ''} | Restam: ${prod.estoque_restam || 'N/A'} ${entregaIcon}</p>
                     </div>
                     <div class="flex space-x-1 ml-2">
-                        <button onclick="editarProduto(${indexReal})" class="p-2 bg-blue-50 text-blue-600 rounded-lg text-xs">✏️</button>
+                        <button onclick="editarProduto(${indexReal})" class="p-2 bg-blue-50 text-blue-600 rounded-lg text-xs">️</button>
                         <button onclick="excluirProduto(${indexReal})" class="p-2 bg-red-50 text-red-600 rounded-lg text-xs">🗑️</button>
                     </div>
                 </div>`;
@@ -1036,7 +1192,7 @@
                         <div class="flex space-x-2 pt-3">
                             ${deveEnviar ? `<button onclick="enviarAlertaWhatsApp(${indexReal})" class="flex-1 bg-gradient-to-r from-yellow-500 to-orange-500 text-white text-center font-semibold py-2 rounded-lg text-xs">📱 Enviar Alerta VIP</button>` : ''}
                             <button onclick="editarAssinante(${indexReal})" class="p-2 bg-blue-50 text-blue-600 rounded-lg text-xs">✏️</button>
-                            <button onclick="excluirAssinante(${indexReal})" class="p-2 bg-red-50 text-red-600 rounded-lg text-xs">🗑️</button>
+                            <button onclick="excluirAssinante(${indexReal})" class="p-2 bg-red-50 text-red-600 rounded-lg text-xs">️</button>
                         </div>
                     </div>
                 </div>`;
@@ -1061,14 +1217,10 @@
         }
 
         function enviarAlertaWhatsApp(index) {
-           const ass = assinantes[index];
-           const produtoNome = ass.produtos?.nome || 'produto';
-           const desconto = ass.desconto_atual;
-    
-           const mensagem = `Olá ${ass.nome}! 👑\n\nSeu *${produtoNome}* está disponível com *desconto VIP de ${desconto}% OFF*!\n\nAproveite essa condição exclusiva para clientes fiéis.\n\n👉 *Ver ofertas:* https://cupomclic-recorrencia.vercel.app/JL-Ofertas.html\n\nResponda *QUERO* para receber o link de pagamento.`;
-    
-           const linkZap = `https://wa.me/${ass.whatsapp}?text=${encodeURIComponent(mensagem)}`;
-           window.open(linkZap, '_blank');
+            const ass = assinantes[index];
+            const produtoNome = ass.produtos?.nome || 'produto';
+            const msg = `Olá ${ass.nome}! \n\nSeu *${produtoNome}* está disponível com *desconto VIP de ${ass.desconto_atual}% OFF*!\n\nAproveite essa condição exclusiva para clientes fiéis.\n\n👉 *Ver ofertas:* https://cupomclic-recorrencia.vercel.app/JL-Ofertas.html\n\nResponda *QUERO* para receber o link de pagamento.`;
+            window.open(`https://wa.me/${ass.whatsapp}?text=${encodeURIComponent(msg)}`, '_blank');
         }
 
         function renderizarCalendarioVIP() {
@@ -1098,7 +1250,7 @@
             const partes = dataStr.split('-');
             document.getElementById('modal-conteudo').innerHTML = `<p class="text-sm text-gray-600 mb-3">Alertas para ${partes[2]}/${partes[1]}/${partes[0]}:</p>`;
             alertasDoDia.forEach(ass => {
-                const msg = `Olá ${ass.nome}! 👑\n\nSeu *${ass.produtos?.nome || 'Produto'}* está disponível com *desconto VIP de ${ass.desconto_atual}% OFF*!\n\nResponda *QUERO*.`;
+                const msg = `Olá ${ass.nome}! 👑\n\nSeu *${ass.produtos?.nome || 'Produto'}* está disponível com *desconto VIP de ${ass.desconto_atual}% OFF*!\n\n👉 *Ver ofertas:* https://cupomclic-recorrencia.vercel.app/JL-Ofertas.html\n\nResponda *QUERO*.`;
                 document.getElementById('modal-conteudo').innerHTML += `<div class="bg-yellow-50 p-3 rounded-lg border border-yellow-200">
                     <p class="font-bold text-sm text-gray-900">${ass.nome}</p>
                     <p class="text-xs text-gray-600">📱 ${ass.whatsapp}</p>
