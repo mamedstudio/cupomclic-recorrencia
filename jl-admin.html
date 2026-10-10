@@ -18,10 +18,6 @@
         .dia-hoje { border: 2px solid var(--cor-primaria); }
         .dia-clicavel { cursor: pointer; transition: all 0.2s; }
         .dia-clicavel:hover { background-color: #dcfce7; transform: scale(1.1); }
-        .accordion-content { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
-        .accordion-content.open { max-height: 2000px; }
-        .rotate-icon { transition: transform 0.3s; }
-        .rotate-icon.open { transform: rotate(180deg); }
         .tab-ativa { background-color: var(--cor-primaria); color: white; }
         .tab-inativa { background-color: #f3f4f6; color: #374151; }
         .tab-inativa:hover { background-color: #e5e7eb; }
@@ -45,6 +41,7 @@
     <div id="tela-login" class="flex-grow flex items-center justify-center p-4">
         <div class="bg-white p-8 rounded-2xl shadow-lg max-w-sm w-full">
             <h2 class="text-2xl font-bold text-gray-900 mb-6 text-center">🔒 Acesso Restrito</h2>
+            <div id="msg-erro" class="hidden bg-red-50 border border-red-200 text-red-700 text-xs p-3 rounded-lg mb-4"></div>
             <form id="form-login" class="space-y-4">
                 <div>
                     <label class="block text-sm font-semibold text-gray-600 mb-1">Senha</label>
@@ -59,18 +56,14 @@
     <main id="painel-admin" class="hidden max-w-md mx-auto px-4 py-6 flex-grow w-full fade-in">
         
         <div class="bg-white rounded-xl shadow-sm mb-6 overflow-hidden border border-gray-200">
-            <div class="grid grid-cols-3 sm:grid-cols-6 gap-1 p-2">
-                <button onclick="mostrarSecao('calendario')" id="tab-calendario" class="tab-ativa py-2 px-1 rounded-lg text-[10px] sm:text-xs font-semibold transition">📅 Calend</button>
-                <button onclick="mostrarSecao('produtos')" id="tab-produtos" class="tab-inativa py-2 px-1 rounded-lg text-[10px] sm:text-xs font-semibold transition">📦 Produtos</button>
-                <button onclick="mostrarSecao('assinaturas')" id="tab-assinaturas" class="tab-inativa py-2 px-1 rounded-lg text-[10px] sm:text-xs font-semibold transition">👥 Assinar</button>
-                <button onclick="mostrarSecao('clientes')" id="tab-clientes" class="tab-inativa py-2 px-1 rounded-lg text-[10px] sm:text-xs font-semibold transition">🔍 Clientes</button>
-                <button onclick="mostrarSecao('solicitacoes')" id="tab-solicitacoes" class="tab-inativa py-2 px-1 rounded-lg text-[10px] sm:text-xs font-semibold transition">💡 Solicit</button>
-                <button onclick="mostrarSecao('configuracoes')" id="tab-configuracoes" class="tab-inativa py-2 px-1 rounded-lg text-[10px] sm:text-xs font-semibold transition">⚙️ Config</button>
+            <div class="grid grid-cols-2 gap-1 p-2">
+                <button onclick="mostrarSecao('produtos')" id="tab-produtos" class="tab-ativa py-2 px-1 rounded-lg text-xs font-semibold transition">📦 Produtos</button>
+                <button onclick="mostrarSecao('configuracoes')" id="tab-configuracoes" class="tab-inativa py-2 px-1 rounded-lg text-xs font-semibold transition">⚙️ Config</button>
             </div>
         </div>
 
         <!-- SEÇÃO: PRODUTOS -->
-        <div id="secao-produtos" class="secao-admin">
+        <div id="secao-produtos" class="secao-admin ativa">
             <div class="bg-white p-5 rounded-2xl shadow-md border border-gray-100 mb-6">
                 <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center"><span class="bg-health text-white w-6 h-6 rounded-full flex items-center justify-center text-xs mr-2">+</span>Adicionar Produto</h2>
                 <form id="form-produto" class="space-y-4">
@@ -79,7 +72,7 @@
                     <div>
                         <label class="block text-xs font-semibold text-gray-600 mb-1">Tipo de Produto</label>
                         <select id="tipo-produto" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm bg-white">
-                            <option value="oferta_semanal">🔥 Oferta da Semana (Empório)</option>
+                            <option value="oferta_semanal"> Oferta da Semana (Empório)</option>
                             <option value="recorrencia">📦 Produto de Recorrência</option>
                         </select>
                     </div>
@@ -197,7 +190,7 @@
         <!-- SEÇÃO: CONFIGURAÇÕES -->
         <div id="secao-configuracoes" class="secao-admin">
             <div class="bg-white p-5 rounded-2xl shadow-md border border-gray-100 mb-6">
-                <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center"><span class="bg-purple-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs mr-2"></span>Personalizar Estabelecimento</h2>
+                <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center"><span class="bg-purple-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs mr-2">⚙️</span>Personalizar Estabelecimento</h2>
                 <form id="form-estabelecimento" class="space-y-4">
                     <div><label class="block text-xs font-semibold text-gray-600 mb-1">Nome do Estabelecimento</label><input type="text" id="est-nome" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
                     <div><label class="block text-xs font-semibold text-gray-600 mb-1">Tipo</label>
@@ -223,7 +216,6 @@
         const SUPABASE_URL = 'https://hcgsttzjolotljqdvlat.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhjZ3N0dHpqb2xvdGxqcWR2bGF0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE0MDU5MTMsImV4cCI6MjEwNjk4MTkxM30.AWbtRx82wDp2K-yERqQy9RA8dYWXev6B14jP5isLkVM';
 
-        // FIXO PARA JL SABORES NOBRES
         const slugLoja = 'jl-sabores-nobres';
 
         let TABELA_DESCONTOS = [{ meses: 3, desconto: 12 }, { meses: 5, desconto: 20 }, { meses: 8, desconto: 30 }];
@@ -232,6 +224,7 @@
         let estabelecimento = null, produtos = [];
         let ESTABELECIMENTO_ID = 1;
         let SENHA_ADMIN = '1234';
+        let lojaCriada = false; // Flag para evitar loop
 
         document.addEventListener('DOMContentLoaded', async () => {
             await carregarEstabelecimento();
@@ -245,18 +238,28 @@
                 document.getElementById('painel-admin').classList.remove('hidden');
                 iniciarPainel();
             } else {
-                alert('Senha incorreta!');
+                const msg = document.getElementById('msg-erro');
+                msg.textContent = 'Senha incorreta!';
+                msg.classList.remove('hidden');
             }
         });
 
         async function iniciarPainel() {
             await carregarProdutos();
-            mostrarSecao('produtos'); // Abre direto em produtos para facilitar o cadastro
+            mostrarSecao('produtos');
         }
 
         async function carregarEstabelecimento() {
             try {
+                // Busca na tabela lojas pelo slug
                 const { data, error } = await db.from('lojas').select('*').eq('slug', slugLoja).limit(1);
+                
+                if (error) {
+                    console.error('Erro ao buscar loja:', error);
+                    // Se der erro de coluna, tenta com estabelecimentos
+                    await tentarEstabelecimentos();
+                    return;
+                }
                 
                 if (data && data.length > 0) {
                     estabelecimento = data[0];
@@ -273,20 +276,69 @@
                     document.getElementById('est-tipo').value = estabelecimento.tipo || 'emporio';
                     document.getElementById('est-whatsapp').value = estabelecimento.whatsapp || '';
                     document.getElementById('est-senha').value = SENHA_ADMIN;
-                } else {
-                    // Cria a loja JL automaticamente se não existir
+                } else if (!lojaCriada) {
+                    // Só cria uma vez
+                    lojaCriada = true;
+                    await criarLojaJL();
+                }
+            } catch (e) { 
+                console.error('Erro estabelecimento:', e); 
+            }
+        }
+
+        async function tentarEstabelecimentos() {
+            // Fallback: tenta na tabela estabelecimentos (caso o SQL do passo 1 ainda não tenha sido rodado)
+            try {
+                const { data, error } = await db.from('estabelecimentos').select('*').eq('slug', slugLoja).limit(1);
+                if (data && data.length > 0) {
+                    estabelecimento = data[0];
+                    ESTABELECIMENTO_ID = estabelecimento.id;
+                    SENHA_ADMIN = estabelecimento.senha_admin || '1234';
+                    document.getElementById('nome-loja-admin').textContent = estabelecimento.nome;
+                } else if (!lojaCriada) {
+                    lojaCriada = true;
+                    // Tenta criar em estabelecimentos
                     const novaLoja = {
-                        slug: 'jl-sabores-nobres',
+                        slug: slugLoja,
                         nome: 'JL Sabores Nobres',
                         tipo: 'emporio',
                         whatsapp: '5514999999999',
-                        cor_tema: '#8B1A1A',
+                        cor_primaria: '#8B1A1A',
                         senha_admin: '1234'
                     };
-                    await db.from('lojas').insert([novaLoja]);
-                    location.reload();
+                    const { error } = await db.from('estabelecimentos').insert([novaLoja]);
+                    if (error) {
+                        console.error('Erro ao criar loja:', error);
+                        document.getElementById('msg-erro').textContent = 'Erro ao conectar com o banco. Verifique se o SQL foi rodado.';
+                        document.getElementById('msg-erro').classList.remove('hidden');
+                    } else {
+                        location.reload();
+                    }
                 }
-            } catch (e) { console.error('Erro estabelecimento:', e); }
+            } catch (e) {
+                console.error('Erro fallback:', e);
+            }
+        }
+
+        async function criarLojaJL() {
+            const novaLoja = {
+                slug: slugLoja,
+                nome: 'JL Sabores Nobres',
+                tipo: 'emporio',
+                whatsapp: '5514999999999',
+                cor_tema: '#8B1A1A',
+                senha_admin: '1234'
+            };
+            const { data, error } = await db.from('lojas').insert([novaLoja]).select();
+            
+            if (error) {
+                console.error('Erro ao criar loja:', error);
+                document.getElementById('msg-erro').textContent = 'Erro ao criar loja. Verifique se o SQL foi rodado no Supabase.';
+                document.getElementById('msg-erro').classList.remove('hidden');
+            } else if (data && data.length > 0) {
+                // Recarrega apenas uma vez após criar
+                location.reload();
+            }
         }
 
         async function carregarProdutos() {
@@ -326,7 +378,8 @@
                 preco_original: document.getElementById('preco-original').value,
                 preco_promocional: document.getElementById('preco-promocional').value,
                 tipo: tipo,
-                estabelecimento_id: ESTABELECIMENTO_ID 
+                estabelecimento_id: ESTABELECIMENTO_ID,
+                ativo: true
             };
 
             if (tipo === 'oferta_semanal') {
@@ -431,7 +484,8 @@
             try {
                 await db.from('lojas').update(dados).eq('id', ESTABELECIMENTO_ID);
                 alert('Configurações salvas!');
-                await carregarEstabelecimento();
+                SENHA_ADMIN = dados.senha_admin;
+                document.documentElement.style.setProperty('--cor-primaria', dados.cor_tema);
             } catch (error) { alert('Erro ao salvar.'); }
         });
     </script>
