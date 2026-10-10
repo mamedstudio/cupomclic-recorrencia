@@ -23,6 +23,7 @@
         .tab-inativa:hover { background-color: #e5e7eb; }
         .secao-admin { display: none; }
         .secao-admin.ativa { display: block; animation: fadeIn 0.3s; }
+        .badge-vip { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 font-sans antialiased min-h-screen flex flex-col">
@@ -33,7 +34,7 @@
                 <span class="text-xl font-extrabold text-gray-900">JL Sabores Nobres</span>
                 <p class="text-xs text-gray-500" id="nome-loja-admin">Carregando...</p>
             </div>
-            <a href="exemplo-jl.html" class="text-xs bg-gray-200 hover:bg-gray-300 text-gray-700 px-3 py-1 rounded-full transition">👁️ Ver Loja</a>
+            <a href="exemplo-jl.html" class="text-xs bg-gray-200 hover:bg-gray-300 text-gray-700 px-3 py-1 rounded-full transition">️ Ver Loja</a>
         </div>
     </header>
 
@@ -56,9 +57,11 @@
     <main id="painel-admin" class="hidden max-w-md mx-auto px-4 py-6 flex-grow w-full fade-in">
         
         <div class="bg-white rounded-xl shadow-sm mb-6 overflow-hidden border border-gray-200">
-            <div class="grid grid-cols-2 gap-1 p-2">
-                <button onclick="mostrarSecao('produtos')" id="tab-produtos" class="tab-ativa py-2 px-1 rounded-lg text-xs font-semibold transition">📦 Produtos</button>
-                <button onclick="mostrarSecao('configuracoes')" id="tab-configuracoes" class="tab-inativa py-2 px-1 rounded-lg text-xs font-semibold transition">⚙️ Config</button>
+            <div class="grid grid-cols-4 gap-1 p-2">
+                <button onclick="mostrarSecao('produtos')" id="tab-produtos" class="tab-ativa py-2 px-1 rounded-lg text-[10px] sm:text-xs font-semibold transition">📦 Produtos</button>
+                <button onclick="mostrarSecao('assinantes')" id="tab-assinantes" class="tab-inativa py-2 px-1 rounded-lg text-[10px] sm:text-xs font-semibold transition">👑 VIP</button>
+                <button onclick="mostrarSecao('descontos')" id="tab-descontos" class="tab-inativa py-2 px-1 rounded-lg text-[10px] sm:text-xs font-semibold transition"> % VIP</button>
+                <button onclick="mostrarSecao('configuracoes')" id="tab-configuracoes" class="tab-inativa py-2 px-1 rounded-lg text-[10px] sm:text-xs font-semibold transition">⚙️</button>
             </div>
         </div>
 
@@ -72,8 +75,8 @@
                     <div>
                         <label class="block text-xs font-semibold text-gray-600 mb-1">Tipo de Produto</label>
                         <select id="tipo-produto" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm bg-white">
-                            <option value="oferta_semanal"> Oferta da Semana (Empório)</option>
-                            <option value="recorrencia">📦 Produto de Recorrência</option>
+                            <option value="oferta_semanal">🔥 Oferta da Semana (Empório)</option>
+                            <option value="recorrencia"> Produto de Recorrência</option>
                         </select>
                     </div>
 
@@ -147,6 +150,34 @@
                             <label class="block text-xs text-gray-600 mb-1">Válido até</label>
                             <input type="date" id="valido-ate" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm">
                         </div>
+
+                        <!-- TIPO DE ENTREGA -->
+                        <div class="pt-2 border-t border-red-200">
+                            <label class="block text-xs font-bold text-red-700 mb-2">🚚 Tipo de Entrega</label>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs text-gray-600 mb-1">Opção</label>
+                                    <select id="tipo-entrega-produto" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm bg-white">
+                                        <option value="ambos">Delivery + Retirada</option>
+                                        <option value="delivery">Apenas Delivery</option>
+                                        <option value="retirada">Apenas Retirada</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-xs text-gray-600 mb-1">Taxa Delivery (R$)</label>
+                                    <input type="number" step="0.01" id="taxa-entrega-produto" value="0" placeholder="0.00" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- TIPO DE PREÇO -->
+                        <div class="pt-2 border-t border-red-200">
+                            <label class="block text-xs font-bold text-red-700 mb-2">💲 Tipo de Preço</label>
+                            <select id="tipo-preco" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm bg-white">
+                                <option value="promocional">Promocional (com desconto)</option>
+                                <option value="unico">Preço Único (sem desconto)</option>
+                            </select>
+                        </div>
                     </div>
 
                     <!-- CAMPOS RECORRÊNCIA -->
@@ -187,6 +218,93 @@
             </div>
         </div>
 
+        <!-- SEÇÃO: ASSINANTES VIP -->
+        <div id="secao-assinantes" class="secao-admin">
+            <!-- Formulário de cadastro -->
+            <div class="bg-white p-5 rounded-2xl shadow-md border border-gray-100 mb-6">
+                <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center"><span class="badge-vip text-white w-6 h-6 rounded-full flex items-center justify-center text-xs mr-2">👑</span>Cadastrar Assinante VIP</h2>
+                <form id="form-assinante" class="space-y-4">
+                    <input type="hidden" id="edit-assinante-id" value="">
+                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">Nome do Cliente</label><input type="text" id="ass-nome" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
+                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">WhatsApp (55+DDD+Número)</label><input type="text" id="ass-whatsapp" required placeholder="5511999999999" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">Produto de Interesse</label>
+                        <select id="ass-produto" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm bg-white">
+                            <option value="">Selecione...</option>
+                        </select>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">Data Última Compra</label><input type="date" id="ass-data-ultima" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
+                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">Qtd de Compras</label><input type="number" id="ass-qtd-compras" value="0" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
+                    </div>
+                    <div class="flex space-x-3 pt-2">
+                        <button type="submit" class="flex-1 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white font-bold py-3 rounded-xl shadow-md transition text-sm">Salvar Assinante</button>
+                        <button type="button" onclick="limparFormAssinante()" class="px-4 py-3 bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-xl transition text-sm">Limpar</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Calendário de Alertas -->
+            <div class="bg-white p-5 rounded-2xl shadow-md border border-gray-100 mb-6">
+                <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center"><span class="bg-blue-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs mr-2">📅</span>Calendário de Alertas</h2>
+                <div class="flex items-center justify-between mb-4">
+                    <button onclick="mudarMes(-1)" class="p-2 hover:bg-gray-100 rounded-lg">◀</button>
+                    <h3 class="text-base font-bold text-gray-900" id="mes-atual"></h3>
+                    <button onclick="mudarMes(1)" class="p-2 hover:bg-gray-100 rounded-lg">▶</button>
+                </div>
+                <div class="grid grid-cols-7 gap-1 text-center text-xs font-semibold text-gray-600 mb-2">
+                    <div>D</div><div>S</div><div>T</div><div>Q</div><div>Q</div><div>S</div><div>S</div>
+                </div>
+                <div id="calendario-vip" class="grid grid-cols-7 gap-1"></div>
+                <div class="mt-3 flex items-center justify-center space-x-4 text-xs">
+                    <div class="flex items-center"><div class="w-4 h-4 bg-yellow-500 rounded mr-2"></div><span class="text-gray-600">Dia de Alerta</span></div>
+                    <div class="flex items-center"><div class="w-4 h-4 border-2 border-yellow-500 rounded mr-2"></div><span class="text-gray-600">Hoje</span></div>
+                </div>
+            </div>
+
+            <!-- Lista de Assinantes -->
+            <div>
+                <h3 class="text-sm font-bold text-gray-500 uppercase tracking-wide mb-3">Assinantes VIP Cadastrados</h3>
+                <div id="lista-assinantes" class="space-y-3"><p class="text-center text-gray-500 py-4 text-sm">Carregando...</p></div>
+            </div>
+        </div>
+
+        <!-- SEÇÃO: DESCONTOS VIP -->
+        <div id="secao-descontos" class="secao-admin">
+            <div class="bg-white p-5 rounded-2xl shadow-md border border-gray-100">
+                <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center"><span class="badge-vip text-white w-6 h-6 rounded-full flex items-center justify-center text-xs mr-2">%</span>Descontos Progressivos VIP</h2>
+                <p class="text-xs text-gray-500 mb-4">Configure os descontos que os assinantes VIP recebem conforme a fidelidade.</p>
+                <form id="form-descontos" class="space-y-4">
+                    <div class="bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200 rounded-lg p-4">
+                        <div class="grid grid-cols-3 gap-3">
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-600 mb-1">3 meses</label>
+                                <div class="relative">
+                                    <input type="number" id="desc-3" value="10" min="0" max="100" class="w-full px-3 py-2 rounded-lg border border-yellow-300 text-sm text-center font-bold text-red-700">
+                                    <span class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 text-xs">%</span>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-600 mb-1">5 meses</label>
+                                <div class="relative">
+                                    <input type="number" id="desc-5" value="18" min="0" max="100" class="w-full px-3 py-2 rounded-lg border border-yellow-300 text-sm text-center font-bold text-red-700">
+                                    <span class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 text-xs">%</span>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-600 mb-1">8 meses</label>
+                                <div class="relative">
+                                    <input type="number" id="desc-8" value="25" min="0" max="100" class="w-full px-3 py-2 rounded-lg border border-yellow-300 text-sm text-center font-bold text-red-700">
+                                    <span class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 text-xs">%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" class="w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white font-bold py-3 rounded-xl shadow-md transition text-sm">💾 Salvar Descontos VIP</button>
+                </form>
+            </div>
+        </div>
+
         <!-- SEÇÃO: CONFIGURAÇÕES -->
         <div id="secao-configuracoes" class="secao-admin">
             <div class="bg-white p-5 rounded-2xl shadow-md border border-gray-100 mb-6">
@@ -210,6 +328,17 @@
         </div>
     </main>
 
+    <!-- MODAL DE ALERTA -->
+    <div id="modal-alerta" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full max-h-[80vh] overflow-y-auto">
+            <div class="p-5 border-b border-gray-200 flex justify-between items-center">
+                <h3 class="text-lg font-bold text-gray-900">Alertas do Dia</h3>
+                <button onclick="fecharModal()" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+            </div>
+            <div id="modal-conteudo" class="p-5 space-y-3"></div>
+        </div>
+    </div>
+
     <footer class="text-center py-6 text-gray-400 text-xs bg-white border-t border-gray-100 mt-auto">&copy; 2026 CUPOMCLIC. Powered by SaaS.</footer>
 
     <script>
@@ -218,13 +347,14 @@
 
         const slugLoja = 'jl-sabores-nobres';
 
-        let TABELA_DESCONTOS = [{ meses: 3, desconto: 12 }, { meses: 5, desconto: 20 }, { meses: 8, desconto: 30 }];
+        let TABELA_DESCONTOS = [{ meses: 3, desconto: 10 }, { meses: 5, desconto: 18 }, { meses: 8, desconto: 25 }];
         const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         
-        let estabelecimento = null, produtos = [];
+        let estabelecimento = null, produtos = [], assinantes = [];
         let ESTABELECIMENTO_ID = 1;
         let SENHA_ADMIN = '1234';
-        let lojaCriada = false; // Flag para evitar loop
+        let lojaCriada = false;
+        let dataAtual = new Date();
 
         document.addEventListener('DOMContentLoaded', async () => {
             await carregarEstabelecimento();
@@ -245,18 +375,18 @@
         });
 
         async function iniciarPainel() {
+            await carregarDescontosVIP();
             await carregarProdutos();
+            await carregarAssinantes();
             mostrarSecao('produtos');
         }
 
         async function carregarEstabelecimento() {
             try {
-                // Busca na tabela lojas pelo slug
                 const { data, error } = await db.from('lojas').select('*').eq('slug', slugLoja).limit(1);
                 
                 if (error) {
                     console.error('Erro ao buscar loja:', error);
-                    // Se der erro de coluna, tenta com estabelecimentos
                     await tentarEstabelecimentos();
                     return;
                 }
@@ -277,7 +407,6 @@
                     document.getElementById('est-whatsapp').value = estabelecimento.whatsapp || '';
                     document.getElementById('est-senha').value = SENHA_ADMIN;
                 } else if (!lojaCriada) {
-                    // Só cria uma vez
                     lojaCriada = true;
                     await criarLojaJL();
                 }
@@ -287,7 +416,6 @@
         }
 
         async function tentarEstabelecimentos() {
-            // Fallback: tenta na tabela estabelecimentos (caso o SQL do passo 1 ainda não tenha sido rodado)
             try {
                 const { data, error } = await db.from('estabelecimentos').select('*').eq('slug', slugLoja).limit(1);
                 if (data && data.length > 0) {
@@ -297,7 +425,6 @@
                     document.getElementById('nome-loja-admin').textContent = estabelecimento.nome;
                 } else if (!lojaCriada) {
                     lojaCriada = true;
-                    // Tenta criar em estabelecimentos
                     const novaLoja = {
                         slug: slugLoja,
                         nome: 'JL Sabores Nobres',
@@ -308,8 +435,7 @@
                     };
                     const { error } = await db.from('estabelecimentos').insert([novaLoja]);
                     if (error) {
-                        console.error('Erro ao criar loja:', error);
-                        document.getElementById('msg-erro').textContent = 'Erro ao conectar com o banco. Verifique se o SQL foi rodado.';
+                        document.getElementById('msg-erro').textContent = 'Erro ao conectar com o banco.';
                         document.getElementById('msg-erro').classList.remove('hidden');
                     } else {
                         location.reload();
@@ -332,13 +458,27 @@
             const { data, error } = await db.from('lojas').insert([novaLoja]).select();
             
             if (error) {
-                console.error('Erro ao criar loja:', error);
                 document.getElementById('msg-erro').textContent = 'Erro ao criar loja. Verifique se o SQL foi rodado no Supabase.';
                 document.getElementById('msg-erro').classList.remove('hidden');
             } else if (data && data.length > 0) {
-                // Recarrega apenas uma vez após criar
                 location.reload();
             }
+        }
+
+        async function carregarDescontosVIP() {
+            try {
+                const { data, error } = await db.from('config_vip').select('*').eq('estabelecimento_id', ESTABELECIMENTO_ID).limit(1);
+                if (!error && data && data.length > 0) {
+                    TABELA_DESCONTOS = [
+                        { meses: 3, desconto: data[0].desc_3_meses },
+                        { meses: 5, desconto: data[0].desc_5_meses },
+                        { meses: 8, desconto: data[0].desc_8_meses }
+                    ];
+                    document.getElementById('desc-3').value = data[0].desc_3_meses;
+                    document.getElementById('desc-5').value = data[0].desc_5_meses;
+                    document.getElementById('desc-8').value = data[0].desc_8_meses;
+                }
+            } catch (e) { console.log('Usando descontos padrão'); }
         }
 
         async function carregarProdutos() {
@@ -347,7 +487,18 @@
                 if (error) throw error;
                 produtos = data || [];
                 renderizarListaAdmin();
+                atualizarSelectProdutos();
             } catch (error) { console.error('Erro produtos:', error); }
+        }
+
+        async function carregarAssinantes() {
+            try {
+                const { data, error } = await db.from('assinantes_vip').select('*, produtos(nome, subtitulo)').eq('estabelecimento_id', ESTABELECIMENTO_ID).eq('ativo', true).order('criado_em', { ascending: false });
+                if (error) throw error;
+                assinantes = data || [];
+                renderizarListaAssinantes();
+                renderizarCalendarioVIP();
+            } catch (error) { console.error('Erro assinantes:', error); }
         }
 
         function mostrarSecao(secao) {
@@ -356,6 +507,10 @@
             document.querySelectorAll('[id^="tab-"]').forEach(t => { t.classList.remove('tab-ativa'); t.classList.add('tab-inativa'); });
             document.getElementById('tab-' + secao).classList.remove('tab-inativa');
             document.getElementById('tab-' + secao).classList.add('tab-ativa');
+            if (secao === 'assinantes') {
+                renderizarCalendarioVIP();
+                renderizarListaAssinantes();
+            }
         }
 
         document.getElementById('tipo-produto').addEventListener('change', function() {
@@ -393,6 +548,9 @@
                 novoProd.atributo2_valor = document.getElementById('atributo2-valor').value;
                 novoProd.link_cupomclic = document.getElementById('link-cupomclic').value;
                 novoProd.valido_ate = document.getElementById('valido-ate').value;
+                novoProd.tipo_preco = document.getElementById('tipo-preco').value;
+                novoProd.tipo_entrega_produto = document.getElementById('tipo-entrega-produto').value;
+                novoProd.taxa_entrega_produto = parseFloat(document.getElementById('taxa-entrega-produto').value) || 0;
             } else {
                 novoProd.dias_duracao = parseInt(document.getElementById('dias-duracao').value) || 30;
                 novoProd.estoque = parseInt(document.getElementById('estoque').value) || 0;
@@ -419,11 +577,13 @@
             if (produtos.length === 0) { listaAdmin.innerHTML = '<p class="text-center text-gray-500 py-4 text-sm">Nenhum produto cadastrado. Cadastre a 1ª oferta!</p>'; return; }
             produtos.forEach((prod, index) => {
                 const isOferta = prod.tipo === 'oferta_semanal';
-                const desconto = prod.preco_original ? Math.round(((prod.preco_original - prod.preco_promocional) / prod.preco_original) * 100) : 0;
+                const isUnico = prod.tipo_preco === 'unico';
+                const desconto = (prod.preco_original && prod.preco_promocional && !isUnico) ? Math.round(((prod.preco_original - prod.preco_promocional) / prod.preco_original) * 100) : 0;
+                const entregaIcon = prod.tipo_entrega_produto === 'delivery' ? '🚚' : prod.tipo_entrega_produto === 'retirada' ? '🏪' : '🚚🏪';
                 listaAdmin.innerHTML += `<div class="bg-white p-3 rounded-xl border border-gray-200 flex justify-between items-center fade-in">
                     <div class="flex-grow">
-                        <p class="font-bold text-sm text-gray-900">${prod.nome} <span class="text-[10px] px-2 py-0.5 rounded-full ${isOferta ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}">${isOferta ? 'OFERTA' : 'RECORRÊNCIA'}</span></p>
-                        <p class="text-xs text-gray-500">R$ ${prod.preco_promocional || prod.preco_original} | ${desconto}% OFF | Restam: ${prod.estoque_restam || 'N/A'}</p>
+                        <p class="font-bold text-sm text-gray-900">${prod.nome} <span class="text-[10px] px-2 py-0.5 rounded-full ${isOferta ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}">${isOferta ? 'OFERTA' : 'RECORRÊNCIA'}</span> ${isUnico ? '<span class="text-[10px] px-2 py-0.5 rounded-full bg-gray-100 text-gray-700">PREÇO ÚNICO</span>' : ''}</p>
+                        <p class="text-xs text-gray-500">R$ ${prod.preco_promocional || prod.preco_original} ${desconto > 0 ? '| ' + desconto + '% OFF' : ''} | Restam: ${prod.estoque_restam || 'N/A'} ${entregaIcon}</p>
                     </div>
                     <div class="flex space-x-2">
                         <button onclick="editarProduto(${index})" class="p-2 bg-blue-50 text-blue-600 rounded-lg text-xs">✏️</button>
@@ -455,6 +615,9 @@
                 document.getElementById('atributo2-valor').value = prod.atributo2_valor || '';
                 document.getElementById('link-cupomclic').value = prod.link_cupomclic || '';
                 document.getElementById('valido-ate').value = prod.valido_ate || '';
+                document.getElementById('tipo-preco').value = prod.tipo_preco || 'promocional';
+                document.getElementById('tipo-entrega-produto').value = prod.tipo_entrega_produto || 'ambos';
+                document.getElementById('taxa-entrega-produto').value = prod.taxa_entrega_produto || 0;
             } else {
                 document.getElementById('dias-duracao').value = prod.dias_duracao || 30;
                 document.getElementById('estoque').value = prod.estoque || 0;
@@ -472,6 +635,199 @@
             }
         }
 
+        // ASSINANTES VIP
+        function atualizarSelectProdutos() {
+            const select = document.getElementById('ass-produto'); 
+            select.innerHTML = '<option value="">Selecione...</option>';
+            produtos.forEach(p => { 
+                select.innerHTML += `<option value="${p.id}">${p.nome} ${p.subtitulo ? '- ' + p.subtitulo : ''}</option>`; 
+            });
+        }
+
+        document.getElementById('form-assinante').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const produtoId = document.getElementById('ass-produto').value;
+            const dataUltima = document.getElementById('ass-data-ultima').value;
+            const qtdCompras = parseInt(document.getElementById('ass-qtd-compras').value) || 0;
+            
+            // Calcular desconto atual baseado na tabela VIP
+            let descontoAtual = 0;
+            if (qtdCompras >= 8) descontoAtual = TABELA_DESCONTOS[2].desconto;
+            else if (qtdCompras >= 5) descontoAtual = TABELA_DESCONTOS[1].desconto;
+            else if (qtdCompras >= 3) descontoAtual = TABELA_DESCONTOS[0].desconto;
+
+            // Calcular próximo alerta (30 dias após última compra)
+            const dataUltimaDate = new Date(dataUltima);
+            const dataProximoAlerta = new Date(dataUltimaDate);
+            dataProximoAlerta.setDate(dataProximoAlerta.getDate() + 30);
+
+            const novoAssinante = {
+                estabelecimento_id: ESTABELECIMENTO_ID,
+                nome: document.getElementById('ass-nome').value,
+                whatsapp: document.getElementById('ass-whatsapp').value,
+                produto_id: produtoId,
+                data_ultima_compra: dataUltima,
+                data_proximo_alerta: dataProximoAlerta.toISOString().split('T')[0],
+                quantidade_compras: qtdCompras,
+                desconto_atual: descontoAtual,
+                ativo: true
+            };
+
+            const editId = document.getElementById('edit-assinante-id').value;
+            try {
+                if (editId) await db.from('assinantes_vip').update(novoAssinante).eq('id', editId);
+                else await db.from('assinantes_vip').insert([novoAssinante]);
+                limparFormAssinante();
+                await carregarAssinantes();
+                alert('Assinante VIP salvo!');
+            } catch (error) { alert('Erro ao salvar: ' + error.message); }
+        });
+
+        function limparFormAssinante() {
+            document.getElementById('form-assinante').reset();
+            document.getElementById('edit-assinante-id').value = '';
+        }
+
+        function renderizarListaAssinantes() {
+            const lista = document.getElementById('lista-assinantes');
+            lista.innerHTML = '';
+            if (assinantes.length === 0) { lista.innerHTML = '<p class="text-center text-gray-500 py-4 text-sm">Nenhum assinante VIP cadastrado.</p>'; return; }
+            
+            assinantes.forEach((ass, index) => {
+                const proximaData = ass.data_proximo_alerta ? new Date(ass.data_proximo_alerta) : null;
+                const hoje = new Date();
+                const deveEnviar = proximaData && proximaData <= hoje;
+                
+                const produtoNome = ass.produtos?.nome || 'Produto';
+                
+                lista.innerHTML += `<div class="bg-white rounded-xl border ${deveEnviar ? 'border-yellow-400' : 'border-gray-200'} overflow-hidden fade-in">
+                    <div class="p-4">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center text-white font-bold text-sm">👑</div>
+                            <div class="flex-grow">
+                                <h3 class="font-bold text-gray-900 text-sm">${ass.nome}</h3>
+                                <p class="text-xs text-gray-500">${produtoNome} • ${ass.quantidade_compras} compras</p>
+                            </div>
+                            <span class="text-[10px] px-2 py-0.5 rounded-full ${deveEnviar ? 'bg-yellow-100 text-yellow-700 font-bold' : 'bg-gray-100 text-gray-600'}">${deveEnviar ? '🔔 ALERTAR' : 'OK'}</span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3 text-sm mt-3">
+                            <div><p class="text-xs text-gray-500">WhatsApp</p><p class="font-semibold text-gray-900 text-xs">${ass.whatsapp}</p></div>
+                            <div><p class="text-xs text-gray-500">Próximo Alerta</p><p class="font-semibold ${deveEnviar ? 'text-yellow-600' : 'text-gray-900'}">${proximaData ? proximaData.toLocaleDateString('pt-BR') : '-'}</p></div>
+                            <div><p class="text-xs text-gray-500">Desconto Atual</p><p class="font-semibold text-health">${ass.desconto_atual}% OFF</p></div>
+                            <div><p class="text-xs text-gray-500">Última Compra</p><p class="font-semibold text-gray-900">${ass.data_ultima_compra ? new Date(ass.data_ultima_compra).toLocaleDateString('pt-BR') : '-'}</p></div>
+                        </div>
+                        <div class="flex space-x-2 pt-3">
+                            ${deveEnviar ? `<button onclick="enviarAlertaWhatsApp(${index})" class="flex-1 bg-gradient-to-r from-yellow-500 to-orange-500 text-white text-center font-semibold py-2 rounded-lg text-xs">📱 Enviar Alerta VIP</button>` : ''}
+                            <button onclick="editarAssinante(${index})" class="p-2 bg-blue-50 text-blue-600 rounded-lg text-xs">✏️</button>
+                            <button onclick="excluirAssinante(${index})" class="p-2 bg-red-50 text-red-600 rounded-lg text-xs">🗑️</button>
+                        </div>
+                    </div>
+                </div>`;
+            });
+        }
+
+        function editarAssinante(index) {
+            const ass = assinantes[index];
+            document.getElementById('ass-nome').value = ass.nome;
+            document.getElementById('ass-whatsapp').value = ass.whatsapp;
+            document.getElementById('ass-produto').value = ass.produto_id || '';
+            document.getElementById('ass-data-ultima').value = ass.data_ultima_compra || '';
+            document.getElementById('ass-qtd-compras').value = ass.quantidade_compras || 0;
+            document.getElementById('edit-assinante-id').value = ass.id;
+            document.getElementById('form-assinante').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        async function excluirAssinante(index) {
+            if (confirm('Excluir este assinante VIP?')) {
+                try { await db.from('assinantes_vip').delete().eq('id', assinantes[index].id); await carregarAssinantes(); } catch (error) { alert('Erro ao excluir.'); }
+            }
+        }
+
+        function enviarAlertaWhatsApp(index) {
+            const ass = assinantes[index];
+            const produtoNome = ass.produtos?.nome || 'produto';
+            const desconto = ass.desconto_atual;
+            
+            const mensagem = `Olá ${ass.nome}! 👑\n\nSeu *${produtoNome}* está disponível com *desconto VIP de ${desconto}% OFF*!\n\nAproveite essa condição exclusiva para clientes fiéis.\n\nResponda *QUERO* para receber o link de pagamento.`;
+            
+            const linkZap = `https://wa.me/${ass.whatsapp}?text=${encodeURIComponent(mensagem)}`;
+            window.open(linkZap, '_blank');
+        }
+
+        // CALENDÁRIO VIP
+        function renderizarCalendarioVIP() {
+            const ano = dataAtual.getFullYear(), mes = dataAtual.getMonth();
+            const nomesMeses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+            document.getElementById('mes-atual').textContent = nomesMeses[mes] + ' ' + ano;
+            const primeiroDia = new Date(ano, mes, 1).getDay(), diasNoMes = new Date(ano, mes + 1, 0).getDate(), hoje = new Date();
+            let html = '';
+            for (let i = 0; i < primeiroDia; i++) html += '<div></div>';
+            for (let dia = 1; dia <= diasNoMes; dia++) {
+                const dataStr = ano + '-' + String(mes + 1).padStart(2, '0') + '-' + String(dia).padStart(2, '0');
+                const temAlerta = assinantes.some(a => a.data_proximo_alerta === dataStr && a.ativo === true);
+                const ehHoje = hoje.getDate() === dia && hoje.getMonth() === mes && hoje.getFullYear() === ano;
+                let classes = 'dia-clicavel p-2 rounded-lg text-sm text-center transition';
+                if (temAlerta) classes += ' dia-marcado bg-yellow-500';
+                if (ehHoje) classes += ' dia-hoje';
+                html += `<div class="${classes}" onclick="abrirDiaAlerta('${dataStr}')">${dia}</div>`;
+            }
+            document.getElementById('calendario-vip').innerHTML = html;
+        }
+
+        function mudarMes(direcao) { dataAtual.setMonth(dataAtual.getMonth() + direcao); renderizarCalendarioVIP(); }
+
+        function abrirDiaAlerta(dataStr) {
+            const alertasDoDia = assinantes.filter(a => a.data_proximo_alerta === dataStr && a.ativo === true);
+            if (alertasDoDia.length === 0) { alert('Nenhum alerta para este dia.'); return; }
+            
+            const partes = dataStr.split('-');
+            document.getElementById('modal-conteudo').innerHTML = '';
+            document.getElementById('modal-conteudo').innerHTML = `<p class="text-sm text-gray-600 mb-3">Alertas para ${partes[2]}/${partes[1]}/${partes[0]}:</p>`;
+            
+            alertasDoDia.forEach(ass => {
+                const produtoNome = ass.produtos?.nome || 'Produto';
+                const msg = `Olá ${ass.nome}! 👑\n\nSeu *${produtoNome}* está disponível com *desconto VIP de ${ass.desconto_atual}% OFF*!\n\nResponda *QUERO* para receber o link.`;
+                const linkZap = `https://wa.me/${ass.whatsapp}?text=${encodeURIComponent(msg)}`;
+                
+                document.getElementById('modal-conteudo').innerHTML += `<div class="bg-yellow-50 p-3 rounded-lg border border-yellow-200">
+                    <p class="font-bold text-sm text-gray-900">${ass.nome}</p>
+                    <p class="text-xs text-gray-600">📱 ${ass.whatsapp}</p>
+                    <p class="text-xs text-gray-700 mt-1">💎 ${produtoNome} - ${ass.desconto_atual}% OFF</p>
+                    <a href="${linkZap}" target="_blank" class="block w-full bg-gradient-to-r from-yellow-500 to-orange-500 text-white text-center font-bold py-2 rounded-lg mt-2 text-xs"> Enviar Alerta</a>
+                </div>`;
+            });
+            
+            document.getElementById('modal-alerta').classList.remove('hidden');
+        }
+
+        function fecharModal() { document.getElementById('modal-alerta').classList.add('hidden'); }
+
+        // DESCONTOS VIP
+        document.getElementById('form-descontos').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const desc3 = parseInt(document.getElementById('desc-3').value);
+            const desc5 = parseInt(document.getElementById('desc-5').value);
+            const desc8 = parseInt(document.getElementById('desc-8').value);
+            
+            try {
+                const { data: existente } = await db.from('config_vip').select('id').eq('estabelecimento_id', ESTABELECIMENTO_ID).limit(1);
+                const configData = { 
+                    desc_3_meses: desc3, 
+                    desc_5_meses: desc5, 
+                    desc_8_meses: desc8, 
+                    estabelecimento_id: ESTABELECIMENTO_ID 
+                };
+                if (existente && existente.length > 0) {
+                    await db.from('config_vip').update(configData).eq('id', existente[0].id);
+                } else {
+                    await db.from('config_vip').insert([configData]);
+                }
+                TABELA_DESCONTOS = [{ meses: 3, desconto: desc3 }, { meses: 5, desconto: desc5 }, { meses: 8, desconto: desc8 }];
+                alert('Descontos VIP salvos!');
+            } catch (error) { alert('Erro ao salvar: ' + error.message); }
+        });
+
+        // CONFIGURAÇÕES
         document.getElementById('form-estabelecimento').addEventListener('submit', async (e) => {
             e.preventDefault();
             const dados = {
