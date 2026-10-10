@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JL Sabores Nobres - Ofertas da Semana | CupomClic</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; }
@@ -19,13 +20,6 @@
         }
         .card-oferta { transition: all 0.3s ease; }
         .card-oferta:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-        .header-jl { 
-            background: linear-gradient(135deg, #8B1A1A 0%, #6B0F0F 50%, #4A0A0A 100%);
-        }
-        .btn-loja { background-color: #8B1A1A; }
-        .btn-loja:hover { background-color: #6B0F0F; }
-        
-        /* Card expandido */
         .card-detalhes {
             max-height: 0;
             overflow: hidden;
@@ -45,16 +39,16 @@
 </head>
 <body class="bg-gray-50 min-h-screen">
 
-    <!-- HEADER BORDÔ -->
-    <header class="header-jl text-white py-6 px-6 shadow-lg">
+    <!-- HEADER DINÂMICO -->
+    <header id="header-loja" class="text-white py-6 px-6 shadow-lg" style="background: linear-gradient(135deg, #8B1A1A 0%, #6B0F0F 50%, #4A0A0A 100%);">
         <div class="max-w-md mx-auto flex items-center space-x-4">
             <img src="https://raw.githubusercontent.com/mamedstudio/cupomclic-recorrencia/main/jl-sabores-nobres.png" 
                  alt="Logo JL Sabores Nobres" 
                  class="w-16 h-16 rounded-full bg-white p-1 shadow-md object-contain"
                  onerror="this.style.display='none'">
             <div>
-                <h1 class="text-xl font-black tracking-wide font-serif">JL SABORES NOBRES</h1>
-                <p class="text-red-200 text-xs font-medium">Empório Gourmet • Carnes Premium</p>
+                <h1 class="text-xl font-black tracking-wide font-serif" id="nome-loja">JL SABORES NOBRES</h1>
+                <p class="text-red-200 text-xs font-medium" id="subtitulo-loja">Empório Gourmet • Carnes Premium</p>
             </div>
         </div>
     </header>
@@ -65,311 +59,12 @@
         <section class="mb-8">
             <div class="flex items-center justify-between mb-5">
                 <h2 class="text-2xl font-black text-gray-900 flex items-center">
-                    <span class="mr-2"></span> Ofertas da Semana
+                    <span class="mr-2">🔥</span> Ofertas da Semana
                 </h2>
                 <span class="text-xs font-semibold bg-red-50 text-red-600 px-3 py-1.5 rounded-full border border-red-100">Até Domingo</span>
             </div>
-
-            <!-- Oferta 1: Picanha Premium -->
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden mb-3 fade-in card-oferta">
-                <!-- Card Compacto com Thumbnail -->
-                <div class="p-4 flex items-center cursor-pointer" onclick="toggleDetalhes('detalhes-1')">
-                    <img src="https://images.unsplash.com/photo-1600891964092-4316c288032e?w=100&h=100&fit=crop&q=80" 
-                         alt="Picanha" 
-                         class="w-16 h-16 rounded-lg object-cover mr-3 flex-shrink-0"
-                         onerror="this.src='https://via.placeholder.com/100x100/8B1A1A/FFFFFF?text=Picanha'">
-                    <div class="flex-grow">
-                        <div class="flex items-center space-x-2 mb-1">
-                            <h3 class="font-bold text-gray-900 text-base">Picanha Premium</h3>
-                            <span class="bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">28% OFF</span>
-                        </div>
-                        <p class="text-xs text-gray-500">Peça inteira • Angus certificado</p>
-                        <div class="flex items-baseline space-x-2 mt-1">
-                            <span class="text-gray-400 text-xs line-through">R$ 95,00/kg</span>
-                            <span class="text-lg font-black text-green-600">R$ 68,40<span class="text-xs">/kg</span></span>
-                        </div>
-                    </div>
-                    <button class="btn-loja text-white font-bold py-2 px-4 rounded-lg text-sm ml-3 flex-shrink-0">
-                        EU QUERO
-                    </button>
-                </div>
-                
-                <!-- Detalhes Expandidos -->
-                <div id="detalhes-1" class="card-detalhes border-t border-gray-100">
-                    <div class="p-4 space-y-3">
-                        <div class="relative">
-                            <img src="https://images.unsplash.com/photo-1600891964092-4316c288032e?w=600&h=400&fit=crop&q=80" 
-                                 alt="Picanha Premium" 
-                                 class="w-full h-48 object-cover rounded-lg foto-zoom"
-                                 onerror="this.src='https://via.placeholder.com/600x400/8B1A1A/FFFFFF?text=Picanha+Premium'">
-                            <div class="absolute bottom-2 right-2">
-                                <div class="badge-restam flex items-end justify-center pb-1">
-                                    <div class="text-center text-white">
-                                        <p class="text-[7px] font-bold leading-tight">RESTAM</p>
-                                        <p class="text-sm font-black leading-tight">8</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-gray-900 text-sm mb-1">Descrição</h4>
-                            <p class="text-xs text-gray-600 leading-relaxed">Picanha Angus de primeira linha, marmoreio intenso para um churrasco inesquecível. Peça inteira com aproximadamente 1,2kg.</p>
-                        </div>
-                        <div class="grid grid-cols-2 gap-2 text-xs">
-                            <div class="bg-gray-50 p-2 rounded">
-                                <p class="text-gray-500">Peso médio</p>
-                                <p class="font-bold text-gray-900">1,2kg</p>
-                            </div>
-                            <div class="bg-gray-50 p-2 rounded">
-                                <p class="text-gray-500">Origem</p>
-                                <p class="font-bold text-gray-900">Angus Certificado</p>
-                            </div>
-                        </div>
-                        <a href="#" class="block w-full btn-loja text-white text-center font-bold py-3 rounded-xl shadow-sm transition text-sm">
-                            COMPRAR AGORA
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Oferta 2: Cachaça Artesanal -->
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden mb-3 fade-in card-oferta">
-                <div class="p-4 flex items-center cursor-pointer" onclick="toggleDetalhes('detalhes-2')">
-                    <img src="https://images.unsplash.com/photo-1569529465841-dfecdab7503b?w=100&h=100&fit=crop&q=80" 
-                         alt="Cachaça" 
-                         class="w-16 h-16 rounded-lg object-cover mr-3 flex-shrink-0"
-                         onerror="this.src='https://via.placeholder.com/100x100/8B1A1A/FFFFFF?text=Cachaca'">
-                    <div class="flex-grow">
-                        <div class="flex items-center space-x-2 mb-1">
-                            <h3 class="font-bold text-gray-900 text-base">Cachaça Artesanal</h3>
-                            <span class="bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">20% OFF</span>
-                        </div>
-                        <p class="text-xs text-gray-500">Envelhecida • 750ml</p>
-                        <div class="flex items-baseline space-x-2 mt-1">
-                            <span class="text-gray-400 text-xs line-through">R$ 89,90</span>
-                            <span class="text-lg font-black text-green-600">R$ 71,92</span>
-                        </div>
-                    </div>
-                    <button class="btn-loja text-white font-bold py-2 px-4 rounded-lg text-sm ml-3 flex-shrink-0">
-                        EU QUERO
-                    </button>
-                </div>
-                
-                <div id="detalhes-2" class="card-detalhes border-t border-gray-100">
-                    <div class="p-4 space-y-3">
-                        <div class="relative">
-                            <img src="https://images.unsplash.com/photo-1569529465841-dfecdab7503b?w=600&h=400&fit=crop&q=80" 
-                                 alt="Cachaça Artesanal" 
-                                 class="w-full h-48 object-cover rounded-lg foto-zoom"
-                                 onerror="this.src='https://via.placeholder.com/600x400/8B1A1A/FFFFFF?text=Cachaca+Artesanal'">
-                            <div class="absolute bottom-2 right-2">
-                                <div class="badge-restam flex items-end justify-center pb-1">
-                                    <div class="text-center text-white">
-                                        <p class="text-[7px] font-bold leading-tight">RESTAM</p>
-                                        <p class="text-sm font-black leading-tight">12</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-gray-900 text-sm mb-1">Descrição</h4>
-                            <p class="text-xs text-gray-600 leading-relaxed">Cachaça artesanal envelhecida em barril de carvalho por 3 anos. Sabor suave e aroma intenso, perfeita para apreciar pura ou em caipirinhas especiais.</p>
-                        </div>
-                        <div class="grid grid-cols-2 gap-2 text-xs">
-                            <div class="bg-gray-50 p-2 rounded">
-                                <p class="text-gray-500">Volume</p>
-                                <p class="font-bold text-gray-900">750ml</p>
-                            </div>
-                            <div class="bg-gray-50 p-2 rounded">
-                                <p class="text-gray-500">Envelhecimento</p>
-                                <p class="font-bold text-gray-900">3 anos</p>
-                            </div>
-                        </div>
-                        <a href="#" class="block w-full btn-loja text-white text-center font-bold py-3 rounded-xl shadow-sm transition text-sm">
-                            COMPRAR AGORA
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Oferta 3: Creme de Amendoim -->
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden mb-3 fade-in card-oferta">
-                <div class="p-4 flex items-center cursor-pointer" onclick="toggleDetalhes('detalhes-3')">
-                    <img src="https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=100&h=100&fit=crop&q=80" 
-                         alt="Creme de Amendoim" 
-                         class="w-16 h-16 rounded-lg object-cover mr-3 flex-shrink-0"
-                         onerror="this.src='https://via.placeholder.com/100x100/8B1A1A/FFFFFF?text=Creme+Amendoim'">
-                    <div class="flex-grow">
-                        <div class="flex items-center space-x-2 mb-1">
-                            <h3 class="font-bold text-gray-900 text-base">Creme de Amendoim</h3>
-                            <span class="bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">25% OFF</span>
-                        </div>
-                        <p class="text-xs text-gray-500">Integral • 500g</p>
-                        <div class="flex items-baseline space-x-2 mt-1">
-                            <span class="text-gray-400 text-xs line-through">R$ 32,00</span>
-                            <span class="text-lg font-black text-green-600">R$ 24,00</span>
-                        </div>
-                    </div>
-                    <button class="btn-loja text-white font-bold py-2 px-4 rounded-lg text-sm ml-3 flex-shrink-0">
-                        EU QUERO
-                    </button>
-                </div>
-                
-                <div id="detalhes-3" class="card-detalhes border-t border-gray-100">
-                    <div class="p-4 space-y-3">
-                        <div class="relative">
-                            <img src="https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=600&h=400&fit=crop&q=80" 
-                                 alt="Creme de Amendoim" 
-                                 class="w-full h-48 object-cover rounded-lg foto-zoom"
-                                 onerror="this.src='https://via.placeholder.com/600x400/8B1A1A/FFFFFF?text=Creme+de+Amendoim'">
-                            <div class="absolute bottom-2 right-2">
-                                <div class="badge-restam flex items-end justify-center pb-1">
-                                    <div class="text-center text-white">
-                                        <p class="text-[7px] font-bold leading-tight">RESTAM</p>
-                                        <p class="text-sm font-black leading-tight">20</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-gray-900 text-sm mb-1">Descrição</h4>
-                            <p class="text-xs text-gray-600 leading-relaxed">Creme de amendoim integral, sem adição de açúcar. Rico em proteínas e gorduras boas, perfeito para atletas e dietas saudáveis.</p>
-                        </div>
-                        <div class="grid grid-cols-2 gap-2 text-xs">
-                            <div class="bg-gray-50 p-2 rounded">
-                                <p class="text-gray-500">Peso</p>
-                                <p class="font-bold text-gray-900">500g</p>
-                            </div>
-                            <div class="bg-gray-50 p-2 rounded">
-                                <p class="text-gray-500">Tipo</p>
-                                <p class="font-bold text-gray-900">Integral</p>
-                            </div>
-                        </div>
-                        <a href="#" class="block w-full btn-loja text-white text-center font-bold py-3 rounded-xl shadow-sm transition text-sm">
-                            COMPRAR AGORA
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Oferta 4: Pimenta Artesanal -->
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden mb-3 fade-in card-oferta">
-                <div class="p-4 flex items-center cursor-pointer" onclick="toggleDetalhes('detalhes-4')">
-                    <img src="https://images.unsplash.com/photo-1583623025817-d180a2221d0a?w=100&h=100&fit=crop&q=80" 
-                         alt="Pimenta" 
-                         class="w-16 h-16 rounded-lg object-cover mr-3 flex-shrink-0"
-                         onerror="this.src='https://via.placeholder.com/100x100/8B1A1A/FFFFFF?text=Pimenta'">
-                    <div class="flex-grow">
-                        <div class="flex items-center space-x-2 mb-1">
-                            <h3 class="font-bold text-gray-900 text-base">Molho de Pimenta</h3>
-                            <span class="bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">30% OFF</span>
-                        </div>
-                        <p class="text-xs text-gray-500">Artesanal • 250ml</p>
-                        <div class="flex items-baseline space-x-2 mt-1">
-                            <span class="text-gray-400 text-xs line-through">R$ 28,00</span>
-                            <span class="text-lg font-black text-green-600">R$ 19,60</span>
-                        </div>
-                    </div>
-                    <button class="btn-loja text-white font-bold py-2 px-4 rounded-lg text-sm ml-3 flex-shrink-0">
-                        EU QUERO
-                    </button>
-                </div>
-                
-                <div id="detalhes-4" class="card-detalhes border-t border-gray-100">
-                    <div class="p-4 space-y-3">
-                        <div class="relative">
-                            <img src="https://images.unsplash.com/photo-1583623025817-d180a2221d0a?w=600&h=400&fit=crop&q=80" 
-                                 alt="Molho de Pimenta" 
-                                 class="w-full h-48 object-cover rounded-lg foto-zoom"
-                                 onerror="this.src='https://via.placeholder.com/600x400/8B1A1A/FFFFFF?text=Molho+de+Pimenta'">
-                            <div class="absolute bottom-2 right-2">
-                                <div class="badge-restam flex items-end justify-center pb-1">
-                                    <div class="text-center text-white">
-                                        <p class="text-[7px] font-bold leading-tight">RESTAM</p>
-                                        <p class="text-sm font-black leading-tight">15</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-gray-900 text-sm mb-1">Descrição</h4>
-                            <p class="text-xs text-gray-600 leading-relaxed">Molho de pimenta artesanal feito com pimentas selecionadas. Intensidade média, perfeito para carnes, pizzas e lanches.</p>
-                        </div>
-                        <div class="grid grid-cols-2 gap-2 text-xs">
-                            <div class="bg-gray-50 p-2 rounded">
-                                <p class="text-gray-500">Volume</p>
-                                <p class="font-bold text-gray-900">250ml</p>
-                            </div>
-                            <div class="bg-gray-50 p-2 rounded">
-                                <p class="text-gray-500">Intensidade</p>
-                                <p class="font-bold text-gray-900">Média</p>
-                            </div>
-                        </div>
-                        <a href="#" class="block w-full btn-loja text-white text-center font-bold py-3 rounded-xl shadow-sm transition text-sm">
-                            COMPRAR AGORA
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Oferta 5: Filé Mignon -->
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden mb-3 fade-in card-oferta">
-                <div class="p-4 flex items-center cursor-pointer" onclick="toggleDetalhes('detalhes-5')">
-                    <img src="https://images.unsplash.com/photo-1558030006-450675393462?w=100&h=100&fit=crop&q=80" 
-                         alt="Filé Mignon" 
-                         class="w-16 h-16 rounded-lg object-cover mr-3 flex-shrink-0"
-                         onerror="this.src='https://via.placeholder.com/100x100/8B1A1A/FFFFFF?text=File+Mignon'">
-                    <div class="flex-grow">
-                        <div class="flex items-center space-x-2 mb-1">
-                            <h3 class="font-bold text-gray-900 text-base">Filé Mignon</h3>
-                            <span class="bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">22% OFF</span>
-                        </div>
-                        <p class="text-xs text-gray-500">Posta • Maciez incomparável</p>
-                        <div class="flex items-baseline space-x-2 mt-1">
-                            <span class="text-gray-400 text-xs line-through">R$ 110,00/kg</span>
-                            <span class="text-lg font-black text-green-600">R$ 85,80<span class="text-xs">/kg</span></span>
-                        </div>
-                    </div>
-                    <button class="btn-loja text-white font-bold py-2 px-4 rounded-lg text-sm ml-3 flex-shrink-0">
-                        EU QUERO
-                    </button>
-                </div>
-                
-                <div id="detalhes-5" class="card-detalhes border-t border-gray-100">
-                    <div class="p-4 space-y-3">
-                        <div class="relative">
-                            <img src="https://images.unsplash.com/photo-1558030006-450675393462?w=600&h=400&fit=crop&q=80" 
-                                 alt="Filé Mignon" 
-                                 class="w-full h-48 object-cover rounded-lg foto-zoom"
-                                 onerror="this.src='https://via.placeholder.com/600x400/8B1A1A/FFFFFF?text=File+Mignon'">
-                            <div class="absolute bottom-2 right-2">
-                                <div class="badge-restam flex items-end justify-center pb-1">
-                                    <div class="text-center text-white">
-                                        <p class="text-[7px] font-bold leading-tight">RESTAM</p>
-                                        <p class="text-sm font-black leading-tight">5</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-gray-900 text-sm mb-1">Descrição</h4>
-                            <p class="text-xs text-gray-600 leading-relaxed">Filé mignon selecionado, corte nobre perfeito para bife ou strogonoff. Textura aveludada e sabor delicado.</p>
-                        </div>
-                        <div class="grid grid-cols-2 gap-2 text-xs">
-                            <div class="bg-gray-50 p-2 rounded">
-                                <p class="text-gray-500">Peso médio</p>
-                                <p class="font-bold text-gray-900">800g</p>
-                            </div>
-                            <div class="bg-gray-50 p-2 rounded">
-                                <p class="text-gray-500">Corte</p>
-                                <p class="font-bold text-gray-900">Posta inteira</p>
-                            </div>
-                        </div>
-                        <a href="#" class="block w-full btn-loja text-white text-center font-bold py-3 rounded-xl shadow-sm transition text-sm">
-                            COMPRAR AGORA
-                        </a>
-                    </div>
-                </div>
+            <div id="lista-ofertas">
+                <div class="text-center py-8"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600 mx-auto"></div></div>
             </div>
         </section>
 
@@ -400,10 +95,10 @@
                         <span class="bg-gradient-to-r from-yellow-500 to-orange-500 text-white text-[10px] px-2 py-0.5 rounded-full mr-2 font-bold">VIP</span>
                         DescontoVIP: Próxima compra com preço exclusivo e garantido.
                     </p>
-                    <div class="grid grid-cols-3 gap-2 text-center">
-                        <div class="bg-white rounded p-1.5 border border-yellow-100"><p class="text-xs text-gray-600">3 meses</p><p class="text-sm font-bold text-red-700">10%</p></div>
-                        <div class="bg-white rounded p-1.5 border border-yellow-100"><p class="text-xs text-gray-600">5 meses</p><p class="text-sm font-bold text-red-700">18%</p></div>
-                        <div class="bg-white rounded p-1.5 border border-yellow-100"><p class="text-xs text-gray-600">8 meses</p><p class="text-sm font-bold text-red-700">25%</p></div>
+                    <div class="grid grid-cols-3 gap-2 text-center" id="tabela-descontos">
+                        <div class="bg-white rounded p-1.5 border border-yellow-100"><p class="text-xs text-gray-600">3 meses</p><p class="text-sm font-bold text-red-700" id="desc-3">10%</p></div>
+                        <div class="bg-white rounded p-1.5 border border-yellow-100"><p class="text-xs text-gray-600">5 meses</p><p class="text-sm font-bold text-red-700" id="desc-5">18%</p></div>
+                        <div class="bg-white rounded p-1.5 border border-yellow-100"><p class="text-xs text-gray-600">8 meses</p><p class="text-sm font-bold text-red-700" id="desc-8">25%</p></div>
                     </div>
                 </div>
                 <button class="block w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white text-center font-bold py-3 rounded-xl shadow-sm transition text-sm mb-2">
@@ -423,11 +118,160 @@
     </footer>
 
     <script>
+        const SUPABASE_URL = 'https://rzapsmtasfdqedlzmyvh.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ6YXBzbXRhc2ZkcWVkbHpteXZoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE0MDQ0NTksImV4cCI6MjEwNjk4MDQ1OX0.EkBMhJwM1aH8TH9aO6JZxkgco2XwSjfu_BsTPZjGfMs';
+        
+        const slugLoja = 'jl-sabores-nobres';
+        const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
+        let loja = null, ofertas = [], tabelaDescontos = [{meses: 3, desconto: 10}, {meses: 5, desconto: 18}, {meses: 8, desconto: 25}];
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await carregarLoja();
+            await carregarDescontos();
+            await carregarOfertas();
+        });
+
+        async function carregarLoja() {
+            try {
+                const { data, error } = await db.from('lojas').select('*').eq('slug', slugLoja).limit(1);
+                if (data && data.length > 0) {
+                    loja = data[0];
+                    document.getElementById('nome-loja').textContent = loja.nome.toUpperCase();
+                    const tipos = { emporio: 'Empório Gourmet • Carnes Premium', acougue: 'Açougue • Carnes Nobres', farmacia: 'Farmácia' };
+                    document.getElementById('subtitulo-loja').textContent = tipos[loja.tipo] || 'Qualidade Superior';
+                    if (loja.cor_tema) {
+                        document.getElementById('header-loja').style.background = `linear-gradient(135deg, ${loja.cor_tema} 0%, ${ajustarCor(loja.cor_tema, -20)} 50%, ${ajustarCor(loja.cor_tema, -40)} 100%)`;
+                    }
+                }
+            } catch (e) { console.error('Erro loja:', e); }
+        }
+
+        function ajustarCor(hex, percentual) {
+            const num = parseInt(hex.replace('#', ''), 16);
+            const r = Math.min(255, Math.max(0, (num >> 16) + percentual));
+            const g = Math.min(255, Math.max(0, ((num >> 8) & 0x00FF) + percentual));
+            const b = Math.min(255, Math.max(0, (num & 0x0000FF) + percentual));
+            return `#${(0x1000000 + r * 0x10000 + g * 0x100 + b).toString(16).slice(1)}`;
+        }
+
+        async function carregarDescontos() {
+            try {
+                const { data } = await db.from('config_vip').select('*').eq('estabelecimento_id', loja?.id).limit(1);
+                if (data && data.length > 0) {
+                    tabelaDescontos = [
+                        {meses: 3, desconto: data[0].desc_3_meses},
+                        {meses: 5, desconto: data[0].desc_5_meses},
+                        {meses: 8, desconto: data[0].desc_8_meses}
+                    ];
+                    document.getElementById('desc-3').textContent = data[0].desc_3_meses + '%';
+                    document.getElementById('desc-5').textContent = data[0].desc_5_meses + '%';
+                    document.getElementById('desc-8').textContent = data[0].desc_8_meses + '%';
+                }
+            } catch (e) { console.log('Usando descontos padrão'); }
+        }
+
+        async function carregarOfertas() {
+            try {
+                const { data, error } = await db.from('produtos').select('*').eq('estabelecimento_id', loja?.id).eq('tipo', 'oferta_semanal').eq('ativo', true).order('criado_em', { ascending: false });
+                if (error) throw error;
+                ofertas = data || [];
+                renderizarOfertas();
+            } catch (error) { 
+                console.error('Erro ofertas:', error);
+                document.getElementById('lista-ofertas').innerHTML = '<p class="text-center text-gray-500 py-4 text-sm">Erro ao carregar ofertas.</p>';
+            }
+        }
+
+        function renderizarOfertas() {
+            const container = document.getElementById('lista-ofertas');
+            container.innerHTML = '';
+            
+            if (ofertas.length === 0) {
+                container.innerHTML = '<p class="text-center text-gray-500 py-8 text-sm">Nenhuma oferta da semana no momento. Volte em breve!</p>';
+                return;
+            }
+            
+            ofertas.forEach((oferta, index) => {
+                const isUnico = oferta.tipo_preco === 'unico';
+                const desconto = (oferta.preco_original && oferta.preco_promocional && !isUnico) 
+                    ? Math.round(((oferta.preco_original - oferta.preco_promocional) / oferta.preco_original) * 100) 
+                    : 0;
+                
+                const precoExibicao = oferta.preco_promocional || oferta.preco_original;
+                const dataValidade = oferta.valido_ate ? new Date(oferta.valido_ate).toLocaleDateString('pt-BR') : 'Fim da semana';
+                
+                const thumbnail = oferta.foto_url 
+                    ? `<img src="${oferta.foto_url}" class="w-16 h-16 rounded-lg object-cover mr-3 flex-shrink-0" onerror="this.src='https://via.placeholder.com/100x100/8B1A1A/FFFFFF?text=Produto'">`
+                    : `<div class="w-16 h-16 rounded-lg bg-gray-200 flex items-center justify-center mr-3 flex-shrink-0 text-2xl">📦</div>`;
+                
+                const fotoGrande = oferta.foto_url 
+                    ? `<img src="${oferta.foto_url}" class="w-full h-48 object-cover rounded-lg foto-zoom" onerror="this.src='https://via.placeholder.com/600x400/8B1A1A/FFFFFF?text=Produto'">`
+                    : `<div class="w-full h-48 bg-gray-200 rounded-lg flex items-center justify-center text-6xl">📦</div>`;
+
+                container.innerHTML += `
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden mb-3 fade-in card-oferta">
+                    <div class="p-4 flex items-center cursor-pointer" onclick="toggleDetalhes('detalhes-${index}')">
+                        ${thumbnail}
+                        <div class="flex-grow min-w-0">
+                            <div class="flex items-center space-x-2 mb-1">
+                                <h3 class="font-bold text-gray-900 text-base truncate">${oferta.nome}</h3>
+                                ${desconto > 0 ? `<span class="bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full flex-shrink-0">${desconto}% OFF</span>` : ''}
+                            </div>
+                            <p class="text-xs text-gray-500 truncate">${oferta.subtitulo || ''}</p>
+                            <div class="flex items-baseline space-x-2 mt-1">
+                                ${!isUnico && oferta.preco_original ? `<span class="text-gray-400 text-xs line-through">R$ ${parseFloat(oferta.preco_original).toFixed(2)}</span>` : ''}
+                                <span class="text-lg font-black text-green-600">R$ ${parseFloat(precoExibicao).toFixed(2)}</span>
+                            </div>
+                        </div>
+                        <button class="btn-loja text-white font-bold py-2 px-4 rounded-lg text-sm ml-3 flex-shrink-0" style="background-color: ${loja?.cor_tema || '#8B1A1A'}">
+                            EU QUERO
+                        </button>
+                    </div>
+                    
+                    <div id="detalhes-${index}" class="card-detalhes border-t border-gray-100">
+                        <div class="p-4 space-y-3">
+                            <div class="relative">
+                                ${fotoGrande}
+                                ${oferta.estoque_restam > 0 ? `
+                                <div class="absolute bottom-2 right-2">
+                                    <div class="badge-restam flex items-end justify-center pb-1">
+                                        <div class="text-center text-white">
+                                            <p class="text-[7px] font-bold leading-tight">RESTAM</p>
+                                            <p class="text-sm font-black leading-tight">${oferta.estoque_restam}</p>
+                                        </div>
+                                    </div>
+                                </div>` : ''}
+                                ${oferta.categoria ? `<div class="absolute bottom-0 left-0 right-0 bg-green-700 text-white text-center py-1.5 text-xs font-bold rounded-b-lg">${oferta.categoria}</div>` : ''}
+                            </div>
+                            ${oferta.descricao_longa ? `
+                            <div>
+                                <h4 class="font-bold text-gray-900 text-sm mb-1">Descrição</h4>
+                                <p class="text-xs text-gray-600 leading-relaxed">${oferta.descricao_longa}</p>
+                            </div>` : ''}
+                            ${(oferta.atributo1_nome || oferta.atributo2_nome) ? `
+                            <div class="grid grid-cols-2 gap-2 text-xs">
+                                ${oferta.atributo1_nome ? `<div class="bg-gray-50 p-2 rounded"><p class="text-gray-500">${oferta.atributo1_nome}</p><p class="font-bold text-gray-900">${oferta.atributo1_valor || '-'}</p></div>` : ''}
+                                ${oferta.atributo2_nome ? `<div class="bg-gray-50 p-2 rounded"><p class="text-gray-500">${oferta.atributo2_nome}</p><p class="font-bold text-gray-900">${oferta.atributo2_valor || '-'}</p></div>` : ''}
+                            </div>` : ''}
+                            <div class="text-xs text-gray-500 bg-gray-50 p-2 rounded">
+                                📅 Válido até: <strong>${dataValidade}</strong>
+                                ${oferta.tipo_entrega_produto === 'delivery' ? ' • 🚚 Delivery' : oferta.tipo_entrega_produto === 'retirada' ? ' • 🏪 Retirada' : ' • 🚚🏪 Delivery + Retirada'}
+                                ${oferta.taxa_entrega_produto > 0 ? ` • Taxa: R$ ${parseFloat(oferta.taxa_entrega_produto).toFixed(2)}` : ''}
+                            </div>
+                            <a href="${oferta.link_cupomclic || '#'}" target="_blank" class="block w-full text-white text-center font-bold py-3 rounded-xl shadow-sm transition text-sm" style="background-color: ${loja?.cor_tema || '#8B1A1A'}">
+                                COMPRAR AGORA
+                            </a>
+                        </div>
+                    </div>
+                </div>`;
+            });
+        }
+
         function toggleDetalhes(id) {
             const detalhes = document.getElementById(id);
             detalhes.classList.toggle('open');
         }
     </script>
-
 </body>
 </html>
