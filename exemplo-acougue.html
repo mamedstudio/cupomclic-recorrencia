@@ -5,29 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Boi Brabo - Ofertas da Semana | CupomClic</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
-        :root { --cor-primaria: #7f1d1d; }
-        .bg-health { background-color: var(--cor-primaria); }
-        .text-health { color: var(--cor-primaria); }
+        body { font-family: 'Inter', sans-serif; }
+        :root { --cor-primaria: #000000; }
         .fade-in { animation: fadeIn 0.4s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
         .badge-restam { 
             background: linear-gradient(135deg, #16a34a 0%, #22c55e 100%);
             clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
         }
+        .card-oferta { transition: transform 0.2s, box-shadow 0.2s; }
+        .card-oferta:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
 
-    <!-- HEADER COM LOGO -->
-    <header class="bg-gradient-to-r from-red-900 via-red-800 to-black text-white py-6 px-6 shadow-lg">
+    <!-- HEADER PRETO (identidade Boi Brabo) -->
+    <header class="bg-black text-white py-5 px-6 shadow-lg">
         <div class="max-w-md mx-auto flex items-center space-x-4">
             <img src="https://raw.githubusercontent.com/mamedstudio/cupomclic-recorrencia/main/boi-brabo.png" 
                  alt="Logo Boi Brabo" 
-                 class="w-16 h-16 rounded-full bg-black p-1 shadow-md border-2 border-white object-contain">
+                 class="w-14 h-14 rounded-full bg-black p-1 object-contain"
+                 onerror="this.style.display='none'">
             <div>
-                <h1 class="text-2xl font-bold tracking-wide">BOI BRABO</h1>
-                <p class="text-red-200 text-xs">O Shopping da Carne • Unidade Bauru</p>
+                <h1 class="text-xl font-black tracking-wider">BOI BRABO</h1>
+                <p class="text-gray-400 text-xs font-medium">O Shopping da Carne • Unidade Bauru</p>
             </div>
         </div>
     </header>
@@ -36,124 +39,135 @@
         
         <!-- OFERTAS DA SEMANA -->
         <section class="mb-8">
-            <div class="flex items-center justify-between mb-4">
-                <h2 class="text-2xl font-bold text-gray-900">🔥 Ofertas da Semana</h2>
-                <span class="text-xs font-semibold bg-red-100 text-red-700 px-3 py-1 rounded-full">Até Domingo</span>
+            <div class="flex items-center justify-between mb-5">
+                <h2 class="text-2xl font-black text-gray-900 flex items-center">
+                    <span class="mr-2">🔥</span> Ofertas da Semana
+                </h2>
+                <span class="text-xs font-semibold bg-red-50 text-red-600 px-3 py-1.5 rounded-full border border-red-100">Até Domingo</span>
             </div>
 
             <!-- Oferta 1: Picanha -->
-            <div class="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden mb-4 fade-in flex">
-                <div class="flex-grow p-4 flex flex-col justify-between">
-                    <div>
-                        <div class="flex items-start justify-between mb-2">
-                            <div>
-                                <h3 class="font-bold text-gray-900 text-base">Picanha Angus</h3>
-                                <p class="text-xs text-gray-500">Peça inteira • Qualidade premium</p>
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden mb-4 fade-in card-oferta">
+                <div class="flex">
+                    <div class="flex-grow p-4 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-start justify-between mb-2">
+                                <div class="flex-grow pr-2">
+                                    <h3 class="font-bold text-gray-900 text-base leading-tight">Picanha Angus</h3>
+                                    <p class="text-xs text-gray-500 mt-0.5">Peça inteira • Qualidade premium</p>
+                                </div>
+                                <span class="bg-red-600 text-white text-[10px] font-bold px-2 py-1 rounded-full flex-shrink-0">30% OFF</span>
                             </div>
-                            <span class="bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-full ml-2">30% OFF</span>
+                            <p class="text-xs text-gray-600 mb-3 line-clamp-2 leading-relaxed">Picanha Angus selecionada, marmoreio perfeito para o seu churrasco de fim de semana.</p>
                         </div>
-                        <p class="text-xs text-gray-600 mb-3 line-clamp-2">Picanha Angus selecionada, marmoreio perfeito para o seu churrasco de fim de semana.</p>
-                    </div>
-                    <div class="mt-2">
-                        <div class="flex items-end space-x-2 mb-3">
-                            <span class="text-gray-400 text-sm line-through">R$ 89,90/kg</span>
-                            <span class="text-2xl font-black text-green-600">R$ 62,93/kg</span>
-                        </div>
-                        <a href="#" class="block w-full bg-orange-500 hover:bg-orange-600 text-white text-center font-bold py-2.5 rounded-xl shadow-md transition text-sm">
-                            Comprar
-                        </a>
-                    </div>
-                </div>
-                <div class="relative w-40 flex-shrink-0">
-                    <img src="https://images.unsplash.com/photo-1600891964092-4316c288032e?w=400&h=400&fit=crop" 
-                         alt="Picanha Angus" 
-                         class="w-full h-full object-cover">
-                    <div class="absolute bottom-2 right-2 badge-restam w-14 h-14 flex items-center justify-center">
-                        <div class="text-center text-white">
-                            <p class="text-[9px] font-bold leading-tight">RESTAM</p>
-                            <p class="text-lg font-black leading-tight">12</p>
+                        <div>
+                            <div class="flex items-baseline space-x-2 mb-3">
+                                <span class="text-gray-400 text-xs line-through">R$ 89,90/kg</span>
+                                <span class="text-2xl font-black text-green-600">R$ 62,93<span class="text-sm">/kg</span></span>
+                            </div>
+                            <a href="#" class="block w-full bg-orange-500 hover:bg-orange-600 text-white text-center font-bold py-2.5 rounded-xl shadow-sm transition text-sm">
+                                Comprar
+                            </a>
                         </div>
                     </div>
-                    <div class="absolute bottom-0 left-0 right-0 bg-green-700 text-white text-center py-1 text-xs font-bold">
-                        Carnes Nobres
+                    <div class="relative w-36 flex-shrink-0 bg-gray-100">
+                        <img src="https://images.unsplash.com/photo-1600891964092-4316c288032e?w=400&h=500&fit=crop&q=80" 
+                             alt="Picanha Angus" 
+                             class="w-full h-full object-cover"
+                             onerror="this.src='https://via.placeholder.com/300x400/DC2626/FFFFFF?text=Picanha'">
+                        <div class="absolute bottom-8 right-2 badge-restam w-12 h-12 flex items-center justify-center">
+                            <div class="text-center text-white">
+                                <p class="text-[8px] font-bold leading-tight">RESTAM</p>
+                                <p class="text-base font-black leading-tight">12</p>
+                            </div>
+                        </div>
+                        <div class="absolute bottom-0 left-0 right-0 bg-green-700 text-white text-center py-1.5 text-xs font-bold">
+                            Carnes Nobres
+                        </div>
                     </div>
                 </div>
             </div>
 
             <!-- Oferta 2: Costela -->
-            <div class="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden mb-4 fade-in flex">
-                <div class="flex-grow p-4 flex flex-col justify-between">
-                    <div>
-                        <div class="flex items-start justify-between mb-2">
-                            <div>
-                                <h3 class="font-bold text-gray-900 text-base">Costela Bovina</h3>
-                                <p class="text-xs text-gray-500">Para churrasco • 1kg</p>
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden mb-4 fade-in card-oferta">
+                <div class="flex">
+                    <div class="flex-grow p-4 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-start justify-between mb-2">
+                                <div class="flex-grow pr-2">
+                                    <h3 class="font-bold text-gray-900 text-base leading-tight">Costela Bovina</h3>
+                                    <p class="text-xs text-gray-500 mt-0.5">Para churrasco • 1kg</p>
+                                </div>
+                                <span class="bg-red-600 text-white text-[10px] font-bold px-2 py-1 rounded-full flex-shrink-0">25% OFF</span>
                             </div>
-                            <span class="bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-full ml-2">25% OFF</span>
+                            <p class="text-xs text-gray-600 mb-3 line-clamp-2 leading-relaxed">Costela bovina de primeira, ideal para assar no bafo ou na brasa. Sabor incomparável.</p>
                         </div>
-                        <p class="text-xs text-gray-600 mb-3 line-clamp-2">Costela bovina de primeira, ideal para assar no bafo ou na brasa. Sabor incomparável.</p>
-                    </div>
-                    <div class="mt-2">
-                        <div class="flex items-end space-x-2 mb-3">
-                            <span class="text-gray-400 text-sm line-through">R$ 45,00/kg</span>
-                            <span class="text-2xl font-black text-green-600">R$ 33,75/kg</span>
-                        </div>
-                        <a href="#" class="block w-full bg-orange-500 hover:bg-orange-600 text-white text-center font-bold py-2.5 rounded-xl shadow-md transition text-sm">
-                            Comprar
-                        </a>
-                    </div>
-                </div>
-                <div class="relative w-40 flex-shrink-0">
-                    <img src="https://images.unsplash.com/photo-1544025162-d76694265947?w=400&h=400&fit=crop" 
-                         alt="Costela Bovina" 
-                         class="w-full h-full object-cover">
-                    <div class="absolute bottom-2 right-2 badge-restam w-14 h-14 flex items-center justify-center">
-                        <div class="text-center text-white">
-                            <p class="text-[9px] font-bold leading-tight">RESTAM</p>
-                            <p class="text-lg font-black leading-tight">8</p>
+                        <div>
+                            <div class="flex items-baseline space-x-2 mb-3">
+                                <span class="text-gray-400 text-xs line-through">R$ 45,00/kg</span>
+                                <span class="text-2xl font-black text-green-600">R$ 33,75<span class="text-sm">/kg</span></span>
+                            </div>
+                            <a href="#" class="block w-full bg-orange-500 hover:bg-orange-600 text-white text-center font-bold py-2.5 rounded-xl shadow-sm transition text-sm">
+                                Comprar
+                            </a>
                         </div>
                     </div>
-                    <div class="absolute bottom-0 left-0 right-0 bg-green-700 text-white text-center py-1 text-xs font-bold">
-                        Churrasco
+                    <div class="relative w-36 flex-shrink-0 bg-gray-100">
+                        <img src="https://images.unsplash.com/photo-1544025162-d76694265947?w=400&h=500&fit=crop&q=80" 
+                             alt="Costela Bovina" 
+                             class="w-full h-full object-cover"
+                             onerror="this.src='https://via.placeholder.com/300x400/DC2626/FFFFFF?text=Costela'">
+                        <div class="absolute bottom-8 right-2 badge-restam w-12 h-12 flex items-center justify-center">
+                            <div class="text-center text-white">
+                                <p class="text-[8px] font-bold leading-tight">RESTAM</p>
+                                <p class="text-base font-black leading-tight">8</p>
+                            </div>
+                        </div>
+                        <div class="absolute bottom-0 left-0 right-0 bg-green-700 text-white text-center py-1.5 text-xs font-bold">
+                            Churrasco
+                        </div>
                     </div>
                 </div>
             </div>
 
             <!-- Oferta 3: Linguiça -->
-            <div class="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden fade-in flex">
-                <div class="flex-grow p-4 flex flex-col justify-between">
-                    <div>
-                        <div class="flex items-start justify-between mb-2">
-                            <div>
-                                <h3 class="font-bold text-gray-900 text-base">Linguiça Toscana</h3>
-                                <p class="text-xs text-gray-500">Pacote 1kg • Artesanal</p>
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden fade-in card-oferta">
+                <div class="flex">
+                    <div class="flex-grow p-4 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-start justify-between mb-2">
+                                <div class="flex-grow pr-2">
+                                    <h3 class="font-bold text-gray-900 text-base leading-tight">Linguiça Toscana</h3>
+                                    <p class="text-xs text-gray-500 mt-0.5">Pacote 1kg • Artesanal</p>
+                                </div>
+                                <span class="bg-red-600 text-white text-[10px] font-bold px-2 py-1 rounded-full flex-shrink-0">35% OFF</span>
                             </div>
-                            <span class="bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-full ml-2">35% OFF</span>
+                            <p class="text-xs text-gray-600 mb-3 line-clamp-2 leading-relaxed">Linguiça toscana artesanal, tempero especial da casa. Perfeita para o churrasco.</p>
                         </div>
-                        <p class="text-xs text-gray-600 mb-3 line-clamp-2">Linguiça toscana artesanal, tempero especial da casa. Perfeita para o churrasco.</p>
-                    </div>
-                    <div class="mt-2">
-                        <div class="flex items-end space-x-2 mb-3">
-                            <span class="text-gray-400 text-sm line-through">R$ 32,00/kg</span>
-                            <span class="text-2xl font-black text-green-600">R$ 20,80/kg</span>
-                        </div>
-                        <a href="#" class="block w-full bg-orange-500 hover:bg-orange-600 text-white text-center font-bold py-2.5 rounded-xl shadow-md transition text-sm">
-                            Comprar
-                        </a>
-                    </div>
-                </div>
-                <div class="relative w-40 flex-shrink-0">
-                    <img src="https://images.unsplash.com/photo-1595486806551-09c613174a48?w=400&h=400&fit=crop" 
-                         alt="Linguiça Toscana" 
-                         class="w-full h-full object-cover">
-                    <div class="absolute bottom-2 right-2 badge-restam w-14 h-14 flex items-center justify-center">
-                        <div class="text-center text-white">
-                            <p class="text-[9px] font-bold leading-tight">RESTAM</p>
-                            <p class="text-lg font-black leading-tight">15</p>
+                        <div>
+                            <div class="flex items-baseline space-x-2 mb-3">
+                                <span class="text-gray-400 text-xs line-through">R$ 32,00/kg</span>
+                                <span class="text-2xl font-black text-green-600">R$ 20,80<span class="text-sm">/kg</span></span>
+                            </div>
+                            <a href="#" class="block w-full bg-orange-500 hover:bg-orange-600 text-white text-center font-bold py-2.5 rounded-xl shadow-sm transition text-sm">
+                                Comprar
+                            </a>
                         </div>
                     </div>
-                    <div class="absolute bottom-0 left-0 right-0 bg-green-700 text-white text-center py-1 text-xs font-bold">
-                        Embutidos
+                    <div class="relative w-36 flex-shrink-0 bg-gray-100">
+                        <img src="https://images.unsplash.com/photo-1595486806551-09c613174a48?w=400&h=500&fit=crop&q=80" 
+                             alt="Linguiça Toscana" 
+                             class="w-full h-full object-cover"
+                             onerror="this.src='https://via.placeholder.com/300x400/DC2626/FFFFFF?text=Linguica'">
+                        <div class="absolute bottom-8 right-2 badge-restam w-12 h-12 flex items-center justify-center">
+                            <div class="text-center text-white">
+                                <p class="text-[8px] font-bold leading-tight">RESTAM</p>
+                                <p class="text-base font-black leading-tight">15</p>
+                            </div>
+                        </div>
+                        <div class="absolute bottom-0 left-0 right-0 bg-green-700 text-white text-center py-1.5 text-xs font-bold">
+                            Embutidos
+                        </div>
                     </div>
                 </div>
             </div>
@@ -161,38 +175,38 @@
 
         <!-- DIVISOR -->
         <div class="relative flex py-6 items-center">
-            <div class="flex-grow border-t border-gray-300"></div>
+            <div class="flex-grow border-t border-gray-200"></div>
             <span class="flex-shrink-0 mx-4 text-gray-400 text-xs font-semibold uppercase tracking-wider">Carnes para o dia a dia</span>
-            <div class="flex-grow border-t border-gray-300"></div>
+            <div class="flex-grow border-t border-gray-200"></div>
         </div>
 
-        <!-- DescontoVIP (antes era "Assinatura") -->
+        <!-- DescontoVIP -->
         <section class="space-y-4">
             <div class="text-center space-y-1">
-                <h1 class="text-lg font-bold text-gray-900">Carnes frescas <span class="text-health">toda semana</span>.</h1>
+                <h1 class="text-lg font-bold text-gray-900">Carnes frescas <span class="text-red-700">toda semana</span>.</h1>
                 <p class="text-gray-500 text-xs">Garanta preço exclusivo e entrega garantida!</p>
             </div>
 
             <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
-                <div class="flex items-center space-x-3">
+                <div class="flex items-center space-x-3 mb-3">
                     <div class="w-12 h-12 bg-red-50 rounded-lg flex items-center justify-center text-2xl">🥩</div>
                     <div class="flex-grow">
                         <h3 class="font-bold text-gray-900 text-sm">Patinho Moído</h3>
                         <p class="text-xs text-gray-500">1kg • R$ 38,00</p>
                     </div>
                 </div>
-                <div class="mt-3 bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200 rounded-lg p-3">
-                    <p class="text-xs font-bold text-gray-700 mb-2 flex items-center">
-                        <span class="bg-yellow-500 text-white text-[10px] px-2 py-0.5 rounded-full mr-2">VIP</span>
+                <div class="bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200 rounded-lg p-3 mb-3">
+                    <p class="text-xs font-semibold text-gray-700 mb-2 flex items-center">
+                        <span class="bg-gradient-to-r from-yellow-500 to-orange-500 text-white text-[10px] px-2 py-0.5 rounded-full mr-2 font-bold">VIP</span>
                         DescontoVIP: Próxima compra com preço exclusivo e garantido.
                     </p>
                     <div class="grid grid-cols-3 gap-2 text-center">
-                        <div class="bg-white rounded p-1"><p class="text-xs text-gray-600">3m</p><p class="text-sm font-bold text-red-700">10%</p></div>
-                        <div class="bg-white rounded p-1"><p class="text-xs text-gray-600">5m</p><p class="text-sm font-bold text-red-700">18%</p></div>
-                        <div class="bg-white rounded p-1"><p class="text-xs text-gray-600">8m</p><p class="text-sm font-bold text-red-700">25%</p></div>
+                        <div class="bg-white rounded p-1.5 border border-yellow-100"><p class="text-xs text-gray-600">3m</p><p class="text-sm font-bold text-red-700">10%</p></div>
+                        <div class="bg-white rounded p-1.5 border border-yellow-100"><p class="text-xs text-gray-600">5m</p><p class="text-sm font-bold text-red-700">18%</p></div>
+                        <div class="bg-white rounded p-1.5 border border-yellow-100"><p class="text-xs text-gray-600">8m</p><p class="text-sm font-bold text-red-700">25%</p></div>
                     </div>
                 </div>
-                <button class="block w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white text-center font-bold py-3 rounded-xl shadow-md transition text-sm mt-3">
+                <button class="block w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white text-center font-bold py-3 rounded-xl shadow-sm transition text-sm">
                     QUERO MEU DESCONTO VIP
                 </button>
             </div>
@@ -202,7 +216,8 @@
     <footer class="text-center py-6 bg-white border-t border-gray-100 mt-8">
         <img src="https://raw.githubusercontent.com/mamedstudio/cupomclic-recorrencia/main/cupomclic-logo.png" 
              alt="CupomClic" 
-             class="h-8 mx-auto mb-2 object-contain">
+             class="h-8 mx-auto mb-2 object-contain"
+             onerror="this.style.display='none'">
         <p class="text-gray-400 text-xs">&copy; 2026 CUPOMCLIC. Powered by SaaS.</p>
     </footer>
 
