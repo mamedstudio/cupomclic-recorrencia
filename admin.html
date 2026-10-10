@@ -65,7 +65,7 @@
                 <button onclick="mostrarSecao('assinaturas')" id="tab-assinaturas" class="tab-inativa py-2 px-1 rounded-lg text-[10px] sm:text-xs font-semibold transition">👥 Assinar</button>
                 <button onclick="mostrarSecao('clientes')" id="tab-clientes" class="tab-inativa py-2 px-1 rounded-lg text-[10px] sm:text-xs font-semibold transition">🔍 Clientes</button>
                 <button onclick="mostrarSecao('solicitacoes')" id="tab-solicitacoes" class="tab-inativa py-2 px-1 rounded-lg text-[10px] sm:text-xs font-semibold transition">💡 Solicit</button>
-                <button onclick="mostrarSecao('configuracoes')" id="tab-configuracoes" class="tab-inativa py-2 px-1 rounded-lg text-[10px] sm:text-xs font-semibold transition">⚙️ Config</button>
+                <button onclick="mostrarSecao('configuracoes')" id="tab-configuracoes" class="tab-inativa py-2 px-1 rounded-lg text-[10px] sm:text-xs font-semibold transition">️ Config</button>
             </div>
         </div>
 
@@ -84,7 +84,7 @@
             </div>
         </div>
 
-        <!-- SEÇÃO: PRODUTOS -->
+        <!-- SEÇÃO: PRODUTOS (REFATORADA) -->
         <div id="secao-produtos" class="secao-admin">
             <div class="bg-white p-5 rounded-2xl shadow-md border border-gray-100 mb-6">
                 <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center"><span class="bg-health text-white w-6 h-6 rounded-full flex items-center justify-center text-xs mr-2">+</span>Adicionar Produto</h2>
@@ -94,24 +94,86 @@
                     <div>
                         <label class="block text-xs font-semibold text-gray-600 mb-1">Tipo de Produto</label>
                         <select id="tipo-produto" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm bg-white">
-                            <option value="oferta_semanal">🔥 Oferta da Semana (Panfleto)</option>
+                            <option value="oferta_semanal"> Oferta da Semana (Empório)</option>
                             <option value="recorrencia">📦 Produto de Recorrência</option>
                         </select>
                     </div>
 
+                    <!-- CAMPOS BÁSICOS -->
                     <div class="grid grid-cols-2 gap-3">
                         <div><label class="block text-xs font-semibold text-gray-600 mb-1">Nome</label><input type="text" id="nome" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
-                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">Dosagem/Versão</label><input type="text" id="dosagem" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
+                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">Subtítulo</label><input type="text" id="subtitulo" placeholder="ex: Peça inteira • Angus" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
                     </div>
-                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">Descrição</label><textarea id="descricao" required rows="2" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></textarea></div>
                     
+                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">Descrição Longa</label><textarea id="descricao-longa" rows="3" placeholder="Descrição detalhada do produto..." class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></textarea></div>
+
+                    <!-- CAMPOS ESPECÍFICOS OFERTA SEMANAL -->
                     <div id="campos-oferta" class="space-y-3 p-3 bg-red-50 rounded-lg border border-red-100">
-                        <label class="block text-xs font-bold text-red-700 mb-1">Dados da Oferta Semanal</label>
-                        <div><label class="block text-xs text-gray-600 mb-1">URL da Foto (opcional)</label><input type="text" id="foto_url" placeholder="https://..." class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
-                        <div><label class="block text-xs text-gray-600 mb-1">Link Checkout CupomClic (PIX)</label><input type="text" id="link_cupomclic" placeholder="https://cupomclic..." class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm font-mono text-xs"></div>
-                        <div><label class="block text-xs text-gray-600 mb-1">Válido até</label><input type="date" id="valido_ate" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
+                        <label class="block text-xs font-bold text-red-700 mb-2"> Imagens da Oferta</label>
+                        
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs text-gray-600 mb-1">Thumbnail (foto pequena)</label>
+                                <input type="text" id="thumbnail-url" placeholder="https://... (100x100)" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-600 mb-1">Foto Grande (detalhes)</label>
+                                <input type="text" id="foto-grande-url" placeholder="https://... (600x400)" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs text-gray-600 mb-1">Categoria</label>
+                                <select id="categoria" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm bg-white">
+                                    <option value="Carnes Nobres">Carnes Nobres</option>
+                                    <option value="Bebidas">Bebidas</option>
+                                    <option value="Gourmet">Gourmet</option>
+                                    <option value="Condimentos">Condimentos</option>
+                                    <option value="Churrasco">Churrasco</option>
+                                    <option value="Premium">Premium</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-600 mb-1">Estoque "Restam"</label>
+                                <input type="number" id="estoque-restam" placeholder="12" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs text-gray-600 mb-1">Atributo 1 (nome)</label>
+                                <input type="text" id="atributo1-nome" placeholder="ex: Peso médio" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-600 mb-1">Atributo 1 (valor)</label>
+                                <input type="text" id="atributo1-valor" placeholder="ex: 1,2kg" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs text-gray-600 mb-1">Atributo 2 (nome)</label>
+                                <input type="text" id="atributo2-nome" placeholder="ex: Origem" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-600 mb-1">Atributo 2 (valor)</label>
+                                <input type="text" id="atributo2-valor" placeholder="ex: Angus Certificado" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs text-gray-600 mb-1">Link Checkout CupomClic (PIX)</label>
+                            <input type="text" id="link-cupomclic" placeholder="https://cupomclic..." class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm font-mono text-xs">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs text-gray-600 mb-1">Válido até</label>
+                            <input type="date" id="valido-ate" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm">
+                        </div>
                     </div>
 
+                    <!-- CAMPOS RECORRÊNCIA -->
                     <div id="campos-recorrencia" class="space-y-3 p-3 bg-green-50 rounded-lg border border-green-100 hidden">
                         <label class="block text-xs font-bold text-green-700 mb-1">Dados de Recorrência</label>
                         <div class="grid grid-cols-2 gap-3">
@@ -132,6 +194,7 @@
                         </div>
                     </div>
 
+                    <!-- PREÇOS -->
                     <div class="grid grid-cols-2 gap-3">
                         <div><label class="block text-xs font-semibold text-gray-600 mb-1">Preço Normal (R$)</label><input type="number" step="0.01" id="preco-original" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
                         <div><label class="block text-xs font-semibold text-gray-600 mb-1">Preço Promocional (R$)</label><input type="number" step="0.01" id="preco-promocional" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
@@ -172,7 +235,7 @@
         <!-- SEÇÃO: CLIENTES -->
         <div id="secao-clientes" class="secao-admin">
             <div class="bg-white p-4 rounded-2xl shadow-md border border-gray-100 mb-4">
-                <h3 class="text-sm font-bold text-gray-900 mb-3"> Buscar Clientes</h3>
+                <h3 class="text-sm font-bold text-gray-900 mb-3">🔍 Buscar Clientes</h3>
                 <div class="space-y-3">
                     <input type="text" id="filtro-nome" oninput="filtrarClientes()" placeholder="Nome do cliente..." class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm">
                     <input type="text" id="filtro-produto" oninput="filtrarClientes()" placeholder="Produto..." class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm">
@@ -201,8 +264,8 @@
                         <select id="est-tipo" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm bg-white">
                             <option value="farmacia">Farmácia</option>
                             <option value="acougue">Açougue / Carnes</option>
+                            <option value="emporio">Empório Gourmet</option>
                             <option value="pet">Pet Shop</option>
-                            <option value="proteicos">Loja de Proteicos</option>
                             <option value="outros">Outros</option>
                         </select>
                     </div>
@@ -360,8 +423,8 @@
             const tipo = document.getElementById('tipo-produto').value;
             const novoProd = { 
                 nome: document.getElementById('nome').value, 
-                dosagem: document.getElementById('dosagem').value, 
-                descricao: document.getElementById('descricao').value, 
+                subtitulo: document.getElementById('subtitulo').value,
+                descricao_longa: document.getElementById('descricao-longa').value,
                 preco_original: document.getElementById('preco-original').value,
                 preco_promocional: document.getElementById('preco-promocional').value,
                 tipo: tipo,
@@ -369,9 +432,16 @@
             };
 
             if (tipo === 'oferta_semanal') {
-                novoProd.foto_url = document.getElementById('foto_url').value;
-                novoProd.link_cupomclic = document.getElementById('link_cupomclic').value;
-                novoProd.valido_ate = document.getElementById('valido_ate').value;
+                novoProd.thumbnail_url = document.getElementById('thumbnail-url').value;
+                novoProd.foto_grande_url = document.getElementById('foto-grande-url').value;
+                novoProd.categoria = document.getElementById('categoria').value;
+                novoProd.estoque_restam = parseInt(document.getElementById('estoque-restam').value) || 0;
+                novoProd.atributo1_nome = document.getElementById('atributo1-nome').value;
+                novoProd.atributo1_valor = document.getElementById('atributo1-valor').value;
+                novoProd.atributo2_nome = document.getElementById('atributo2-nome').value;
+                novoProd.atributo2_valor = document.getElementById('atributo2-valor').value;
+                novoProd.link_cupomclic = document.getElementById('link-cupomclic').value;
+                novoProd.valido_ate = document.getElementById('valido-ate').value;
             } else {
                 novoProd.dias_duracao = parseInt(document.getElementById('dias-duracao').value) || 30;
                 novoProd.estoque = parseInt(document.getElementById('estoque').value) || 0;
@@ -398,10 +468,11 @@
             if (produtos.length === 0) { listaAdmin.innerHTML = '<p class="text-center text-gray-500 py-4 text-sm">Nenhum produto cadastrado.</p>'; return; }
             produtos.forEach((prod, index) => {
                 const isOferta = prod.tipo === 'oferta_semanal';
+                const desconto = prod.preco_original ? Math.round(((prod.preco_original - prod.preco_promocional) / prod.preco_original) * 100) : 0;
                 listaAdmin.innerHTML += `<div class="bg-white p-3 rounded-xl border border-gray-200 flex justify-between items-center fade-in">
                     <div class="flex-grow">
-                        <p class="font-bold text-sm text-gray-900">${prod.nome} ${prod.dosagem || ''} <span class="text-[10px] px-2 py-0.5 rounded-full ${isOferta ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}">${isOferta ? 'OFERTA' : 'RECORRÊNCIA'}</span></p>
-                        <p class="text-xs text-gray-500">R$ ${prod.preco_promocional || prod.preco_original} | Estoque: ${prod.estoque || 'N/A'}</p>
+                        <p class="font-bold text-sm text-gray-900">${prod.nome} <span class="text-[10px] px-2 py-0.5 rounded-full ${isOferta ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}">${isOferta ? 'OFERTA' : 'RECORRÊNCIA'}</span></p>
+                        <p class="text-xs text-gray-500">R$ ${prod.preco_promocional || prod.preco_original} | ${desconto}% OFF | Restam: ${prod.estoque_restam || 'N/A'}</p>
                     </div>
                     <div class="flex space-x-2">
                         <button onclick="editarProduto(${index})" class="p-2 bg-blue-50 text-blue-600 rounded-lg text-xs">✏️</button>
@@ -417,15 +488,22 @@
             document.getElementById('tipo-produto').dispatchEvent(new Event('change'));
             
             document.getElementById('nome').value = prod.nome; 
-            document.getElementById('dosagem').value = prod.dosagem || ''; 
-            document.getElementById('descricao').value = prod.descricao || ''; 
+            document.getElementById('subtitulo').value = prod.subtitulo || ''; 
+            document.getElementById('descricao-longa').value = prod.descricao_longa || ''; 
             document.getElementById('preco-original').value = prod.preco_original; 
             document.getElementById('preco-promocional').value = prod.preco_promocional || prod.preco_original;
             
             if (prod.tipo === 'oferta_semanal') {
-                document.getElementById('foto_url').value = prod.foto_url || '';
-                document.getElementById('link_cupomclic').value = prod.link_cupomclic || '';
-                document.getElementById('valido_ate').value = prod.valido_ate || '';
+                document.getElementById('thumbnail-url').value = prod.thumbnail_url || '';
+                document.getElementById('foto-grande-url').value = prod.foto_grande_url || '';
+                document.getElementById('categoria').value = prod.categoria || 'Carnes Nobres';
+                document.getElementById('estoque-restam').value = prod.estoque_restam || 0;
+                document.getElementById('atributo1-nome').value = prod.atributo1_nome || '';
+                document.getElementById('atributo1-valor').value = prod.atributo1_valor || '';
+                document.getElementById('atributo2-nome').value = prod.atributo2_nome || '';
+                document.getElementById('atributo2-valor').value = prod.atributo2_valor || '';
+                document.getElementById('link-cupomclic').value = prod.link_cupomclic || '';
+                document.getElementById('valido-ate').value = prod.valido_ate || '';
             } else {
                 document.getElementById('dias-duracao').value = prod.dias_duracao || 30;
                 document.getElementById('estoque').value = prod.estoque || 0;
@@ -445,38 +523,11 @@
 
         function atualizarSelectProdutos() {
             const select = document.getElementById('assinatura-produto'); select.innerHTML = '<option value="">Selecione...</option>';
-            produtos.filter(p => p.tipo === 'recorrencia' || !p.tipo).forEach(med => { select.innerHTML += `<option value="${med.id}">${med.nome} ${med.dosagem || ''}</option>`; });
+            produtos.filter(p => p.tipo === 'recorrencia' || !p.tipo).forEach(med => { select.innerHTML += `<option value="${med.id}">${med.nome} ${med.subtitulo || ''}</option>`; });
         }
 
-        document.getElementById('form-assinatura').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const produtoId = parseInt(document.getElementById('assinatura-produto').value);
-            const produto = produtos.find(p => p.id === produtoId);
-            const dataUltimaEntrega = document.getElementById('assinatura-data').value;
-            const dataUltima = new Date(dataUltimaEntrega), dataProxima = new Date(dataUltima); 
-            dataProxima.setDate(dataProxima.getDate() + (produto?.dias_duracao || 30));
-            
-            const novaAssinatura = { 
-                cliente_nome: document.getElementById('cliente-nome').value, 
-                cliente_whatsapp: document.getElementById('cliente-whatsapp').value, 
-                produto_id: produtoId, 
-                dias_duracao: produto?.dias_duracao || 30, 
-                data_ultima_entrega: dataUltimaEntrega, 
-                data_proxima_entrega: dataProxima.toISOString().split('T')[0], 
-                desconto_aplicado: parseInt(document.getElementById('assinatura-desconto').value), 
-                tipo_entrega: document.getElementById('assinatura-tipo').value, 
-                estabelecimento_id: ESTABELECIMENTO_ID, 
-                quantidade_compras: 0, 
-                ativa: true 
-            };
-            try {
-                await db.from('assinaturas').insert([novaAssinatura]); 
-                document.getElementById('form-assinatura').reset(); 
-                await carregarAssinaturas(); 
-                alert('Assinatura registrada!');
-            } catch (error) { alert('Erro ao registrar: ' + error.message); }
-        });
-
+        // ... (resto das funções de calendário, assinaturas, clientes, solicitações e configurações permanecem iguais)
+        
         function renderizarCalendario() {
             const ano = dataAtual.getFullYear(), mes = dataAtual.getMonth();
             const nomesMeses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
@@ -513,7 +564,7 @@
                             <div class="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center text-lg">👤</div>
                             <div class="flex-grow">
                                 <h3 class="font-bold text-gray-900 text-sm">${cliente.cliente_nome}</h3>
-                                <p class="text-xs text-gray-500">${cliente.produtos?.nome || 'Produto'} ${cliente.produtos?.dosagem || ''}</p>
+                                <p class="text-xs text-gray-500">${cliente.produtos?.nome || 'Produto'}</p>
                             </div>
                         </div>
                         <div class="grid grid-cols-2 gap-3 text-sm mt-3">
@@ -548,10 +599,10 @@
                 lista.innerHTML += `<div class="bg-white rounded-xl border border-gray-200 overflow-hidden fade-in">
                     <div class="p-4">
                         <div class="flex items-center space-x-3">
-                            <div class="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center text-lg">👤</div>
+                            <div class="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center text-lg"></div>
                             <div class="flex-grow">
                                 <h3 class="font-bold text-gray-900 text-sm">${cliente.cliente_nome}</h3>
-                                <p class="text-xs text-gray-500">${cliente.produtos?.nome || 'Produto'} ${cliente.produtos?.dosagem || ''}</p>
+                                <p class="text-xs text-gray-500">${cliente.produtos?.nome || 'Produto'}</p>
                             </div>
                         </div>
                         <div class="grid grid-cols-2 gap-3 text-sm mt-3">
@@ -594,6 +645,35 @@
         async function atualizarStatusSolicitacao(id, status) {
             try { await db.from('solicitacoes_produtos').update({ status }).eq('id', id); await carregarSolicitacoes(); } catch (e) { alert('Erro.'); }
         }
+
+        document.getElementById('form-assinatura').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const produtoId = parseInt(document.getElementById('assinatura-produto').value);
+            const produto = produtos.find(p => p.id === produtoId);
+            const dataUltimaEntrega = document.getElementById('assinatura-data').value;
+            const dataUltima = new Date(dataUltimaEntrega), dataProxima = new Date(dataUltima); 
+            dataProxima.setDate(dataProxima.getDate() + (produto?.dias_duracao || 30));
+            
+            const novaAssinatura = { 
+                cliente_nome: document.getElementById('cliente-nome').value, 
+                cliente_whatsapp: document.getElementById('cliente-whatsapp').value, 
+                produto_id: produtoId, 
+                dias_duracao: produto?.dias_duracao || 30, 
+                data_ultima_entrega: dataUltimaEntrega, 
+                data_proxima_entrega: dataProxima.toISOString().split('T')[0], 
+                desconto_aplicado: parseInt(document.getElementById('assinatura-desconto').value), 
+                tipo_entrega: document.getElementById('assinatura-tipo').value, 
+                estabelecimento_id: ESTABELECIMENTO_ID, 
+                quantidade_compras: 0, 
+                ativa: true 
+            };
+            try {
+                await db.from('assinaturas').insert([novaAssinatura]); 
+                document.getElementById('form-assinatura').reset(); 
+                await carregarAssinaturas(); 
+                alert('Assinatura registrada!');
+            } catch (error) { alert('Erro ao registrar: ' + error.message); }
+        });
 
         document.getElementById('form-estabelecimento').addEventListener('submit', async (e) => {
             e.preventDefault();
