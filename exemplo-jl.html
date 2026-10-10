@@ -181,7 +181,7 @@
                              <h3 class="font-bold text-gray-900 text-base truncate">${oferta.nome}</h3>
                              ${desconto > 0 ? `<span class="bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full flex-shrink-0">${desconto}% OFF</span>` : ''}
                     </div>
-                    <p class="text-xs text-gray-500 truncate">${oferta.subtitulo || ''}</p>
+                    <p class="text-xs text-gray-500 leading-tight">${oferta.subtitulo || ''}</p>
                     <div class="flex items-baseline space-x-2 mt-1">
                        ${!isUnico && oferta.preco_original ? `<span class="text-gray-400 text-xs line-through">R$ ${parseFloat(oferta.preco_original).toFixed(2)}</span>` : ''}
                        <span class="text-lg font-black text-green-600">R$ ${parseFloat(precoExibicao).toFixed(2)}</span>
