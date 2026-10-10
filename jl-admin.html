@@ -128,7 +128,7 @@
                 <button onclick="toggleDarkMode()" id="btn-dark-mode" class="p-2 rounded-lg bg-gray-200 hover:bg-gray-300 transition" title="Alternar modo escuro">
                     <span id="icon-dark-mode" class="text-lg">🌙</span>
                 </button>
-                <a href="exemplo-jl.html" class="text-xs bg-gray-200 hover:bg-gray-300 text-gray-700 px-3 py-1 rounded-full transition">👁️ Ver Loja</a>
+                <a href="JL-Ofertas.html" class="text-xs bg-gray-200 hover:bg-gray-300 text-gray-700 px-3 py-1 rounded-full transition">👁️ Ver Loja</a>
             </div>
         </div>
     </header>
@@ -1061,10 +1061,14 @@
         }
 
         function enviarAlertaWhatsApp(index) {
-            const ass = assinantes[index];
-            const produtoNome = ass.produtos?.nome || 'produto';
-            const msg = `Olá ${ass.nome}! 👑\n\nSeu *${produtoNome}* está disponível com *desconto VIP de ${ass.desconto_atual}% OFF*!\n\nAproveite essa condição exclusiva.\n\nResponda *QUERO* para receber o link.`;
-            window.open(`https://wa.me/${ass.whatsapp}?text=${encodeURIComponent(msg)}`, '_blank');
+           const ass = assinantes[index];
+           const produtoNome = ass.produtos?.nome || 'produto';
+           const desconto = ass.desconto_atual;
+    
+           const mensagem = `Olá ${ass.nome}! 👑\n\nSeu *${produtoNome}* está disponível com *desconto VIP de ${desconto}% OFF*!\n\nAproveite essa condição exclusiva para clientes fiéis.\n\n👉 *Ver ofertas:* https://cupomclic-recorrencia.vercel.app/JL-Ofertas.html\n\nResponda *QUERO* para receber o link de pagamento.`;
+    
+           const linkZap = `https://wa.me/${ass.whatsapp}?text=${encodeURIComponent(mensagem)}`;
+           window.open(linkZap, '_blank');
         }
 
         function renderizarCalendarioVIP() {
