@@ -45,8 +45,10 @@
     <main class="max-w-md mx-auto px-4 py-6">
         <section class="mb-8">
             <div class="flex items-center justify-between mb-5">
-                <h2 class="text-2xl font-black text-gray-900 flex items-center"><span class="mr-2">🔥</span> Ofertas da Semana</h2>
-                <span class="text-xs font-semibold bg-red-50 text-red-600 px-3 py-1.5 rounded-full border border-red-100">Até Domingo</span>
+    <h2 class="text-2xl font-black text-gray-900 flex items-center">
+        <span class="mr-2"></span> Ofertas da Semana
+    </h2>
+    <!-- Badge "Até Domingo" removido -->
             </div>
             <div id="lista-ofertas">
                 <div class="text-center py-8"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600 mx-auto"></div></div>
@@ -183,6 +185,7 @@
                             <div class="flex items-baseline space-x-2 mt-1">
                                 ${!isUnico && oferta.preco_original ? `<span class="text-gray-400 text-xs line-through">R$ ${parseFloat(oferta.preco_original).toFixed(2)}</span>` : ''}
                                 <span class="text-lg font-black text-green-600">R$ ${parseFloat(precoExibicao).toFixed(2)}</span>
+                                ${oferta.valido_ate ? `<p class="text-[10px] text-gray-400 mt-1">📅 Válido até ${new Date(oferta.valido_ate).toLocaleDateString('pt-BR')}</p>` : ''}
                             </div>
                         </div>
                         <button class="text-white font-bold py-2 px-4 rounded-lg text-sm ml-3 flex-shrink-0" style="background-color: ${loja?.cor_tema || '#8B1A1A'}">EU QUERO</button>
