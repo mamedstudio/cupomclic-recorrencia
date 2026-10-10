@@ -641,7 +641,7 @@
                 
                 // Upload para o Supabase Storage
                 const { data, error } = await db.storage
-                    .from('produtos')
+                    .from('PRODUTOS')
                     .upload(nomeArquivo, arquivoSelecionado, {
                         cacheControl: '3600',
                         upsert: false
@@ -651,7 +651,7 @@
                 
                 // Obter URL pública
                 const { data: urlData } = db.storage
-                    .from('produtos')
+                    .from('PRODUTOS')
                     .getPublicUrl(nomeArquivo);
                 
                 const urlPublica = urlData.publicUrl;
