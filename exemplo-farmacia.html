@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Farmácia - Ofertas da Semana</title>
+    <title>Farmácia - Ofertas da Semana | CupomClic</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         :root { --cor-primaria: #1e40af; }
@@ -18,12 +18,11 @@
     <!-- HEADER COM LOGO -->
     <header class="bg-gradient-to-r from-blue-700 to-blue-500 text-white py-6 px-6 shadow-lg">
         <div class="max-w-md mx-auto flex items-center space-x-4">
-            <!-- Logo placeholder (substitua pela logo real) -->
-            <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-md">
-                <span class="text-3xl font-bold text-blue-700">M</span>
-            </div>
+            <img src="https://raw.githubusercontent.com/mamedstudio/cupomclic-recorrencia/main/farmacia-m.png" 
+                 alt="Logo Farmácia" 
+                 class="w-16 h-16 rounded-full bg-white p-1 shadow-md object-contain">
             <div>
-                <h1 class="text-2xl font-bold">Farmácia Saúde</h1>
+                <h1 class="text-2xl font-bold">Farmácia M</h1>
                 <p class="text-blue-100 text-sm">Sua saúde em primeiro lugar</p>
             </div>
         </div>
@@ -39,7 +38,7 @@
             </div>
 
             <!-- Oferta 1 -->
-            <div class="bg-white rounded-2xl shadow-lg border-2 border-red-100 overflow-hidden mb-4 fade-in">
+            <div class="bg-white rounded-2xl shadow-lg border-2 border-red-100 overflow-hidden mb-4 fade-in relative">
                 <div class="absolute top-3 left-3 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md z-10">
                     35% OFF
                 </div>
@@ -62,12 +61,12 @@
             </div>
 
             <!-- Oferta 2 -->
-            <div class="bg-white rounded-2xl shadow-lg border-2 border-red-100 overflow-hidden mb-4 fade-in">
+            <div class="bg-white rounded-2xl shadow-lg border-2 border-red-100 overflow-hidden mb-4 fade-in relative">
                 <div class="absolute top-3 left-3 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md z-10">
                     25% OFF
                 </div>
                 <div class="h-48 bg-gradient-to-br from-green-100 to-green-200 flex items-center justify-center">
-                    <span class="text-6xl"></span>
+                    <span class="text-6xl">🩹</span>
                 </div>
                 <div class="p-4">
                     <h3 class="font-bold text-gray-900 text-lg mb-1">Curativos Adesivos</h3>
@@ -85,7 +84,7 @@
             </div>
 
             <!-- Oferta 3 -->
-            <div class="bg-white rounded-2xl shadow-lg border-2 border-red-100 overflow-hidden fade-in">
+            <div class="bg-white rounded-2xl shadow-lg border-2 border-red-100 overflow-hidden fade-in relative">
                 <div class="absolute top-3 left-3 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md z-10">
                     40% OFF
                 </div>
@@ -145,8 +144,11 @@
         </section>
     </main>
 
-    <footer class="text-center py-6 text-gray-400 text-xs bg-white border-t border-gray-100 mt-8">
-        <p>&copy; 2026 CUPOMCLIC. Powered by SaaS.</p>
+    <footer class="text-center py-6 bg-white border-t border-gray-100 mt-8">
+        <img src="https://raw.githubusercontent.com/mamedstudio/cupomclic-recorrencia/main/cupomclic-logo.png" 
+             alt="CupomClic" 
+             class="h-8 mx-auto mb-2 object-contain">
+        <p class="text-gray-400 text-xs">&copy; 2026 CUPOMCLIC. Powered by SaaS.</p>
     </footer>
 
 </body>
