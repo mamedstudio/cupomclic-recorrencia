@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JL Sabores Nobres - Painel Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        :root { --cor-primaria: #8B1A1A; }
+        .bg-health { background-color: var(--cor-primaria); }
+        .bg-health:hover { filter: brightness(0.9); }
+        .text-health { color: var(--cor-primaria); }
+        .border-health { border-color: var(--cor-primaria); }
+        .fade-in { animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .dia-marcado { background-color: var(--cor-primaria); color: white; font-weight: bold; }
+        .dia-hoje { border: 2px solid var(--cor-primaria); }
+        .dia-clicavel { cursor: pointer; transition: all 0.2s; }
+        .dia-clicavel:hover { background-color: #dcfce7; transform: scale(1.1); }
+        .accordion-content { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
+        .accordion-content.open { max-height: 2000px; }
+        .rotate-icon { transition: transform 0.3s; }
+        .rotate-icon.open { transform: rotate(180deg); }
+        .tab-ativa { background-color: var(--cor-primaria); color: white; }
+        .tab-inativa { background-color: #f3f4f6; color: #374151; }
+        .tab-inativa:hover { background-color: #e5e7eb; }
+        .secao-admin { display: none; }
+        .secao-admin.ativa { display: block; animation: fadeIn 0.3s; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans antialiased min-h-screen flex flex-col">
+
+    <header class="bg-white shadow-sm py-4 px-6 sticky top-0 z-20">
+        <div class="max-w-md mx-auto flex items-center justify-between">
+            <div>
+                <span class="text-xl font-extrabold text-gray-900">JL Sabores Nobres</span>
+                <p class="text-xs text-gray-500" id="nome-loja-admin">Carregando...</p>
+            </div>
+            <a href="exemplo-jl.html" class="text-xs bg-gray-200 hover:bg-gray-300 text-gray-700 px-3 py-1 rounded-full transition">👁️ Ver Loja</a>
+        </div>
+    </header>
+
+    <!-- TELA DE LOGIN -->
+    <div id="tela-login" class="flex-grow flex items-center justify-center p-4">
+        <div class="bg-white p-8 rounded-2xl shadow-lg max-w-sm w-full">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6 text-center">🔒 Acesso Restrito</h2>
+            <form id="form-login" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-600 mb-1">Senha</label>
+                    <input type="password" id="senha-admin" required class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 focus:outline-none">
+                </div>
+                <button type="submit" class="w-full bg-health hover:bg-red-800 text-white font-bold py-3 rounded-xl shadow-md transition">Entrar</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- PAINEL ADMIN -->
+    <main id="painel-admin" class="hidden max-w-md mx-auto px-4 py-6 flex-grow w-full fade-in">
+        
+        <div class="bg-white rounded-xl shadow-sm mb-6 overflow-hidden border border-gray-200">
+            <div class="grid grid-cols-3 sm:grid-cols-6 gap-1 p-2">
+                <button onclick="mostrarSecao('calendario')" id="tab-calendario" class="tab-ativa py-2 px-1 rounded-lg text-[10px] sm:text-xs font-semibold transition">📅 Calend</button>
+                <button onclick="mostrarSecao('produtos')" id="tab-produtos" class="tab-inativa py-2 px-1 rounded-lg text-[10px] sm:text-xs font-semibold transition">📦 Produtos</button>
+                <button onclick="mostrarSecao('assinaturas')" id="tab-assinaturas" class="tab-inativa py-2 px-1 rounded-lg text-[10px] sm:text-xs font-semibold transition">👥 Assinar</button>
+                <button onclick="mostrarSecao('clientes')" id="tab-clientes" class="tab-inativa py-2 px-1 rounded-lg text-[10px] sm:text-xs font-semibold transition">🔍 Clientes</button>
+                <button onclick="mostrarSecao('solicitacoes')" id="tab-solicitacoes" class="tab-inativa py-2 px-1 rounded-lg text-[10px] sm:text-xs font-semibold transition">💡 Solicit</button>
+                <button onclick="mostrarSecao('configuracoes')" id="tab-configuracoes" class="tab-inativa py-2 px-1 rounded-lg text-[10px] sm:text-xs font-semibold transition">⚙️ Config</button>
+            </div>
+        </div>
+
+        <!-- SEÇÃO: PRODUTOS -->
+        <div id="secao-produtos" class="secao-admin">
+            <div class="bg-white p-5 rounded-2xl shadow-md border border-gray-100 mb-6">
+                <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center"><span class="bg-health text-white w-6 h-6 rounded-full flex items-center justify-center text-xs mr-2">+</span>Adicionar Produto</h2>
+                <form id="form-produto" class="space-y-4">
+                    <input type="hidden" id="edit-id" value="">
+                    
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">Tipo de Produto</label>
+                        <select id="tipo-produto" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm bg-white">
+                            <option value="oferta_semanal">🔥 Oferta da Semana (Empório)</option>
+                            <option value="recorrencia">📦 Produto de Recorrência</option>
+                        </select>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">Nome</label><input type="text" id="nome" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
+                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">Subtítulo</label><input type="text" id="subtitulo" placeholder="ex: Peça inteira • Angus" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
+                    </div>
+                    
+                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">Descrição Longa</label><textarea id="descricao-longa" rows="3" placeholder="Descrição detalhada do produto..." class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></textarea></div>
+
+                    <!-- CAMPOS OFERTA SEMANAL -->
+                    <div id="campos-oferta" class="space-y-3 p-3 bg-red-50 rounded-lg border border-red-100">
+                        <label class="block text-xs font-bold text-red-700 mb-2">🖼️ Imagens da Oferta</label>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs text-gray-600 mb-1">Thumbnail (foto pequena)</label>
+                                <input type="text" id="thumbnail-url" placeholder="https://... (100x100)" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-600 mb-1">Foto Grande (detalhes)</label>
+                                <input type="text" id="foto-grande-url" placeholder="https://... (600x400)" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs text-gray-600 mb-1">Categoria</label>
+                                <select id="categoria" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm bg-white">
+                                    <option value="Carnes Nobres">Carnes Nobres</option>
+                                    <option value="Bebidas">Bebidas</option>
+                                    <option value="Gourmet">Gourmet</option>
+                                    <option value="Condimentos">Condimentos</option>
+                                    <option value="Churrasco">Churrasco</option>
+                                    <option value="Premium">Premium</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-600 mb-1">Estoque "Restam"</label>
+                                <input type="number" id="estoque-restam" placeholder="12" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs text-gray-600 mb-1">Atributo 1 (nome)</label>
+                                <input type="text" id="atributo1-nome" placeholder="ex: Peso médio" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-600 mb-1">Atributo 1 (valor)</label>
+                                <input type="text" id="atributo1-valor" placeholder="ex: 1,2kg" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs text-gray-600 mb-1">Atributo 2 (nome)</label>
+                                <input type="text" id="atributo2-nome" placeholder="ex: Origem" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-600 mb-1">Atributo 2 (valor)</label>
+                                <input type="text" id="atributo2-valor" placeholder="ex: Angus Certificado" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs text-gray-600 mb-1">Link Checkout CupomClic (PIX)</label>
+                            <input type="text" id="link-cupomclic" placeholder="https://cupomclic..." class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm font-mono text-xs">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs text-gray-600 mb-1">Válido até</label>
+                            <input type="date" id="valido-ate" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm">
+                        </div>
+                    </div>
+
+                    <!-- CAMPOS RECORRÊNCIA -->
+                    <div id="campos-recorrencia" class="space-y-3 p-3 bg-green-50 rounded-lg border border-green-100 hidden">
+                        <label class="block text-xs font-bold text-green-700 mb-1">Dados de Recorrência</label>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div><label class="block text-xs text-gray-600 mb-1">Duração (dias)</label><input type="number" id="dias-duracao" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
+                            <div><label class="block text-xs text-gray-600 mb-1">Estoque</label><input type="number" id="estoque" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div><label class="block text-xs text-gray-600 mb-1">Qtd / Mês</label><input type="text" id="quantidade" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
+                            <div><label class="block text-xs text-gray-600 mb-1">Taxa Entrega (R$)</label><input type="number" step="0.01" id="taxa-entrega" value="0" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-600 mb-1">Tipo de Entrega</label>
+                            <select id="tipo-entrega" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm bg-white">
+                                <option value="ambos">Busca na Loja + Delivery</option>
+                                <option value="loja">Apenas Busca na Loja</option>
+                                <option value="delivery">Apenas Delivery</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">Preço Normal (R$)</label><input type="number" step="0.01" id="preco-original" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
+                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">Preço Promocional (R$)</label><input type="number" step="0.01" id="preco-promocional" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
+                    </div>
+
+                    <div class="flex space-x-3 pt-2">
+                        <button type="submit" class="flex-1 bg-health hover:bg-red-800 text-white font-bold py-3 rounded-xl shadow-md transition text-sm">Salvar Produto</button>
+                        <button type="button" onclick="limparFormulario()" class="px-4 py-3 bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-xl transition text-sm">Limpar</button>
+                    </div>
+                </form>
+            </div>
+            <div class="mt-6">
+                <h3 class="text-sm font-bold text-gray-500 uppercase tracking-wide mb-3">Produtos Cadastrados</h3>
+                <div id="lista-admin" class="space-y-3"><p class="text-center text-gray-500 py-4 text-sm">Carregando...</p></div>
+            </div>
+        </div>
+
+        <!-- SEÇÃO: CONFIGURAÇÕES -->
+        <div id="secao-configuracoes" class="secao-admin">
+            <div class="bg-white p-5 rounded-2xl shadow-md border border-gray-100 mb-6">
+                <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center"><span class="bg-purple-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs mr-2"></span>Personalizar Estabelecimento</h2>
+                <form id="form-estabelecimento" class="space-y-4">
+                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">Nome do Estabelecimento</label><input type="text" id="est-nome" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
+                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">Tipo</label>
+                        <select id="est-tipo" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm bg-white">
+                            <option value="emporio">Empório Gourmet</option>
+                            <option value="acougue">Açougue / Carnes</option>
+                            <option value="farmacia">Farmácia</option>
+                            <option value="outros">Outros</option>
+                        </select>
+                    </div>
+                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">WhatsApp (55+DDD+Número)</label><input type="text" id="est-whatsapp" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
+                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">Cor Primária</label><input type="color" id="est-cor" class="w-full h-10 rounded-lg border border-gray-300 cursor-pointer"></div>
+                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">Senha Admin</label><input type="text" id="est-senha" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
+                    <button type="submit" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 rounded-xl shadow-md transition text-sm">Salvar Configurações</button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <footer class="text-center py-6 text-gray-400 text-xs bg-white border-t border-gray-100 mt-auto">&copy; 2026 CUPOMCLIC. Powered by SaaS.</footer>
+
+    <script>
+        const SUPABASE_URL = 'https://hcgsttzjolotljqdvlat.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhjZ3N0dHpqb2xvdGxqcWR2bGF0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE0MDU5MTMsImV4cCI6MjEwNjk4MTkxM30.AWbtRx82wDp2K-yERqQy9RA8dYWXev6B14jP5isLkVM';
+
+        // FIXO PARA JL SABORES NOBRES
+        const slugLoja = 'jl-sabores-nobres';
+
+        let TABELA_DESCONTOS = [{ meses: 3, desconto: 12 }, { meses: 5, desconto: 20 }, { meses: 8, desconto: 30 }];
+        const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
+        let estabelecimento = null, produtos = [];
+        let ESTABELECIMENTO_ID = 1;
+        let SENHA_ADMIN = '1234';
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await carregarEstabelecimento();
+        });
+
+        document.getElementById('form-login').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const senha = document.getElementById('senha-admin').value;
+            if (senha === SENHA_ADMIN) {
+                document.getElementById('tela-login').classList.add('hidden');
+                document.getElementById('painel-admin').classList.remove('hidden');
+                iniciarPainel();
+            } else {
+                alert('Senha incorreta!');
+            }
+        });
+
+        async function iniciarPainel() {
+            await carregarProdutos();
+            mostrarSecao('produtos'); // Abre direto em produtos para facilitar o cadastro
+        }
+
+        async function carregarEstabelecimento() {
+            try {
+                const { data, error } = await db.from('lojas').select('*').eq('slug', slugLoja).limit(1);
+                
+                if (data && data.length > 0) {
+                    estabelecimento = data[0];
+                    ESTABELECIMENTO_ID = estabelecimento.id;
+                    SENHA_ADMIN = estabelecimento.senha_admin || '1234';
+                    
+                    document.getElementById('nome-loja-admin').textContent = estabelecimento.nome;
+                    
+                    if (estabelecimento.cor_tema) {
+                        document.documentElement.style.setProperty('--cor-primaria', estabelecimento.cor_tema);
+                        document.getElementById('est-cor').value = estabelecimento.cor_tema;
+                    }
+                    document.getElementById('est-nome').value = estabelecimento.nome;
+                    document.getElementById('est-tipo').value = estabelecimento.tipo || 'emporio';
+                    document.getElementById('est-whatsapp').value = estabelecimento.whatsapp || '';
+                    document.getElementById('est-senha').value = SENHA_ADMIN;
+                } else {
+                    // Cria a loja JL automaticamente se não existir
+                    const novaLoja = {
+                        slug: 'jl-sabores-nobres',
+                        nome: 'JL Sabores Nobres',
+                        tipo: 'emporio',
+                        whatsapp: '5514999999999',
+                        cor_tema: '#8B1A1A',
+                        senha_admin: '1234'
+                    };
+                    await db.from('lojas').insert([novaLoja]);
+                    location.reload();
+                }
+            } catch (e) { console.error('Erro estabelecimento:', e); }
+        }
+
+        async function carregarProdutos() {
+            try {
+                const { data, error } = await db.from('produtos').select('*').eq('estabelecimento_id', ESTABELECIMENTO_ID).eq('ativo', true).order('criado_em', { ascending: false });
+                if (error) throw error;
+                produtos = data || [];
+                renderizarListaAdmin();
+            } catch (error) { console.error('Erro produtos:', error); }
+        }
+
+        function mostrarSecao(secao) {
+            document.querySelectorAll('.secao-admin').forEach(s => s.classList.remove('ativa'));
+            document.getElementById('secao-' + secao).classList.add('ativa');
+            document.querySelectorAll('[id^="tab-"]').forEach(t => { t.classList.remove('tab-ativa'); t.classList.add('tab-inativa'); });
+            document.getElementById('tab-' + secao).classList.remove('tab-inativa');
+            document.getElementById('tab-' + secao).classList.add('tab-ativa');
+        }
+
+        document.getElementById('tipo-produto').addEventListener('change', function() {
+            if(this.value === 'oferta_semanal') {
+                document.getElementById('campos-oferta').classList.remove('hidden');
+                document.getElementById('campos-recorrencia').classList.add('hidden');
+            } else {
+                document.getElementById('campos-oferta').classList.add('hidden');
+                document.getElementById('campos-recorrencia').classList.remove('hidden');
+            }
+        });
+
+        document.getElementById('form-produto').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const tipo = document.getElementById('tipo-produto').value;
+            const novoProd = { 
+                nome: document.getElementById('nome').value, 
+                subtitulo: document.getElementById('subtitulo').value,
+                descricao_longa: document.getElementById('descricao-longa').value,
+                preco_original: document.getElementById('preco-original').value,
+                preco_promocional: document.getElementById('preco-promocional').value,
+                tipo: tipo,
+                estabelecimento_id: ESTABELECIMENTO_ID 
+            };
+
+            if (tipo === 'oferta_semanal') {
+                novoProd.thumbnail_url = document.getElementById('thumbnail-url').value;
+                novoProd.foto_grande_url = document.getElementById('foto-grande-url').value;
+                novoProd.categoria = document.getElementById('categoria').value;
+                novoProd.estoque_restam = parseInt(document.getElementById('estoque-restam').value) || 0;
+                novoProd.atributo1_nome = document.getElementById('atributo1-nome').value;
+                novoProd.atributo1_valor = document.getElementById('atributo1-valor').value;
+                novoProd.atributo2_nome = document.getElementById('atributo2-nome').value;
+                novoProd.atributo2_valor = document.getElementById('atributo2-valor').value;
+                novoProd.link_cupomclic = document.getElementById('link-cupomclic').value;
+                novoProd.valido_ate = document.getElementById('valido-ate').value;
+            } else {
+                novoProd.dias_duracao = parseInt(document.getElementById('dias-duracao').value) || 30;
+                novoProd.estoque = parseInt(document.getElementById('estoque').value) || 0;
+                novoProd.quantidade = document.getElementById('quantidade').value;
+                novoProd.tipo_entrega = document.getElementById('tipo-entrega').value;
+                novoProd.taxa_entrega = document.getElementById('taxa-entrega').value || 0;
+            }
+
+            const editId = document.getElementById('edit-id').value;
+            try {
+                if (editId) await db.from('produtos').update(novoProd).eq('id', editId); 
+                else await db.from('produtos').insert([novoProd]);
+                limparFormulario(); await carregarProdutos(); alert('Produto salvo!');
+            } catch (error) { alert('Erro ao salvar: ' + error.message); }
+        });
+
+        function limparFormulario() { 
+            document.getElementById('form-produto').reset(); 
+            document.getElementById('edit-id').value = ''; 
+        }
+
+        function renderizarListaAdmin() {
+            const listaAdmin = document.getElementById('lista-admin'); listaAdmin.innerHTML = '';
+            if (produtos.length === 0) { listaAdmin.innerHTML = '<p class="text-center text-gray-500 py-4 text-sm">Nenhum produto cadastrado. Cadastre a 1ª oferta!</p>'; return; }
+            produtos.forEach((prod, index) => {
+                const isOferta = prod.tipo === 'oferta_semanal';
+                const desconto = prod.preco_original ? Math.round(((prod.preco_original - prod.preco_promocional) / prod.preco_original) * 100) : 0;
+                listaAdmin.innerHTML += `<div class="bg-white p-3 rounded-xl border border-gray-200 flex justify-between items-center fade-in">
+                    <div class="flex-grow">
+                        <p class="font-bold text-sm text-gray-900">${prod.nome} <span class="text-[10px] px-2 py-0.5 rounded-full ${isOferta ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}">${isOferta ? 'OFERTA' : 'RECORRÊNCIA'}</span></p>
+                        <p class="text-xs text-gray-500">R$ ${prod.preco_promocional || prod.preco_original} | ${desconto}% OFF | Restam: ${prod.estoque_restam || 'N/A'}</p>
+                    </div>
+                    <div class="flex space-x-2">
+                        <button onclick="editarProduto(${index})" class="p-2 bg-blue-50 text-blue-600 rounded-lg text-xs">✏️</button>
+                        <button onclick="excluirProduto(${index})" class="p-2 bg-red-50 text-red-600 rounded-lg text-xs">🗑️</button>
+                    </div>
+                </div>`;
+            });
+        }
+
+        function editarProduto(index) {
+            const prod = produtos[index];
+            document.getElementById('tipo-produto').value = prod.tipo || 'recorrencia';
+            document.getElementById('tipo-produto').dispatchEvent(new Event('change'));
+            
+            document.getElementById('nome').value = prod.nome; 
+            document.getElementById('subtitulo').value = prod.subtitulo || ''; 
+            document.getElementById('descricao-longa').value = prod.descricao_longa || ''; 
+            document.getElementById('preco-original').value = prod.preco_original; 
+            document.getElementById('preco-promocional').value = prod.preco_promocional || prod.preco_original;
+            
+            if (prod.tipo === 'oferta_semanal') {
+                document.getElementById('thumbnail-url').value = prod.thumbnail_url || '';
+                document.getElementById('foto-grande-url').value = prod.foto_grande_url || '';
+                document.getElementById('categoria').value = prod.categoria || 'Carnes Nobres';
+                document.getElementById('estoque-restam').value = prod.estoque_restam || 0;
+                document.getElementById('atributo1-nome').value = prod.atributo1_nome || '';
+                document.getElementById('atributo1-valor').value = prod.atributo1_valor || '';
+                document.getElementById('atributo2-nome').value = prod.atributo2_nome || '';
+                document.getElementById('atributo2-valor').value = prod.atributo2_valor || '';
+                document.getElementById('link-cupomclic').value = prod.link_cupomclic || '';
+                document.getElementById('valido-ate').value = prod.valido_ate || '';
+            } else {
+                document.getElementById('dias-duracao').value = prod.dias_duracao || 30;
+                document.getElementById('estoque').value = prod.estoque || 0;
+                document.getElementById('quantidade').value = prod.quantidade || '';
+                document.getElementById('tipo-entrega').value = prod.tipo_entrega || 'ambos';
+                document.getElementById('taxa-entrega').value = prod.taxa_entrega || 0;
+            }
+            document.getElementById('edit-id').value = prod.id;
+            document.getElementById('form-produto').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        async function excluirProduto(index) {
+            if (confirm('Excluir este produto?')) {
+                try { await db.from('produtos').delete().eq('id', produtos[index].id); await carregarProdutos(); } catch (error) { alert('Erro ao excluir.'); }
+            }
+        }
+
+        document.getElementById('form-estabelecimento').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const dados = {
+                nome: document.getElementById('est-nome').value,
+                tipo: document.getElementById('est-tipo').value,
+                whatsapp: document.getElementById('est-whatsapp').value,
+                cor_tema: document.getElementById('est-cor').value,
+                senha_admin: document.getElementById('est-senha').value
+            };
+            try {
+                await db.from('lojas').update(dados).eq('id', ESTABELECIMENTO_ID);
+                alert('Configurações salvas!');
+                await carregarEstabelecimento();
+            } catch (error) { alert('Erro ao salvar.'); }
+        });
+    </script>
+</body>
+</html>
