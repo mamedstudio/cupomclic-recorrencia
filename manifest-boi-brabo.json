@@ -1,7 +1,7 @@
 {
-  "name": "Boi Brabo",
-  "short_name": "Boi Brabo",
-  "description": "Açougue premium com as melhores ofertas da região.",
+  "name": "Boi Brabo | Shop Pocket",
+  "short_name": "Shop Pocket",
+  "description": "Completo para vender, simples de usar.",
   "start_url": "/BO-Ofertas.html",
   "display": "standalone",
   "background_color": "#ffffff",
