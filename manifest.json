@@ -1,10 +1,10 @@
 {
-  "name": "JL Sabores Nobres",
-  "short_name": "JL Sabores",
-  "description": "Empório Gourmet e Carnes Premium com ofertas exclusivas.",
+  "name": "JL Sabores Nobres | Shop Pocket",
+  "short_name": "Shop Pocket",
+  "description": "O catálogo digital mais completo e sem burocracia.",
   "start_url": "/JL-Ofertas.html",
   "display": "standalone",
-  "background_color": "#f9fafb",
+  "background_color": "#ffffff",
   "theme_color": "#8B1A1A",
   "orientation": "portrait",
   "icons": [
