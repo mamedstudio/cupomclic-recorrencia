@@ -1,7 +1,7 @@
 {
   "name": "Boi Brabo | Shop Pocket",
   "short_name": "Shop Pocket",
-  "description": "Completo para vender, simples de usar.",
+  "description": "O catálogo digital mais completo e sem burocracia.",
   "start_url": "/BO-Ofertas.html",
   "display": "standalone",
   "background_color": "#ffffff",
@@ -9,13 +9,13 @@
   "orientation": "portrait",
   "icons": [
     {
-      "src": "https://raw.githubusercontent.com/mamedstudio/cupomclic-recorrencia/main/boi-brabo.png",
+      "src": "https://raw.githubusercontent.com/mamedstudio/cupomclic-recorrencia/main/shop-pocket-logo.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "https://raw.githubusercontent.com/mamedstudio/cupomclic-recorrencia/main/boi-brabo.png",
+      "src": "https://raw.githubusercontent.com/mamedstudio/cupomclic-recorrencia/main/shop-pocket-logo.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
