@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super Admin | Shop Pocket</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .fade-in { animation: fadeIn 0.3s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .toast {
+            position: fixed; bottom: 20px; right: 20px;
+            padding: 12px 24px; border-radius: 8px; color: white;
+            font-weight: 600; z-index: 1000; opacity: 0;
+            transition: opacity 0.3s ease; pointer-events: none;
+        }
+        .toast.show { opacity: 1; }
+        .toast-success { background: #10b981; }
+        .toast-error { background: #ef4444; }
+        .modal {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 100; opacity: 0; pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .modal.active { opacity: 1; pointer-events: all; }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+
+    <!-- Tela de Login -->
+    <div id="tela-login" class="min-h-screen flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md">
+            <div class="text-center mb-6">
+                <img src="https://raw.githubusercontent.com/mamedstudio/cupomclic-recorrencia/main/shop-pocket-logo.png" alt="Shop Pocket" class="h-16 mx-auto mb-4">
+                <h1 class="text-2xl font-bold text-gray-900">Super Admin</h1>
+                <p class="text-gray-500 text-sm">Painel de Controle Tokto</p>
+            </div>
+            <form id="form-login" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Senha Mestra</label>
+                    <input type="password" id="senha-mestra" required class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-black focus:outline-none" placeholder="Digite a senha mestra">
+                </div>
+                <button type="submit" class="w-full bg-black hover:bg-gray-800 text-white font-bold py-3 rounded-lg transition">Entrar</button>
+                <p class="text-xs text-center text-gray-400">Senha padrão: tokto2026</p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Painel Principal -->
+    <div id="painel-principal" class="hidden">
+        <!-- Header -->
+        <header class="bg-black text-white py-4 px-6 shadow-lg">
+            <div class="max-w-6xl mx-auto flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <img src="https://raw.githubusercontent.com/mamedstudio/cupomclic-recorrencia/main/shop-pocket-logo.png" class="h-10">
+                    <div>
+                        <h1 class="text-lg font-bold">Super Admin</h1>
+                        <p class="text-xs text-gray-400">Painel Tokto</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <a href="loja.html?slug=jl-sabores-nobres" target="_blank" class="text-xs bg-gray-800 hover:bg-gray-700 px-3 py-2 rounded-lg">Ver Loja Demo</a>
+                    <button onclick="logout()" class="text-xs bg-red-600 hover:bg-red-700 px-3 py-2 rounded-lg">Sair</button>
+                </div>
+            </div>
+        </header>
+
+        <div class="max-w-6xl mx-auto p-6">
+            <!-- Estatísticas -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                <div class="bg-white rounded-xl p-4 shadow-sm">
+                    <p class="text-xs text-gray-500 mb-1">Total de Lojas</p>
+                    <p class="text-2xl font-bold text-gray-900" id="stat-lojas">0</p>
+                </div>
+                <div class="bg-white rounded-xl p-4 shadow-sm">
+                    <p class="text-xs text-gray-500 mb-1">Total de Produtos</p>
+                    <p class="text-2xl font-bold text-gray-900" id="stat-produtos">0</p>
+                </div>
+                <div class="bg-white rounded-xl p-4 shadow-sm">
+                    <p class="text-xs text-gray-500 mb-1">Assinantes VIP</p>
+                    <p class="text-2xl font-bold text-gray-900" id="stat-vips">0</p>
+                </div>
+                <div class="bg-white rounded-xl p-4 shadow-sm">
+                    <p class="text-xs text-gray-500 mb-1">Favoritos</p>
+                    <p class="text-2xl font-bold text-gray-900" id="stat-favoritos">0</p>
+                </div>
+            </div>
+
+            <!-- Botão Nova Loja -->
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-xl font-bold text-gray-900">Lojas Cadastradas</h2>
+                <button onclick="abrirModalNovaLoja()" class="bg-black hover:bg-gray-800 text-white px-4 py-2 rounded-lg font-semibold text-sm flex items-center">
+                    <span class="mr-2">+</span> Nova Loja
+                </button>
+            </div>
+
+            <!-- Lista de Lojas -->
+            <div id="lista-lojas" class="space-y-3">
+                <div class="text-center py-8 text-gray-500">Carregando...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Nova/Editar Loja -->
+    <div id="modal-loja" class="modal">
+        <div class="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto mx-4">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-xl font-bold text-gray-900" id="modal-titulo">Nova Loja</h2>
+                <button onclick="fecharModal()" class="text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
+            </div>
+            
+            <form id="form-loja" class="space-y-4">
+                <input type="hidden" id="loja-id">
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="col-span-2">
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Nome da Loja *</label>
+                        <input type="text" id="loja-nome" required class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-black focus:outline-none" placeholder="Ex: Farmácia Magistral">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Slug (URL) *</label>
+                        <input type="text" id="loja-slug" required class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-black focus:outline-none" placeholder="Ex: farmacia-magistral">
+                        <p class="text-xs text-gray-500 mt-1">Sem espaços, apenas letras minúsculas e hífens</p>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Tipo *</label>
+                        <select id="loja-tipo" required class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-black focus:outline-none">
+                            <option value="emporio">Empório Gourmet</option>
+                            <option value="acougue">Açougue</option>
+                            <option value="farmacia">Farmácia</option>
+                            <option value="restaurante">Restaurante</option>
+                            <option value="servicos">Serviços</option>
+                            <option value="outros">Outros</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Cor do Tema *</label>
+                        <div class="flex space-x-2">
+                            <input type="color" id="loja-cor" value="#000000" class="h-10 w-20 rounded-lg border border-gray-300">
+                            <input type="text" id="loja-cor-text" value="#000000" class="flex-1 px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-black focus:outline-none" placeholder="#000000">
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">WhatsApp *</label>
+                        <input type="text" id="loja-whatsapp" required class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-black focus:outline-none" placeholder="5514999999999">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Senha do Admin *</label>
+                        <input type="text" id="loja-senha" required class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-black focus:outline-none" placeholder="Senha para o lojista">
+                    </div>
+                    
+                    <div class="col-span-2">
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Subtítulo</label>
+                        <input type="text" id="loja-subtitulo" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-black focus:outline-none" placeholder="Ex: Farmácia de Manipulação">
+                    </div>
+                    
+                    <div class="col-span-2">
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Endereço</label>
+                        <input type="text" id="loja-endereco" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-black focus:outline-none" placeholder="Rua, número, bairro">
+                    </div>
+                    
+                    <div class="grid grid-cols-3 gap-4 col-span-2">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Cidade</label>
+                            <input type="text" id="loja-cidade" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-black focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Estado</label>
+                            <input type="text" id="loja-estado" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-black focus:outline-none" maxlength="2">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">CEP</label>
+                            <input type="text" id="loja-cep" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-black focus:outline-none">
+                        </div>
+                    </div>
+                    
+                    <div class="col-span-2">
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Horário de Funcionamento</label>
+                        <input type="text" id="loja-horario" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-black focus:outline-none" placeholder="Ex: Seg-Sex 8h-18h, Sáb 8h-12h">
+                    </div>
+                    
+                    <div class="col-span-2">
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Descrição</label>
+                        <textarea id="loja-descricao" rows="3" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-black focus:outline-none" placeholder="Breve descrição da loja"></textarea>
+                    </div>
+                    
+                    <div class="col-span-2">
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">URL da Logo</label>
+                        <input type="text" id="loja-logo" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-black focus:outline-none" placeholder="https://raw.githubusercontent.com/.../logo.png">
+                        <p class="text-xs text-gray-500 mt-1">Cole a URL da logo (faça upload no GitHub primeiro)</p>
+                    </div>
+                </div>
+                
+                <div class="flex space-x-3 pt-4 border-t">
+                    <button type="submit" class="flex-1 bg-black hover:bg-gray-800 text-white font-bold py-3 rounded-lg transition">Salvar Loja</button>
+                    <button type="button" onclick="fecharModal()" class="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="toast"></div>
+
+    <script>
+        const SUPABASE_URL = 'https://rzapsmtasfdqedlzmyvh.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ6YXBzbXRhc2ZkcWVkbHpteXZoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE0MDQ0NTksImV4cCI6MjEwNjk4MDQ1OX0.EkBMhJwM1aH8TH9aO6JZxkgco2XwSjfu_BsTPZjGfMs';
+        const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const SENHA_MESTRA = 'tokto2026'; // Senha do Super Admin
+
+        // Login
+        document.getElementById('form-login').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const senha = document.getElementById('senha-mestra').value;
+            if (senha === SENHA_MESTRA) {
+                localStorage.setItem('super_admin_auth', 'true');
+                mostrarPainel();
+            } else {
+                mostrarToast('Senha incorreta!', 'error');
+            }
+        });
+
+        // Verifica se já está logado
+        if (localStorage.getItem('super_admin_auth') === 'true') {
+            mostrarPainel();
+        }
+
+        function mostrarPainel() {
+            document.getElementById('tela-login').classList.add('hidden');
+            document.getElementById('painel-principal').classList.remove('hidden');
+            carregarEstatisticas();
+            carregarLojas();
+        }
+
+        function logout() {
+            localStorage.removeItem('super_admin_auth');
+            location.reload();
+        }
+
+        async function carregarEstatisticas() {
+            try {
+                const [lojas, produtos, vips, favoritos] = await Promise.all([
+                    db.from('lojas').select('id', { count: 'exact' }),
+                    db.from('produtos').select('id', { count: 'exact' }),
+                    db.from('assinantes_vip').select('id', { count: 'exact' }),
+                    db.from('favoritos').select('id', { count: 'exact' })
+                ]);
+                document.getElementById('stat-lojas').textContent = lojas.count || 0;
+                document.getElementById('stat-produtos').textContent = produtos.count || 0;
+                document.getElementById('stat-vips').textContent = vips.count || 0;
+                document.getElementById('stat-favoritos').textContent = favoritos.count || 0;
+            } catch (e) { console.error('Erro estatísticas:', e); }
+        }
+
+        async function carregarLojas() {
+            try {
+                const { data, error } = await db.from('lojas').select('*').order('criado_em', { ascending: false });
+                if (error) throw error;
+                
+                const container = document.getElementById('lista-lojas');
+                if (!data || data.length === 0) {
+                    container.innerHTML = '<div class="bg-white rounded-xl p-8 text-center text-gray-500">Nenhuma loja cadastrada ainda.</div>';
+                    return;
+                }
+                
+                container.innerHTML = '';
+                data.forEach(loja => {
+                    const tipos = { emporio: 'Empório', acougue: 'Açougue', farmacia: 'Farmácia', restaurante: 'Restaurante', servicos: 'Serviços', outros: 'Outros' };
+                    container.innerHTML += `
+                        <div class="bg-white rounded-xl p-4 shadow-sm fade-in flex items-center justify-between">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg" style="background-color: ${loja.cor_tema || '#000'}">
+                                    ${loja.nome.charAt(0).toUpperCase()}
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-gray-900">${loja.nome}</h3>
+                                    <p class="text-xs text-gray-500">${tipos[loja.tipo] || loja.tipo} • ${loja.slug}</p>
+                                    <p class="text-xs text-gray-400">${loja.whatsapp || 'Sem WhatsApp'}</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <a href="loja.html?slug=${loja.slug}" target="_blank" class="text-xs bg-blue-100 text-blue-700 px-3 py-2 rounded-lg hover:bg-blue-200">Ver</a>
+                                <button onclick='editarLoja(${JSON.stringify(loja)})' class="text-xs bg-gray-100 text-gray-700 px-3 py-2 rounded-lg hover:bg-gray-200">Editar</button>
+                                <button onclick="excluirLoja('${loja.id}', '${loja.nome}')" class="text-xs bg-red-100 text-red-700 px-3 py-2 rounded-lg hover:bg-red-200">Excluir</button>
+                            </div>
+                        </div>
+                    `;
+                });
+            } catch (e) {
+                console.error('Erro ao carregar lojas:', e);
+                mostrarToast('Erro ao carregar lojas', 'error');
+            }
+        }
+
+        function abrirModalNovaLoja() {
+            document.getElementById('modal-titulo').textContent = 'Nova Loja';
+            document.getElementById('form-loja').reset();
+            document.getElementById('loja-id').value = '';
+            document.getElementById('loja-cor').value = '#000000';
+            document.getElementById('loja-cor-text').value = '#000000';
+            document.getElementById('modal-loja').classList.add('active');
+        }
+
+        function editarLoja(loja) {
+            document.getElementById('modal-titulo').textContent = 'Editar Loja';
+            document.getElementById('loja-id').value = loja.id;
+            document.getElementById('loja-nome').value = loja.nome || '';
+            document.getElementById('loja-slug').value = loja.slug || '';
+            document.getElementById('loja-tipo').value = loja.tipo || 'outros';
+            document.getElementById('loja-cor').value = loja.cor_tema || '#000000';
+            document.getElementById('loja-cor-text').value = loja.cor_tema || '#000000';
+            document.getElementById('loja-whatsapp').value = loja.whatsapp || '';
+            document.getElementById('loja-senha').value = loja.senha_admin || '';
+            document.getElementById('loja-subtitulo').value = loja.subtitulo || '';
+            document.getElementById('loja-endereco').value = loja.endereco || '';
+            document.getElementById('loja-cidade').value = loja.cidade || '';
+            document.getElementById('loja-estado').value = loja.estado || '';
+            document.getElementById('loja-cep').value = loja.cep || '';
+            document.getElementById('loja-horario').value = loja.horario_funcionamento || '';
+            document.getElementById('loja-descricao').value = loja.descricao || '';
+            document.getElementById('loja-logo').value = loja.logo_url || '';
+            document.getElementById('modal-loja').classList.add('active');
+        }
+
+        function fecharModal() {
+            document.getElementById('modal-loja').classList.remove('active');
+        }
+
+        // Sincroniza color picker com input text
+        document.getElementById('loja-cor').addEventListener('input', (e) => {
+            document.getElementById('loja-cor-text').value = e.target.value;
+        });
+        document.getElementById('loja-cor-text').addEventListener('input', (e) => {
+            document.getElementById('loja-cor').value = e.target.value;
+        });
+
+        document.getElementById('form-loja').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('loja-id').value;
+            
+            const dados = {
+                nome: document.getElementById('loja-nome').value,
+                slug: document.getElementById('loja-slug').value.toLowerCase().replace(/\s+/g, '-'),
+                tipo: document.getElementById('loja-tipo').value,
+                cor_tema: document.getElementById('loja-cor').value,
+                whatsapp: document.getElementById('loja-whatsapp').value,
+                senha_admin: document.getElementById('loja-senha').value,
+                subtitulo: document.getElementById('loja-subtitulo').value,
+                endereco: document.getElementById('loja-endereco').value,
+                cidade: document.getElementById('loja-cidade').value,
+                estado: document.getElementById('loja-estado').value,
+                cep: document.getElementById('loja-cep').value,
+                horario_funcionamento: document.getElementById('loja-horario').value,
+                descricao: document.getElementById('loja-descricao').value,
+                logo_url: document.getElementById('loja-logo').value
+            };
+            
+            try {
+                if (id) {
+                    // Atualizar
+                    const { error } = await db.from('lojas').update(dados).eq('id', id);
+                    if (error) throw error;
+                    mostrarToast('Loja atualizada com sucesso!', 'success');
+                } else {
+                    // Criar nova
+                    const { error } = await db.from('lojas').insert([dados]);
+                    if (error) throw error;
+                    
+                    // Criar config VIP padrão
+                    const { data: novaLoja } = await db.from('lojas').select('id').eq('slug', dados.slug).single();
+                    if (novaLoja) {
+                        await db.from('config_vip').insert([{
+                            estabelecimento_id: novaLoja.id,
+                            desc_3_meses: 10,
+                            desc_5_meses: 18,
+                            desc_8_meses: 25
+                        }]);
+                    }
+                    mostrarToast('Loja criada com sucesso!', 'success');
+                }
+                fecharModal();
+                carregarLojas();
+                carregarEstatisticas();
+            } catch (e) {
+                console.error('Erro ao salvar:', e);
+                mostrarToast('Erro ao salvar loja: ' + e.message, 'error');
+            }
+        });
+
+        async function excluirLoja(id, nome) {
+            if (!confirm(`Tem certeza que deseja excluir "${nome}"? Esta ação não pode ser desfeita.`)) return;
+            
+            try {
+                const { error } = await db.from('lojas').delete().eq('id', id);
+                if (error) throw error;
+                mostrarToast('Loja excluída!', 'success');
+                carregarLojas();
+                carregarEstatisticas();
+            } catch (e) {
+                console.error('Erro ao excluir:', e);
+                mostrarToast('Erro ao excluir loja', 'error');
+            }
+        }
+
+        function mostrarToast(msg, tipo = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.className = `toast toast-${tipo} show`;
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+    </script>
+</body>
+</html>
