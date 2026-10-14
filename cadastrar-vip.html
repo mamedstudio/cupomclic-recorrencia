@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro VIP | Shop Pocket</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="bg-gradient-to-br from-yellow-50 to-orange-50 min-h-screen flex items-center justify-center p-4">
+    <div class="max-w-md w-full bg-white rounded-2xl shadow-xl p-6">
+        <div class="text-center mb-6">
+            <span class="text-5xl">👑</span>
+            <h1 class="text-2xl font-bold text-gray-900 mt-3">Programa de Fidelidade</h1>
+            <p class="text-gray-600 text-sm mt-1" id="subtitulo-loja">Entre para o clube VIP e ganhe descontos progressivos!</p>
+        </div>
+
+        <form id="form-vip" class="space-y-4">
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-1">Nome Completo</label>
+                <input type="text" id="nome" required class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-yellow-500 focus:outline-none" placeholder="Seu nome completo">
+            </div>
+
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-1">WhatsApp (55+DDD+Número)</label>
+                <input type="text" id="whatsapp" required class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-yellow-500 focus:outline-none" placeholder="5514999999999">
+            </div>
+
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-1">Produto de Interesse</label>
+                <select id="produto" required class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-yellow-500 focus:outline-none">
+                    <option value="">Carregando produtos...</option>
+                </select>
+            </div>
+
+            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                <p class="text-xs text-gray-700 font-semibold mb-2">📈 Tabela de Descontos:</p>
+                <div class="grid grid-cols-3 gap-2 text-center text-xs">
+                    <div class="bg-white rounded p-2"><p class="text-gray-600">3 meses</p><p class="text-lg font-bold text-green-600">10% OFF</p></div>
+                    <div class="bg-white rounded p-2"><p class="text-gray-600">5 meses</p><p class="text-lg font-bold text-green-600">18% OFF</p></div>
+                    <div class="bg-white rounded p-2"><p class="text-gray-600">8 meses</p><p class="text-lg font-bold text-green-600">25% OFF</p></div>
+                </div>
+            </div>
+
+            <button type="submit" class="w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white font-bold py-4 rounded-xl shadow-lg transition text-lg">
+                👑 Quero Ser VIP
+            </button>
+            <p class="text-xs text-center text-gray-500 mt-2">Você será redirecionado para o WhatsApp para confirmar.</p>
+        </form>
+
+        <div id="sucesso" class="hidden text-center py-8">
+            <span class="text-6xl">🎉</span>
+            <h2 class="text-2xl font-bold text-gray-900 mt-4">Solicitação Enviada!</h2>
+            <p class="text-gray-600 mt-2">Agora é só confirmar a mensagem no WhatsApp que abriu.</p>
+            <a href="javascript:history.back()" class="inline-block mt-4 text-yellow-600 font-semibold hover:underline">← Voltar para a loja</a>
+        </div>
+    </div>
+
+    <script>
+        const SUPABASE_URL = 'https://rzapsmtasfdqedlzmyvh.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ6YXBzbXRhc2ZkcWVkbHpteXZoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE0MDQ0NTksImV4cCI6MjEwNjk4MDQ1OX0.EkBMhJwM1aH8TH9aO6JZxkgco2XwSjfu_BsTPZjGfMs';
+        const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
+        let lojaId = null;
+        let lojaWhatsapp = '';
+        let lojaNome = '';
+
+        async function inicializar() {
+            // Descobre qual loja o cliente está visitando pela URL
+            const params = new URLSearchParams(window.location.search);
+            const slug = params.get('loja') || 'jl-sabores-nobres'; // Padrão JL se não especificar
+
+            try {
+                const { data: loja, error } = await db.from('lojas').select('id, whatsapp, nome').eq('slug', slug).single();
+                if (error || !loja) throw error;
+                
+                lojaId = loja.id;
+                lojaWhatsapp = loja.whatsapp;
+                lojaNome = loja.nome;
+                document.getElementById('subtitulo-loja').textContent = `Clube VIP ${lojaNome}`;
+
+                // Carrega produtos APENAS desta loja
+                const { data: produtos } = await db.from('produtos').select('id, nome, subtitulo').eq('estabelecimento_id', lojaId).eq('ativo', true).order('nome');
+                const select = document.getElementById('produto');
+                select.innerHTML = '<option value="">Selecione um produto...</option>';
+                if (produtos) {
+                    produtos.forEach(p => {
+                        select.innerHTML += `<option value="${p.id}">${p.nome} ${p.subtitulo ? '- ' + p.subtitulo : ''}</option>`;
+                    });
+                }
+            } catch (e) {
+                console.error('Erro ao carregar dados da loja:', e);
+                document.getElementById('subtitulo-loja').textContent = 'Erro ao carregar dados. Tente novamente.';
+            }
+        }
+
+        document.getElementById('form-vip').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button');
+            btn.disabled = true;
+            btn.textContent = 'Processando...';
+
+            try {
+                const hoje = new Date().toISOString().split('T')[0];
+                const proximoAlerta = new Date();
+                proximoAlerta.setDate(proximoAlerta.getDate() + 30); // Primeiro alerta em 30 dias
+
+                // 1. Salva no Banco de Dados (LINKADO COM O ADMIN)
+                await db.from('assinantes_vip').insert([{
+                    estabelecimento_id: lojaId,
+                    nome: document.getElementById('nome').value,
+                    whatsapp: document.getElementById('whatsapp').value,
+                    produto_id: document.getElementById('produto').value,
+                    data_ultima_compra: hoje,
+                    data_proximo_alerta: proximoAlerta.toISOString().split('T')[0],
+                    quantidade_compras: 0,
+                    desconto_atual: 0,
+                    ativo: true
+                }]);
+
+                // 2. Monta mensagem para o WhatsApp do Lojista/Tokto
+                const produtoTexto = document.getElementById('produto').options[document.getElementById('produto').selectedIndex].text;
+                const msg = `👑 *NOVO CADASTRO VIP!* 👑\n\n🏪 Loja: ${lojaNome}\n👤 Cliente: ${document.getElementById('nome').value}\n📱 WhatsApp: ${document.getElementById('whatsapp').value}\n📦 Produto: ${produtoTexto}\n\n✅ Por favor, confirmar e gerenciar no Painel Admin.`;
+                
+                // 3. Abre o WhatsApp
+                window.open(`https://wa.me/${lojaWhatsapp}?text=${encodeURIComponent(msg)}`, '_blank');
+                
+                // 4. Mostra tela de sucesso
+                document.getElementById('form-vip').classList.add('hidden');
+                document.getElementById('sucesso').classList.remove('hidden');
+
+            } catch (error) {
+                alert('Erro ao cadastrar. Verifique sua conexão e tente novamente.');
+                console.error(error);
+                btn.disabled = false;
+                btn.textContent = '👑 Quero Ser VIP';
+            }
+        });
+
+        inicializar();
+    </script>
+</body>
+</html>
