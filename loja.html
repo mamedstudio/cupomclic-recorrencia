@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#000000">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Shop Pocket">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/mamedstudio/cupomclic-recorrencia/main/shop-pocket-logo.png">
+    <title>Carregando... | Shop Pocket</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .font-serif { font-family: 'Playfair Display', serif; }
+        .fade-in { animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        .badge-restam { background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%); border-radius: 50% 50% 0 0; width: 50px; height: 25px; }
+        .card-oferta { transition: all 0.3s ease; }
+        .card-oferta:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        .card-detalhes { max-height: 0; overflow: hidden; transition: max-height 0.5s ease; }
+        .card-detalhes.open { max-height: 800px; }
+        .foto-zoom { transition: transform 0.3s ease; cursor: zoom-in; }
+        .foto-zoom:hover { transform: scale(1.05); }
+        .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .coracao { transition: all 0.3s ease; cursor: pointer; user-select: none; }
+        .coracao:hover { transform: scale(1.2); }
+        .coracao.favoritado { animation: pulse 0.5s ease; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.4); } 100% { transform: scale(1); } }
+        .tab-ativa { color: white; }
+        .tab-inativa { background-color: #f3f4f6; color: #374151; }
+        .toast {
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            background: #1e293b; color: white; padding: 12px 24px; border-radius: 12px;
+            font-size: 14px; font-weight: 600; z-index: 1000; opacity: 0;
+            transition: opacity 0.3s ease; pointer-events: none;
+        }
+        .toast.show { opacity: 1; }
+        .erro-loja { text-align: center; padding: 40px 20px; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+    <!-- Tela de Carregamento -->
+    <div id="tela-carregamento" class="fixed inset-0 bg-white flex items-center justify-center z-50">
+        <div class="text-center">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto mb-4"></div>
+            <p class="text-gray-600">Carregando loja...</p>
+        </div>
+    </div>
+
+    <!-- Tela de Erro (loja não encontrada) -->
+    <div id="tela-erro" class="hidden min-h-screen flex items-center justify-center p-4">
+        <div class="text-center max-w-md">
+            <span class="text-6xl">😕</span>
+            <h1 class="text-2xl font-bold text-gray-900 mt-4">Loja não encontrada</h1>
+            <p class="text-gray-600 mt-2">A loja que você procura não existe ou está temporariamente indisponível.</p>
+            <a href="/" class="inline-block mt-4 bg-black text-white px-6 py-3 rounded-lg font-semibold">Ver outras lojas</a>
+        </div>
+    </div>
+
+    <!-- Conteúdo Principal (inicialmente oculto) -->
+    <div id="conteudo-principal" class="hidden">
+        <header id="header-loja" class="text-white py-6 px-6 shadow-lg">
+            <div class="max-w-md mx-auto flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <img id="logo-loja" src="" alt="Logo" class="w-14 h-14 rounded-full bg-white p-1 shadow-md object-contain" onerror="this.style.display='none'">
+                    <div>
+                        <h1 class="text-lg font-black tracking-wide font-serif" id="nome-loja">Carregando...</h1>
+                        <p class="text-xs font-medium" id="subtitulo-loja">Carregando...</p>
+                    </div>
+                </div>
+                <button onclick="mostrarFavoritos()" class="relative p-2 bg-white bg-opacity-20 rounded-full">
+                    <span class="text-2xl">❤️</span>
+                    <span id="contador-favoritos" class="absolute -top-1 -right-1 bg-red-600 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center hidden">0</span>
+                </button>
+            </div>
+        </header>
+
+        <div class="max-w-md mx-auto px-4 pt-4">
+            <div class="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-200">
+                <div class="grid grid-cols-3 gap-1 p-2">
+                    <button onclick="mostrarAba('ofertas')" id="tab-ofertas" class="tab-ativa py-2 px-1 rounded-lg text-xs font-semibold transition">🔥 Ofertas</button>
+                    <button onclick="mostrarAba('diadia')" id="tab-diadia" class="tab-inativa py-2 px-1 rounded-lg text-xs font-semibold transition">🛒 Dia a Dia</button>
+                    <button onclick="mostrarAba('vip')" id="tab-vip" class="tab-inativa py-2 px-1 rounded-lg text-xs font-semibold transition"> VIP</button>
+                </div>
+            </div>
+        </div>
+
+        <main class="max-w-md mx-auto px-4 py-6">
+            <div id="aba-ofertas" class="aba-conteudo">
+                <section class="mb-8">
+                    <div id="lista-ofertas">
+                        <div class="text-center py-8"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto"></div></div>
+                    </div>
+                </section>
+            </div>
+
+            <div id="aba-diadia" class="aba-conteudo hidden">
+                <section class="mb-8">
+                    <div class="text-center space-y-1 mb-5">
+                        <h1 class="text-lg font-bold text-gray-900">Produtos de qualidade <span class="text-gray-700">toda semana</span>.</h1>
+                        <p class="text-gray-500 text-xs">Garanta preço exclusivo e qualidade superior!</p>
+                    </div>
+                    <div id="lista-dia-a-dia">
+                        <div class="text-center py-8"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto"></div></div>
+                    </div>
+                </section>
+            </div>
+
+            <div id="aba-vip" class="aba-conteudo hidden">
+                <section class="space-y-4">
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+                        <div class="bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200 rounded-lg p-3 mb-3">
+                            <p class="text-xs font-semibold text-gray-700 mb-2 flex items-center">
+                                <span class="bg-gradient-to-r from-yellow-500 to-orange-500 text-white text-[10px] px-2 py-0.5 rounded-full mr-2 font-bold">VIP</span>
+                                DescontoVIP: Próxima compra com preço exclusivo e garantido.
+                            </p>
+                            <div class="grid grid-cols-3 gap-2 text-center" id="tabela-descontos">
+                                <div class="bg-white rounded p-1.5 border border-yellow-100"><p class="text-xs text-gray-600">3 meses</p><p class="text-sm font-bold text-red-700" id="desc-3">10%</p></div>
+                                <div class="bg-white rounded p-1.5 border border-yellow-100"><p class="text-xs text-gray-600">5 meses</p><p class="text-sm font-bold text-red-700" id="desc-5">18%</p></div>
+                                <div class="bg-white rounded p-1.5 border border-yellow-100"><p class="text-xs text-gray-600">8 meses</p><p class="text-sm font-bold text-red-700" id="desc-8">25%</p></div>
+                            </div>
+                        </div>
+                        <a id="btn-vip" href="cadastrar-vip.html" class="block w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white text-center font-bold py-3 rounded-xl shadow-sm transition text-sm mb-2">QUERO MEU DESCONTO VIP</a>
+                        <p class="text-center text-xs text-gray-500 font-medium">Agende suas compras</p>
+                    </div>
+                </section>
+            </div>
+
+            <div id="aba-favoritos" class="aba-conteudo hidden">
+                <section class="mb-8">
+                    <div class="flex items-center justify-between mb-5">
+                        <h2 class="text-2xl font-black text-gray-900 flex items-center"><span class="mr-2">❤️</span> Meus Favoritos</h2>
+                        <button onclick="mostrarAba('ofertas')" class="text-xs bg-gray-200 hover:bg-gray-300 text-gray-700 px-3 py-1.5 rounded-full transition">← Voltar</button>
+                    </div>
+                    <div id="lista-favoritos">
+                        <div class="text-center py-8 text-gray-500 text-sm">Carregando...</div>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <div id="toast" class="toast"></div>
+
+        <footer class="text-center py-6 bg-white border-t border-gray-100 mt-8">
+            <img src="https://raw.githubusercontent.com/mamedstudio/cupomclic-recorrencia/main/cupomclic-logo.png" alt="CupomClic" class="h-8 mx-auto mb-2 object-contain" onerror="this.style.display='none'">
+            <p class="text-gray-400 text-xs">&copy; 2026 Shop Pocket. Powered by Tokto.</p>
+        </footer>
+    </div>
+
+    <script>
+        const SUPABASE_URL = 'https://rzapsmtasfdqedlzmyvh.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ6YXBzbXRhc2ZkcWVkbHpteXZoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE0MDQ0NTksImV4cCI6MjEwNjk4MDQ1OX0.EkBMhJwM1aH8TH9aO6JZxkgco2XwSjfu_BsTPZjGfMs';
+        const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
+        // Pega o slug da URL (ex: ?slug=jl-sabores-nobres)
+        const params = new URLSearchParams(window.location.search);
+        const slugLoja = params.get('slug') || 'jl-sabores-nobres'; // fallback para JL
+        
+        let loja = null, ofertas = [], produtosDiaADia = [];
+        let favoritosIds = JSON.parse(localStorage.getItem(`favoritos_${slugLoja}`) || '[]');
+        let contadoresFavoritos = {};
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                await carregarLoja();
+                if (!loja) {
+                    document.getElementById('tela-carregamento').classList.add('hidden');
+                    document.getElementById('tela-erro').classList.remove('hidden');
+                    return;
+                }
+                
+                await carregarDescontos();
+                await carregarOfertas();
+                await carregarDiaADia();
+                await carregarContadoresFavoritos();
+                atualizarContadorFavoritos();
+                
+                document.getElementById('tela-carregamento').classList.add('hidden');
+                document.getElementById('conteudo-principal').classList.remove('hidden');
+            } catch (e) {
+                console.error('Erro ao carregar:', e);
+                document.getElementById('tela-carregamento').classList.add('hidden');
+                document.getElementById('tela-erro').classList.remove('hidden');
+            }
+        });
+
+        async function carregarLoja() {
+            try {
+                const { data, error } = await db.from('lojas').select('*').eq('slug', slugLoja).eq('ativo', true).limit(1);
+                if (error || !data || data.length === 0) {
+                    loja = null;
+                    return;
+                }
+                loja = data[0];
+                
+                // Atualiza título da página
+                document.title = `${loja.nome} | Shop Pocket`;
+                
+                // Atualiza header
+                document.getElementById('nome-loja').textContent = loja.nome.toUpperCase();
+                const tipos = { emporio: 'Empório Gourmet', acougue: 'Açougue Premium', farmacia: 'Farmácia de Manipulação', outros: 'Qualidade Superior' };
+                document.getElementById('subtitulo-loja').textContent = loja.subtitulo || tipos[loja.tipo] || 'Qualidade Superior';
+                
+                // Atualiza cor do header
+                const cor = loja.cor_tema || '#000000';
+                document.getElementById('header-loja').style.background = `linear-gradient(135deg, ${cor} 0%, ${ajustarCor(cor, 30)} 50%, ${ajustarCor(cor, 60)} 100%)`;
+                
+                // Atualiza abas ativas com a cor da loja
+                document.querySelectorAll('.tab-ativa').forEach(tab => {
+                    tab.style.backgroundColor = cor;
+                });
+                
+                // Atualiza logo
+                if (loja.logo_url) {
+                    document.getElementById('logo-loja').src = loja.logo_url;
+                } else {
+                    document.getElementById('logo-loja').src = `https://raw.githubusercontent.com/mamedstudio/cupomclic-recorrencia/main/${slugLoja}.png`;
+                }
+                
+                // Atualiza link do botão VIP
+                document.getElementById('btn-vip').href = `cadastrar-vip.html?loja=${slugLoja}`;
+                
+                // Atualiza meta theme-color
+                document.querySelector('meta[name="theme-color"]').content = cor;
+                
+            } catch (e) { 
+                console.error('Erro loja:', e);
+                loja = null;
+            }
+        }
+
+        function ajustarCor(hex, percentual) {
+            const num = parseInt(hex.replace('#', ''), 16);
+            const r = Math.min(255, Math.max(0, (num >> 16) + percentual));
+            const g = Math.min(255, Math.max(0, ((num >> 8) & 0x00FF) + percentual));
+            const b = Math.min(255, Math.max(0, (num & 0x0000FF) + percentual));
+            return `#${(0x1000000 + r * 0x10000 + g * 0x100 + b).toString(16).slice(1)}`;
+        }
+
+        async function carregarDescontos() {
+            try {
+                const { data } = await db.from('config_vip').select('*').eq('estabelecimento_id', loja?.id).limit(1);
+                if (data && data.length > 0) {
+                    document.getElementById('desc-3').textContent = data[0].desc_3_meses + '%';
+                    document.getElementById('desc-5').textContent = data[0].desc_5_meses + '%';
+                    document.getElementById('desc-8').textContent = data[0].desc_8_meses + '%';
+                }
+            } catch (e) { console.log('Usando descontos padrão'); }
+        }
+
+        async function carregarOfertas() {
+            try {
+                const { data } = await db.from('produtos').select('*').eq('estabelecimento_id', loja?.id).eq('tipo', 'oferta_semanal').eq('ativo', true).order('criado_em', { ascending: false });
+                ofertas = data || [];
+                renderizarOfertas();
+            } catch (error) { 
+                document.getElementById('lista-ofertas').innerHTML = '<p class="text-center text-gray-500 py-4 text-sm">Erro ao carregar ofertas.</p>';
+            }
+        }
+
+        async function carregarDiaADia() {
+            try {
+                const { data } = await db.from('produtos').select('*').eq('estabelecimento_id', loja?.id).eq('tipo', 'dia_a_dia').eq('ativo', true).order('nome', { ascending: true });
+                produtosDiaADia = data || [];
+                renderizarDiaADia();
+            } catch (error) { 
+                document.getElementById('lista-dia-a-dia').innerHTML = '<p class="text-center text-gray-500 py-4 text-sm">Erro ao carregar produtos.</p>';
+            }
+        }
+
+        async function carregarContadoresFavoritos() {
+            try {
+                const { data } = await db.from('favoritos').select('produto_id').eq('estabelecimento_id', loja?.id);
+                if (data) {
+                    contadoresFavoritos = {};
+                    data.forEach(f => { contadoresFavoritos[f.produto_id] = (contadoresFavoritos[f.produto_id] || 0) + 1; });
+                }
+            } catch (e) { console.log('Erro ao carregar contadores:', e); }
+        }
+
+        async function toggleFavorito(produtoId) {
+            const jaFavoritado = favoritosIds.includes(produtoId);
+            if (jaFavoritado) {
+                favoritosIds = favoritosIds.filter(id => id !== produtoId);
+                localStorage.setItem(`favoritos_${slugLoja}`, JSON.stringify(favoritosIds));
+                mostrarToast('Removido dos favoritos');
+            } else {
+                favoritosIds.push(produtoId);
+                localStorage.setItem(`favoritos_${slugLoja}`, JSON.stringify(favoritosIds));
+                try {
+                    await db.from('favoritos').insert([{ estabelecimento_id: loja?.id, produto_id: produtoId }]);
+                    mostrarToast('❤️ Adicionado aos favoritos!');
+                } catch (e) { mostrarToast('❤️ Favoritado (local)'); }
+                contadoresFavoritos[produtoId] = (contadoresFavoritos[produtoId] || 0) + 1;
+            }
+            atualizarContadorFavoritos();
+            atualizarIconesFavoritos();
+        }
+
+        function ehFavorito(produtoId) { return favoritosIds.includes(produtoId); }
+
+        function atualizarContadorFavoritos() {
+            const contador = document.getElementById('contador-favoritos');
+            if (favoritosIds.length > 0) { contador.textContent = favoritosIds.length; contador.classList.remove('hidden'); }
+            else { contador.classList.add('hidden'); }
+        }
+
+        function atualizarIconesFavoritos() {
+            document.querySelectorAll('.coracao').forEach(btn => {
+                const produtoId = btn.dataset.produtoId;
+                if (ehFavorito(produtoId)) { btn.innerHTML = '❤️'; btn.classList.add('favoritado'); }
+                else { btn.innerHTML = '🤍'; btn.classList.remove('favoritado'); }
+            });
+        }
+
+        function mostrarFavoritos() { mostrarAba('favoritos'); renderizarFavoritos(); }
+
+        function renderizarFavoritos() {
+            const container = document.getElementById('lista-favoritos');
+            const produtosFavoritos = [...ofertas, ...produtosDiaADia].filter(p => favoritosIds.includes(p.id));
+            if (produtosFavoritos.length === 0) {
+                container.innerHTML = `<div class="text-center py-12"><div class="text-6xl mb-4">💔</div><p class="text-gray-500 text-sm mb-4">Você ainda não tem favoritos.</p><button onclick="mostrarAba('ofertas')" class="text-white font-bold py-2 px-6 rounded-lg text-sm" style="background-color: ${loja?.cor_tema || '#000'}">Ver ofertas</button></div>`;
+                return;
+            }
+            container.innerHTML = '';
+            produtosFavoritos.forEach((produto) => {
+                const isUnico = produto.tipo_preco === 'unico';
+                const desconto = (produto.preco_original && produto.preco_promocional && !isUnico) ? Math.round(((produto.preco_original - produto.preco_promocional) / produto.preco_original) * 100) : 0;
+                const precoExibicao = produto.preco_promocional || produto.preco_original;
+                const thumbnail = produto.foto_url ? `<img src="${produto.foto_url}" class="w-16 h-16 rounded-lg object-cover mr-3 flex-shrink-0" onerror="this.src='https://via.placeholder.com/100x100/000000/FFFFFF?text=Produto'">` : `<div class="w-16 h-16 rounded-lg bg-gray-200 flex items-center justify-center mr-3 flex-shrink-0 text-2xl">📦</div>`;
+                container.innerHTML += `<div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden mb-3 fade-in"><div class="p-4 flex items-center">${thumbnail}<div class="flex-grow min-w-0 pr-2"><h3 class="font-bold text-gray-900 text-sm leading-tight line-clamp-2 mb-1">${produto.nome}</h3><p class="text-xs text-gray-500 truncate">${produto.subtitulo || ''}</p><div class="flex items-baseline flex-wrap gap-2 mt-1">${!isUnico && produto.preco_original ? `<span class="text-gray-400 text-xs line-through">R$ ${parseFloat(produto.preco_original).toFixed(2)}</span>` : ''}<span class="text-lg font-black text-green-600">R$ ${parseFloat(precoExibicao).toFixed(2)}</span>${desconto > 0 ? `<span class="bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">${desconto}% OFF</span>` : ''}</div></div><button onclick="toggleFavorito('${produto.id}'); renderizarFavoritos();" class="coracao favoritado text-2xl ml-2">❤️</button></div></div>`;
+            });
+        }
+
+        function mostrarToast(msg) { const toast = document.getElementById('toast'); toast.textContent = msg; toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 2000); }
+
+        function mostrarAba(aba) {
+            document.querySelectorAll('.aba-conteudo').forEach(a => a.classList.add('hidden'));
+            document.getElementById('aba-' + aba).classList.remove('hidden');
+            document.querySelectorAll('[id^="tab-"]').forEach(t => { t.classList.remove('tab-ativa'); t.classList.add('tab-inativa'); t.style.backgroundColor = ''; });
+            const tabAtiva = document.getElementById('tab-' + aba);
+            if (tabAtiva) { tabAtiva.classList.remove('tab-inativa'); tabAtiva.classList.add('tab-ativa'); tabAtiva.style.backgroundColor = loja?.cor_tema || '#000'; }
+        }
+
+        function renderizarOfertas() {
+            const container = document.getElementById('lista-ofertas');
+            container.innerHTML = '';
+            if (ofertas.length === 0) { container.innerHTML = '<p class="text-center text-gray-500 py-8 text-sm">Nenhuma oferta da semana no momento. Volte em breve!</p>'; return; }
+            ofertas.forEach((oferta, index) => {
+                const isUnico = oferta.tipo_preco === 'unico';
+                const desconto = (oferta.preco_original && oferta.preco_promocional && !isUnico) ? Math.round(((oferta.preco_original - oferta.preco_promocional) / oferta.preco_original) * 100) : 0;
+                const precoExibicao = oferta.preco_promocional || oferta.preco_original;
+                const isFav = ehFavorito(oferta.id);
+                const totalFavs = contadoresFavoritos[oferta.id] || 0;
+                const cor = loja?.cor_tema || '#000000';
+                const thumbnail = oferta.foto_url ? `<img src="${oferta.foto_url}" class="w-16 h-16 rounded-lg object-cover mr-3 flex-shrink-0" onerror="this.src='https://via.placeholder.com/100x100/000000/FFFFFF?text=Produto'">` : `<div class="w-16 h-16 rounded-lg bg-gray-200 flex items-center justify-center mr-3 flex-shrink-0 text-2xl">📦</div>`;
+                const fotoGrande = oferta.foto_url ? `<img src="${oferta.foto_url}" class="w-full h-48 object-cover rounded-lg foto-zoom" onerror="this.src='https://via.placeholder.com/600x400/000000/FFFFFF?text=Produto'">` : `<div class="w-full h-48 bg-gray-200 rounded-lg flex items-center justify-center text-6xl">📦</div>`;
+                container.innerHTML += `<div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden mb-3 fade-in card-oferta"><div class="p-4 flex items-center cursor-pointer" onclick="toggleDetalhes('detalhes-${index}')">${thumbnail}<div class="flex-grow min-w-0 pr-2"><h3 class="font-bold text-gray-900 text-sm leading-tight line-clamp-2 mb-1">${oferta.nome}</h3><p class="text-xs text-gray-500 truncate">${oferta.subtitulo || ''}</p><div class="flex items-baseline flex-wrap gap-2 mt-1">${!isUnico && oferta.preco_original ? `<span class="text-gray-400 text-xs line-through">R$ ${parseFloat(oferta.preco_original).toFixed(2)}</span>` : ''}<span class="text-lg font-black text-green-600">R$ ${parseFloat(precoExibicao).toFixed(2)}</span>${desconto > 0 ? `<span class="bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">${desconto}% OFF</span>` : ''}</div>${oferta.valido_ate ? `<p class="text-[10px] text-gray-400 mt-1">📅 Válido até ${new Date(oferta.valido_ate).toLocaleDateString('pt-BR')}</p>` : ''}${totalFavs > 0 ? `<p class="text-[10px] text-gray-400 mt-0.5">❤️ ${totalFavs} pessoa${totalFavs > 1 ? 's' : ''} favoritaram</p>` : ''}</div><button onclick="event.stopPropagation(); toggleFavorito('${oferta.id}')" class="coracao ${isFav ? 'favoritado' : ''} text-2xl mr-2" data-produto-id="${oferta.id}">${isFav ? '❤️' : '🤍'}</button><button class="text-white font-bold py-2 px-4 rounded-lg text-sm flex-shrink-0" style="background-color: ${cor}">EU QUERO</button></div><div id="detalhes-${index}" class="card-detalhes border-t border-gray-100"><div class="p-4 space-y-3"><div class="relative">${fotoGrande}${oferta.estoque_restam > 0 ? `<div class="absolute bottom-2 right-2"><div class="badge-restam flex items-end justify-center pb-1"><div class="text-center text-white"><p class="text-[7px] font-bold leading-tight">RESTAM</p><p class="text-sm font-black leading-tight">${oferta.estoque_restam}</p></div></div></div>` : ''}${oferta.categoria ? `<div class="absolute bottom-0 left-0 right-0 bg-green-700 text-white text-center py-1.5 text-xs font-bold rounded-b-lg">${oferta.categoria}</div>` : ''}</div>${oferta.descricao_longa ? `<div><h4 class="font-bold text-gray-900 text-sm mb-1">Descrição</h4><p class="text-xs text-gray-600 leading-relaxed">${oferta.descricao_longa}</p></div>` : ''}${(oferta.atributo1_nome || oferta.atributo2_nome) ? `<div class="grid grid-cols-2 gap-2 text-xs">${oferta.atributo1_nome ? `<div class="bg-gray-50 p-2 rounded"><p class="text-gray-500">${oferta.atributo1_nome}</p><p class="font-bold text-gray-900">${oferta.atributo1_valor || '-'}</p></div>` : ''}${oferta.atributo2_nome ? `<div class="bg-gray-50 p-2 rounded"><p class="text-gray-500">${oferta.atributo2_nome}</p><p class="font-bold text-gray-900">${oferta.atributo2_valor || '-'}</p></div>` : ''}</div>` : ''}<div class="text-xs text-gray-500 bg-gray-50 p-2 rounded">📅 Válido até: <strong>${oferta.valido_ate ? new Date(oferta.valido_ate).toLocaleDateString('pt-BR') : 'Fim da semana'}</strong>${oferta.tipo_entrega_produto === 'delivery' ? ' • 🚚 Delivery' : oferta.tipo_entrega_produto === 'retirada' ? ' • 🏪 Retirada' : ' • 🚚 Delivery + Retirada'}${oferta.taxa_entrega_produto > 0 ? ` • Taxa: R$ ${parseFloat(oferta.taxa_entrega_produto).toFixed(2)}` : ''}</div><a href="${oferta.link_cupomclic || '#'}" target="_blank" class="block w-full text-white text-center font-bold py-3 rounded-xl shadow-sm transition text-sm" style="background-color: ${cor}">COMPRAR AGORA</a></div></div></div>`;
+            });
+        }
+
+        function renderizarDiaADia() {
+            const container = document.getElementById('lista-dia-a-dia');
+            container.innerHTML = '';
+            if (produtosDiaADia.length === 0) { container.innerHTML = '<p class="text-center text-gray-500 py-8 text-sm">Nenhum produto disponível no momento. Volte em breve!</p>'; return; }
+            const cor = loja?.cor_tema || '#000000';
+            produtosDiaADia.forEach((produto, index) => {
+                const isUnico = produto.tipo_preco === 'unico';
+                const precoExibicao = produto.preco_promocional || produto.preco_original;
+                const isFav = ehFavorito(produto.id);
+                const totalFavs = contadoresFavoritos[produto.id] || 0;
+                const thumbnail = produto.foto_url ? `<img src="${produto.foto_url}" class="w-14 h-14 rounded-lg object-cover mr-3 flex-shrink-0" onerror="this.src='https://via.placeholder.com/100x100/000000/FFFFFF?text=Produto'">` : `<div class="w-14 h-14 rounded-lg bg-gray-200 flex items-center justify-center mr-3 flex-shrink-0 text-xl">📦</div>`;
+                container.innerHTML += `<div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mb-3 fade-in"><div class="p-4 flex items-center">${thumbnail}<div class="flex-grow min-w-0 pr-2"><h3 class="font-bold text-gray-900 text-sm leading-tight line-clamp-2 mb-1">${produto.nome}</h3><p class="text-xs text-gray-500 truncate">${produto.subtitulo || ''}</p><div class="flex items-baseline flex-wrap gap-2 mt-1">${!isUnico && produto.preco_original ? `<span class="text-gray-400 text-xs line-through">R$ ${parseFloat(produto.preco_original).toFixed(2)}</span>` : ''}<span class="text-base font-black text-green-600">R$ ${parseFloat(precoExibicao).toFixed(2)}</span></div>${totalFavs > 0 ? `<p class="text-[10px] text-gray-400 mt-0.5">❤️ ${totalFavs} pessoa${totalFavs > 1 ? 's' : ''} favoritaram</p>` : ''}</div><button onclick="toggleFavorito('${produto.id}')" class="coracao ${isFav ? 'favoritado' : ''} text-2xl mr-2" data-produto-id="${produto.id}">${isFav ? '❤️' : '🤍'}</button><a href="${produto.link_cupomclic || '#'}" target="_blank" class="text-white font-bold py-2 px-3 rounded-lg text-xs flex-shrink-0" style="background-color: ${cor}">COMPRAR</a></div></div>`;
+            });
+        }
+
+        function toggleDetalhes(id) { document.getElementById(id).classList.toggle('open'); }
+    </script>
+</body>
+</html>
