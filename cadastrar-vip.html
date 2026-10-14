@@ -3,56 +3,224 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastro VIP | Shop Pocket</title>
+    <title>Programa de Fidelidade VIP | Shop Pocket</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        .plano-selecionado {
+            border: 3px solid #f59e0b;
+            background-color: #fffbeb;
+            transform: scale(1.02);
+        }
+        .plano-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .plano-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+    </style>
 </head>
-<body class="bg-gradient-to-br from-yellow-50 to-orange-50 min-h-screen flex items-center justify-center p-4">
-    <div class="max-w-md w-full bg-white rounded-2xl shadow-xl p-6">
-        <div class="text-center mb-6">
-            <span class="text-5xl">👑</span>
-            <h1 class="text-2xl font-bold text-gray-900 mt-3">Programa de Fidelidade</h1>
-            <p class="text-gray-600 text-sm mt-1" id="subtitulo-loja">Entre para o clube VIP e ganhe descontos progressivos!</p>
+<body class="bg-gradient-to-br from-yellow-50 to-orange-50 min-h-screen p-4">
+    <div class="max-w-md mx-auto">
+        <!-- Header -->
+        <div class="text-center mb-6 pt-4">
+            <span class="text-6xl">👑</span>
+            <h1 class="text-3xl font-bold text-gray-900 mt-3">Programa de Fidelidade</h1>
+            <p class="text-gray-600 text-sm mt-2" id="subtitulo-loja">Clube VIP</p>
         </div>
 
-        <form id="form-vip" class="space-y-4">
-            <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-1">Nome Completo</label>
-                <input type="text" id="nome" required class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-yellow-500 focus:outline-none" placeholder="Seu nome completo">
+        <!-- Explicação do Programa -->
+        <div class="bg-white rounded-2xl shadow-lg p-5 mb-4">
+            <h2 class="text-lg font-bold text-gray-900 mb-3 flex items-center">
+                <span class="mr-2"></span> Como Funciona?
+            </h2>
+            <div class="space-y-3 text-sm text-gray-700">
+                <div class="flex items-start">
+                    <span class="text-green-600 font-bold mr-2">✓</span>
+                    <p>Você escolhe um plano de <strong>3, 5 ou 8 meses</strong> de assinatura.</p>
+                </div>
+                <div class="flex items-start">
+                    <span class="text-green-600 font-bold mr-2">✓</span>
+                    <p>Paga <strong>mês a mês</strong> (sem compromisso de longo prazo).</p>
+                </div>
+                <div class="flex items-start">
+                    <span class="text-green-600 font-bold mr-2">✓</span>
+                    <p>A cada mês de fidelidade, seu <strong>desconto aumenta</strong> progressivamente.</p>
+                </div>
+                <div class="flex items-start">
+                    <span class="text-green-600 font-bold mr-2">✓</span>
+                    <p>Recebe <strong>lembrete automático</strong> no WhatsApp todo mês.</p>
+                </div>
+                <div class="flex items-start">
+                    <span class="text-green-600 font-bold mr-2">✓</span>
+                    <p>Garante <strong>preço exclusivo</strong> e produtos reservados para você.</p>
+                </div>
             </div>
+        </div>
 
-            <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-1">WhatsApp (55+DDD+Número)</label>
-                <input type="text" id="whatsapp" required class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-yellow-500 focus:outline-none" placeholder="5514999999999">
-            </div>
+        <!-- Escolha do Plano -->
+        <div class="bg-white rounded-2xl shadow-lg p-5 mb-4">
+            <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center">
+                <span class="mr-2">🎯</span> Escolha Seu Plano
+            </h2>
 
-            <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-1">Produto de Interesse</label>
-                <select id="produto" required class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-yellow-500 focus:outline-none">
-                    <option value="">Carregando produtos...</option>
-                </select>
-            </div>
-
-            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                <p class="text-xs text-gray-700 font-semibold mb-2">📈 Tabela de Descontos:</p>
-                <div class="grid grid-cols-3 gap-2 text-center text-xs">
-                    <div class="bg-white rounded p-2"><p class="text-gray-600">3 meses</p><p class="text-lg font-bold text-green-600">10% OFF</p></div>
-                    <div class="bg-white rounded p-2"><p class="text-gray-600">5 meses</p><p class="text-lg font-bold text-green-600">18% OFF</p></div>
-                    <div class="bg-white rounded p-2"><p class="text-gray-600">8 meses</p><p class="text-lg font-bold text-green-600">25% OFF</p></div>
+            <!-- Plano 3 Meses -->
+            <div class="plano-card border-2 border-gray-200 rounded-xl p-4 mb-3" onclick="selecionarPlano(3)">
+                <div class="flex items-center justify-between mb-2">
+                    <div class="flex items-center">
+                        <input type="radio" name="plano" id="plano-3" value="3" class="w-5 h-5 text-yellow-500 mr-3">
+                        <label for="plano-3" class="font-bold text-gray-900">Plano 3 Meses</label>
+                    </div>
+                    <span class="bg-blue-100 text-blue-700 text-xs font-bold px-2 py-1 rounded-full">INICIANTE</span>
+                </div>
+                <div class="ml-8 space-y-1 text-xs">
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Mês 1:</span>
+                        <span class="font-bold text-green-600">10% OFF</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Mês 2:</span>
+                        <span class="font-bold text-green-600">12% OFF</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Mês 3:</span>
+                        <span class="font-bold text-green-600">16% OFF</span>
+                    </div>
                 </div>
             </div>
 
-            <button type="submit" class="w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white font-bold py-4 rounded-xl shadow-lg transition text-lg">
-                👑 Quero Ser VIP
-            </button>
-            <p class="text-xs text-center text-gray-500 mt-2">Você será redirecionado para o WhatsApp para confirmar.</p>
-        </form>
+            <!-- Plano 5 Meses -->
+            <div class="plano-card border-2 border-gray-200 rounded-xl p-4 mb-3" onclick="selecionarPlano(5)">
+                <div class="flex items-center justify-between mb-2">
+                    <div class="flex items-center">
+                        <input type="radio" name="plano" id="plano-5" value="5" class="w-5 h-5 text-yellow-500 mr-3">
+                        <label for="plano-5" class="font-bold text-gray-900">Plano 5 Meses</label>
+                    </div>
+                    <span class="bg-purple-100 text-purple-700 text-xs font-bold px-2 py-1 rounded-full">RECOMENDADO</span>
+                </div>
+                <div class="ml-8 space-y-1 text-xs">
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Mês 1:</span>
+                        <span class="font-bold text-green-600">10% OFF</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Mês 2:</span>
+                        <span class="font-bold text-green-600">12% OFF</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Mês 3:</span>
+                        <span class="font-bold text-green-600">16% OFF</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Mês 4:</span>
+                        <span class="font-bold text-green-600">18% OFF</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Mês 5:</span>
+                        <span class="font-bold text-green-600">22% OFF</span>
+                    </div>
+                </div>
+            </div>
 
-        <div id="sucesso" class="hidden text-center py-8">
+            <!-- Plano 8 Meses -->
+            <div class="plano-card border-2 border-gray-200 rounded-xl p-4 mb-3" onclick="selecionarPlano(8)">
+                <div class="flex items-center justify-between mb-2">
+                    <div class="flex items-center">
+                        <input type="radio" name="plano" id="plano-8" value="8" class="w-5 h-5 text-yellow-500 mr-3">
+                        <label for="plano-8" class="font-bold text-gray-900">Plano 8 Meses</label>
+                    </div>
+                    <span class="bg-yellow-100 text-yellow-700 text-xs font-bold px-2 py-1 rounded-full">MÁXIMO DESCONTO</span>
+                </div>
+                <div class="ml-8 space-y-1 text-xs">
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Mês 1:</span>
+                        <span class="font-bold text-green-600">10% OFF</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Mês 2:</span>
+                        <span class="font-bold text-green-600">12% OFF</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Mês 3:</span>
+                        <span class="font-bold text-green-600">16% OFF</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Mês 4:</span>
+                        <span class="font-bold text-green-600">18% OFF</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Mês 5:</span>
+                        <span class="font-bold text-green-600">22% OFF</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Mês 6:</span>
+                        <span class="font-bold text-green-600">23% OFF</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Mês 7:</span>
+                        <span class="font-bold text-green-600">24% OFF</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Mês 8:</span>
+                        <span class="font-bold text-green-600">25% OFF</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Formulário de Cadastro -->
+        <div class="bg-white rounded-2xl shadow-lg p-5 mb-4">
+            <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center">
+                <span class="mr-2">📝</span> Seus Dados
+            </h2>
+            <form id="form-vip" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Nome Completo</label>
+                    <input type="text" id="nome" required class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-yellow-500 focus:outline-none" placeholder="Seu nome completo">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">WhatsApp (55+DDD+Número)</label>
+                    <input type="text" id="whatsapp" required class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-yellow-500 focus:outline-none" placeholder="5514999999999">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Produto de Interesse</label>
+                    <select id="produto" required class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-yellow-500 focus:outline-none">
+                        <option value="">Carregando produtos...</option>
+                    </select>
+                </div>
+
+                <div class="bg-blue-50 border border-blue-200 rounded-lg p-3 text-xs text-gray-700">
+                    <p class="font-semibold mb-1">💳 Pagamento Mensal:</p>
+                    <p>Você paga apenas <strong>mês a mês</strong>, sem taxa de adesão. Pode cancelar quando quiser.</p>
+                </div>
+
+                <div class="bg-green-50 border border-green-200 rounded-lg p-3 text-xs text-gray-700">
+                    <p class="font-semibold mb-1">🔔 Lembrete Automático:</p>
+                    <p>Todo mês, enviaremos um <strong>alerta no WhatsApp</strong> com seu desconto atualizado e oferta exclusiva.</p>
+                </div>
+
+                <button type="submit" class="w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white font-bold py-4 rounded-xl shadow-lg transition text-lg">
+                    👑 Quero Ser VIP
+                </button>
+                <p class="text-xs text-center text-gray-500 mt-2">Você será redirecionado para o WhatsApp para confirmar.</p>
+            </form>
+        </div>
+
+        <!-- Mensagem de Sucesso -->
+        <div id="sucesso" class="hidden bg-white rounded-2xl shadow-lg p-8 text-center">
             <span class="text-6xl">🎉</span>
-            <h2 class="text-2xl font-bold text-gray-900 mt-4">Solicitação Enviada!</h2>
+            <h2 class="text-2xl font-bold text-gray-900 mt-4">Bem-vindo ao Clube VIP!</h2>
             <p class="text-gray-600 mt-2">Agora é só confirmar a mensagem no WhatsApp que abriu.</p>
             <a href="javascript:history.back()" class="inline-block mt-4 text-yellow-600 font-semibold hover:underline">← Voltar para a loja</a>
+        </div>
+
+        <!-- Footer -->
+        <div class="text-center py-6 text-gray-500 text-xs">
+            <p>Powered by <span class="font-bold">Shop Pocket</span></p>
         </div>
     </div>
 
@@ -64,11 +232,27 @@
         let lojaId = null;
         let lojaWhatsapp = '';
         let lojaNome = '';
+        let planoSelecionado = null;
+
+        // Tabela de descontos progressivos
+        const tabelaDescontos = {
+            3: [10, 12, 16],
+            5: [10, 12, 16, 18, 22],
+            8: [10, 12, 16, 18, 22, 23, 24, 25]
+        };
+
+        function selecionarPlano(meses) {
+            planoSelecionado = meses;
+            document.querySelectorAll('.plano-card').forEach(card => {
+                card.classList.remove('plano-selecionado');
+            });
+            event.currentTarget.classList.add('plano-selecionado');
+            document.getElementById(`plano-${meses}`).checked = true;
+        }
 
         async function inicializar() {
-            // Descobre qual loja o cliente está visitando pela URL
             const params = new URLSearchParams(window.location.search);
-            const slug = params.get('loja') || 'jl-sabores-nobres'; // Padrão JL se não especificar
+            const slug = params.get('loja') || 'jl-sabores-nobres';
 
             try {
                 const { data: loja, error } = await db.from('lojas').select('id, whatsapp, nome').eq('slug', slug).single();
@@ -79,7 +263,6 @@
                 lojaNome = loja.nome;
                 document.getElementById('subtitulo-loja').textContent = `Clube VIP ${lojaNome}`;
 
-                // Carrega produtos APENAS desta loja
                 const { data: produtos } = await db.from('produtos').select('id, nome, subtitulo').eq('estabelecimento_id', lojaId).eq('ativo', true).order('nome');
                 const select = document.getElementById('produto');
                 select.innerHTML = '<option value="">Selecione um produto...</option>';
@@ -90,12 +273,17 @@
                 }
             } catch (e) {
                 console.error('Erro ao carregar dados da loja:', e);
-                document.getElementById('subtitulo-loja').textContent = 'Erro ao carregar dados. Tente novamente.';
             }
         }
 
         document.getElementById('form-vip').addEventListener('submit', async (e) => {
             e.preventDefault();
+            
+            if (!planoSelecionado) {
+                alert('Por favor, selecione um plano (3, 5 ou 8 meses).');
+                return;
+            }
+
             const btn = e.target.querySelector('button');
             btn.disabled = true;
             btn.textContent = 'Processando...';
@@ -103,9 +291,8 @@
             try {
                 const hoje = new Date().toISOString().split('T')[0];
                 const proximoAlerta = new Date();
-                proximoAlerta.setDate(proximoAlerta.getDate() + 30); // Primeiro alerta em 30 dias
+                proximoAlerta.setDate(proximoAlerta.getDate() + 30);
 
-                // 1. Salva no Banco de Dados (LINKADO COM O ADMIN)
                 await db.from('assinantes_vip').insert([{
                     estabelecimento_id: lojaId,
                     nome: document.getElementById('nome').value,
@@ -114,23 +301,21 @@
                     data_ultima_compra: hoje,
                     data_proximo_alerta: proximoAlerta.toISOString().split('T')[0],
                     quantidade_compras: 0,
-                    desconto_atual: 0,
+                    desconto_atual: tabelaDescontos[planoSelecionado][0],
+                    plano_meses: planoSelecionado,
                     ativo: true
                 }]);
 
-                // 2. Monta mensagem para o WhatsApp do Lojista/Tokto
                 const produtoTexto = document.getElementById('produto').options[document.getElementById('produto').selectedIndex].text;
-                const msg = `👑 *NOVO CADASTRO VIP!* 👑\n\n🏪 Loja: ${lojaNome}\n👤 Cliente: ${document.getElementById('nome').value}\n📱 WhatsApp: ${document.getElementById('whatsapp').value}\n📦 Produto: ${produtoTexto}\n\n✅ Por favor, confirmar e gerenciar no Painel Admin.`;
+                const msg = `👑 *NOVO CADASTRO VIP!* 👑\n\n🏪 Loja: ${lojaNome}\n👤 Cliente: ${document.getElementById('nome').value}\n WhatsApp: ${document.getElementById('whatsapp').value}\n📦 Produto: ${produtoTexto}\n Plano: ${planoSelecionado} meses\n💰 Desconto inicial: ${tabelaDescontos[planoSelecionado][0]}% OFF\n\n✅ Por favor, confirmar no Painel Admin.`;
                 
-                // 3. Abre o WhatsApp
                 window.open(`https://wa.me/${lojaWhatsapp}?text=${encodeURIComponent(msg)}`, '_blank');
                 
-                // 4. Mostra tela de sucesso
                 document.getElementById('form-vip').classList.add('hidden');
                 document.getElementById('sucesso').classList.remove('hidden');
 
             } catch (error) {
-                alert('Erro ao cadastrar. Verifique sua conexão e tente novamente.');
+                alert('Erro ao cadastrar. Tente novamente.');
                 console.error(error);
                 btn.disabled = false;
                 btn.textContent = '👑 Quero Ser VIP';
