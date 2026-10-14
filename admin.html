@@ -3,705 +3,808 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cupomclic - Painel Admin</title>
+    <title>Admin | Shop Pocket</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        :root { --cor-primaria: #16a34a; }
-        .bg-health { background-color: var(--cor-primaria); }
-        .bg-health:hover { filter: brightness(0.9); }
-        .text-health { color: var(--cor-primaria); }
-        .border-health { border-color: var(--cor-primaria); }
-        .fade-in { animation: fadeIn 0.3s ease-in-out; }
+        body { font-family: 'Inter', sans-serif; }
+        .fade-in { animation: fadeIn 0.3s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .dia-marcado { background-color: var(--cor-primaria); color: white; font-weight: bold; }
-        .dia-hoje { border: 2px solid var(--cor-primaria); }
-        .dia-clicavel { cursor: pointer; transition: all 0.2s; }
-        .dia-clicavel:hover { background-color: #dcfce7; transform: scale(1.1); }
-        .accordion-content { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
-        .accordion-content.open { max-height: 2000px; }
-        .rotate-icon { transition: transform 0.3s; }
-        .rotate-icon.open { transform: rotate(180deg); }
-        .tab-ativa { background-color: var(--cor-primaria); color: white; }
-        .tab-inativa { background-color: #f3f4f6; color: #374151; }
-        .tab-inativa:hover { background-color: #e5e7eb; }
-        .secao-admin { display: none; }
-        .secao-admin.ativa { display: block; animation: fadeIn 0.3s; }
+        .toast {
+            position: fixed; bottom: 20px; right: 20px;
+            padding: 12px 24px; border-radius: 8px; color: white;
+            font-weight: 600; z-index: 1000; opacity: 0;
+            transition: opacity 0.3s ease; pointer-events: none;
+        }
+        .toast.show { opacity: 1; }
+        .toast-success { background: #10b981; }
+        .toast-error { background: #ef4444; }
+        .modal {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 100; opacity: 0; pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .modal.active { opacity: 1; pointer-events: all; }
+        .tab-btn.active { background-color: #000; color: white; }
+        .tab-btn:not(.active) { background-color: #f3f4f6; color: #374151; }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800 font-sans antialiased min-h-screen flex flex-col">
+<body class="bg-gray-100 min-h-screen">
 
-    <header class="bg-white shadow-sm py-4 px-6 sticky top-0 z-20">
-        <div class="max-w-md mx-auto flex items-center justify-between">
-            <div>
-                <span class="text-xl font-extrabold text-gray-900">Painel Admin</span>
-                <p class="text-xs text-gray-500" id="nome-loja-admin">Carregando...</p>
+    <!-- Tela de Login -->
+    <div id="tela-login" class="min-h-screen flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md">
+            <div class="text-center mb-6">
+                <img src="https://raw.githubusercontent.com/mamedstudio/cupomclic-recorrencia/main/shop-pocket-logo.png" alt="Shop Pocket" class="h-16 mx-auto mb-4">
+                <h1 class="text-2xl font-bold text-gray-900">Admin da Loja</h1>
+                <p class="text-gray-500 text-sm" id="login-subtitulo">Faça login para gerenciar sua loja</p>
             </div>
-            <a href="index.html?loja=rafarma" class="text-xs bg-gray-200 hover:bg-gray-300 text-gray-700 px-3 py-1 rounded-full transition">👁️ Ver Loja</a>
-        </div>
-    </header>
-
-    <!-- TELA DE LOGIN -->
-    <div id="tela-login" class="flex-grow flex items-center justify-center p-4">
-        <div class="bg-white p-8 rounded-2xl shadow-lg max-w-sm w-full">
-            <h2 class="text-2xl font-bold text-gray-900 mb-6 text-center">🔒 Acesso Restrito</h2>
             <form id="form-login" class="space-y-4">
                 <div>
-                    <label class="block text-sm font-semibold text-gray-600 mb-1">Senha</label>
-                    <input type="password" id="senha-admin" required class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:outline-none">
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Senha</label>
+                    <input type="password" id="senha-admin" required class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-black focus:outline-none" placeholder="Digite sua senha">
                 </div>
-                <button type="submit" class="w-full bg-health hover:bg-green-700 text-white font-bold py-3 rounded-xl shadow-md transition">Entrar</button>
+                <button type="submit" class="w-full bg-black hover:bg-gray-800 text-white font-bold py-3 rounded-lg transition">Entrar</button>
+                <p class="text-xs text-center text-gray-400">Esqueceu a senha? Contate o suporte Tokto.</p>
             </form>
         </div>
     </div>
 
-    <!-- PAINEL ADMIN (oculto até login) -->
-    <main id="painel-admin" class="hidden max-w-md mx-auto px-4 py-6 flex-grow w-full fade-in">
-        
-        <div class="bg-white rounded-xl shadow-sm mb-6 overflow-hidden border border-gray-200">
-            <div class="grid grid-cols-3 sm:grid-cols-6 gap-1 p-2">
-                <button onclick="mostrarSecao('calendario')" id="tab-calendario" class="tab-ativa py-2 px-1 rounded-lg text-[10px] sm:text-xs font-semibold transition">📅 Calend</button>
-                <button onclick="mostrarSecao('produtos')" id="tab-produtos" class="tab-inativa py-2 px-1 rounded-lg text-[10px] sm:text-xs font-semibold transition">📦 Produtos</button>
-                <button onclick="mostrarSecao('assinaturas')" id="tab-assinaturas" class="tab-inativa py-2 px-1 rounded-lg text-[10px] sm:text-xs font-semibold transition">👥 Assinar</button>
-                <button onclick="mostrarSecao('clientes')" id="tab-clientes" class="tab-inativa py-2 px-1 rounded-lg text-[10px] sm:text-xs font-semibold transition">🔍 Clientes</button>
-                <button onclick="mostrarSecao('solicitacoes')" id="tab-solicitacoes" class="tab-inativa py-2 px-1 rounded-lg text-[10px] sm:text-xs font-semibold transition">💡 Solicit</button>
-                <button onclick="mostrarSecao('configuracoes')" id="tab-configuracoes" class="tab-inativa py-2 px-1 rounded-lg text-[10px] sm:text-xs font-semibold transition">️ Config</button>
-            </div>
-        </div>
-
-        <!-- SEÇÃO: CALENDÁRIO -->
-        <div id="secao-calendario" class="secao-admin ativa">
-            <div class="bg-white p-5 rounded-2xl shadow-md border border-gray-100">
-                <div class="flex items-center justify-between mb-4">
-                    <button onclick="mudarMes(-1)" class="p-2 hover:bg-gray-100 rounded-lg">◀</button>
-                    <h2 class="text-lg font-bold text-gray-900" id="mes-atual"></h2>
-                    <button onclick="mudarMes(1)" class="p-2 hover:bg-gray-100 rounded-lg">▶</button>
-                </div>
-                <div class="grid grid-cols-7 gap-1 text-center text-xs font-semibold text-gray-600 mb-2">
-                    <div>Dom</div><div>Seg</div><div>Ter</div><div>Qua</div><div>Qui</div><div>Sex</div><div>Sáb</div>
-                </div>
-                <div id="calendario" class="grid grid-cols-7 gap-1"></div>
-            </div>
-        </div>
-
-        <!-- SEÇÃO: PRODUTOS (REFATORADA) -->
-        <div id="secao-produtos" class="secao-admin">
-            <div class="bg-white p-5 rounded-2xl shadow-md border border-gray-100 mb-6">
-                <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center"><span class="bg-health text-white w-6 h-6 rounded-full flex items-center justify-center text-xs mr-2">+</span>Adicionar Produto</h2>
-                <form id="form-produto" class="space-y-4">
-                    <input type="hidden" id="edit-id" value="">
-                    
+    <!-- Painel Principal -->
+    <div id="painel-principal" class="hidden">
+        <header id="header-admin" class="text-white py-4 px-6 shadow-lg">
+            <div class="max-w-6xl mx-auto flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <img id="logo-admin" src="" class="h-10 rounded-full bg-white p-1 object-contain" onerror="this.style.display='none'">
                     <div>
-                        <label class="block text-xs font-semibold text-gray-600 mb-1">Tipo de Produto</label>
-                        <select id="tipo-produto" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm bg-white">
-                            <option value="oferta_semanal"> Oferta da Semana (Empório)</option>
-                            <option value="recorrencia">📦 Produto de Recorrência</option>
-                        </select>
+                        <h1 class="text-lg font-bold" id="nome-loja-admin">Carregando...</h1>
+                        <p class="text-xs opacity-80">Painel de Administração</p>
                     </div>
-
-                    <!-- CAMPOS BÁSICOS -->
-                    <div class="grid grid-cols-2 gap-3">
-                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">Nome</label><input type="text" id="nome" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
-                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">Subtítulo</label><input type="text" id="subtitulo" placeholder="ex: Peça inteira • Angus" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
-                    </div>
-                    
-                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">Descrição Longa</label><textarea id="descricao-longa" rows="3" placeholder="Descrição detalhada do produto..." class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></textarea></div>
-
-                    <!-- CAMPOS ESPECÍFICOS OFERTA SEMANAL -->
-                    <div id="campos-oferta" class="space-y-3 p-3 bg-red-50 rounded-lg border border-red-100">
-                        <label class="block text-xs font-bold text-red-700 mb-2"> Imagens da Oferta</label>
-                        
-                        <div class="grid grid-cols-2 gap-3">
-                            <div>
-                                <label class="block text-xs text-gray-600 mb-1">Thumbnail (foto pequena)</label>
-                                <input type="text" id="thumbnail-url" placeholder="https://... (100x100)" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm">
-                            </div>
-                            <div>
-                                <label class="block text-xs text-gray-600 mb-1">Foto Grande (detalhes)</label>
-                                <input type="text" id="foto-grande-url" placeholder="https://... (600x400)" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm">
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-2 gap-3">
-                            <div>
-                                <label class="block text-xs text-gray-600 mb-1">Categoria</label>
-                                <select id="categoria" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm bg-white">
-                                    <option value="Carnes Nobres">Carnes Nobres</option>
-                                    <option value="Bebidas">Bebidas</option>
-                                    <option value="Gourmet">Gourmet</option>
-                                    <option value="Condimentos">Condimentos</option>
-                                    <option value="Churrasco">Churrasco</option>
-                                    <option value="Premium">Premium</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-xs text-gray-600 mb-1">Estoque "Restam"</label>
-                                <input type="number" id="estoque-restam" placeholder="12" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm">
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-2 gap-3">
-                            <div>
-                                <label class="block text-xs text-gray-600 mb-1">Atributo 1 (nome)</label>
-                                <input type="text" id="atributo1-nome" placeholder="ex: Peso médio" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm">
-                            </div>
-                            <div>
-                                <label class="block text-xs text-gray-600 mb-1">Atributo 1 (valor)</label>
-                                <input type="text" id="atributo1-valor" placeholder="ex: 1,2kg" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm">
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-2 gap-3">
-                            <div>
-                                <label class="block text-xs text-gray-600 mb-1">Atributo 2 (nome)</label>
-                                <input type="text" id="atributo2-nome" placeholder="ex: Origem" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm">
-                            </div>
-                            <div>
-                                <label class="block text-xs text-gray-600 mb-1">Atributo 2 (valor)</label>
-                                <input type="text" id="atributo2-valor" placeholder="ex: Angus Certificado" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm">
-                            </div>
-                        </div>
-
-                        <div>
-                            <label class="block text-xs text-gray-600 mb-1">Link Checkout CupomClic (PIX)</label>
-                            <input type="text" id="link-cupomclic" placeholder="https://cupomclic..." class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm font-mono text-xs">
-                        </div>
-
-                        <div>
-                            <label class="block text-xs text-gray-600 mb-1">Válido até</label>
-                            <input type="date" id="valido-ate" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm">
-                        </div>
-                    </div>
-
-                    <!-- CAMPOS RECORRÊNCIA -->
-                    <div id="campos-recorrencia" class="space-y-3 p-3 bg-green-50 rounded-lg border border-green-100 hidden">
-                        <label class="block text-xs font-bold text-green-700 mb-1">Dados de Recorrência</label>
-                        <div class="grid grid-cols-2 gap-3">
-                            <div><label class="block text-xs text-gray-600 mb-1">Duração (dias)</label><input type="number" id="dias-duracao" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
-                            <div><label class="block text-xs text-gray-600 mb-1">Estoque</label><input type="number" id="estoque" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
-                        </div>
-                        <div class="grid grid-cols-2 gap-3">
-                            <div><label class="block text-xs text-gray-600 mb-1">Qtd / Mês</label><input type="text" id="quantidade" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
-                            <div><label class="block text-xs text-gray-600 mb-1">Taxa Entrega (R$)</label><input type="number" step="0.01" id="taxa-entrega" value="0" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
-                        </div>
-                        <div>
-                            <label class="block text-xs text-gray-600 mb-1">Tipo de Entrega</label>
-                            <select id="tipo-entrega" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm bg-white">
-                                <option value="ambos">Busca na Loja + Delivery</option>
-                                <option value="loja">Apenas Busca na Loja</option>
-                                <option value="delivery">Apenas Delivery</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <!-- PREÇOS -->
-                    <div class="grid grid-cols-2 gap-3">
-                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">Preço Normal (R$)</label><input type="number" step="0.01" id="preco-original" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
-                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">Preço Promocional (R$)</label><input type="number" step="0.01" id="preco-promocional" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
-                    </div>
-
-                    <div class="flex space-x-3 pt-2">
-                        <button type="submit" class="flex-1 bg-health hover:bg-green-700 text-white font-bold py-3 rounded-xl shadow-md transition text-sm">Salvar Produto</button>
-                        <button type="button" onclick="limparFormulario()" class="px-4 py-3 bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-xl transition text-sm">Limpar</button>
-                    </div>
-                </form>
-            </div>
-            <div class="mt-6">
-                <h3 class="text-sm font-bold text-gray-500 uppercase tracking-wide mb-3">Produtos Cadastrados</h3>
-                <div id="lista-admin" class="space-y-3"><p class="text-center text-gray-500 py-4 text-sm">Carregando...</p></div>
-            </div>
-        </div>
-
-        <!-- SEÇÃO: ASSINATURAS -->
-        <div id="secao-assinaturas" class="secao-admin">
-            <div class="bg-white p-5 rounded-2xl shadow-md border border-gray-100">
-                <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center"><span class="bg-health text-white w-6 h-6 rounded-full flex items-center justify-center text-xs mr-2">📝</span>Registrar Assinatura</h2>
-                <form id="form-assinatura" class="space-y-4">
-                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">Nome do Cliente</label><input type="text" id="cliente-nome" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
-                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">WhatsApp (55+DDD+Número)</label><input type="text" id="cliente-whatsapp" required placeholder="5511999999999" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
-                    <div class="grid grid-cols-2 gap-3">
-                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">Produto</label><select id="assinatura-produto" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm bg-white"></select></div>
-                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">Desconto (%)</label><input type="number" id="assinatura-desconto" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-3">
-                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">Data Última Entrega</label><input type="date" id="assinatura-data" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
-                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">Tipo Entrega</label><select id="assinatura-tipo" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm bg-white"><option value="retirada">Retirada na Loja</option><option value="entrega">Delivery</option></select></div>
-                    </div>
-                    <button type="submit" class="w-full bg-health hover:bg-green-700 text-white font-bold py-3 rounded-xl shadow-md transition text-sm">Registrar Assinatura</button>
-                </form>
-            </div>
-        </div>
-
-        <!-- SEÇÃO: CLIENTES -->
-        <div id="secao-clientes" class="secao-admin">
-            <div class="bg-white p-4 rounded-2xl shadow-md border border-gray-100 mb-4">
-                <h3 class="text-sm font-bold text-gray-900 mb-3">🔍 Buscar Clientes</h3>
-                <div class="space-y-3">
-                    <input type="text" id="filtro-nome" oninput="filtrarClientes()" placeholder="Nome do cliente..." class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm">
-                    <input type="text" id="filtro-produto" oninput="filtrarClientes()" placeholder="Produto..." class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm">
-                    <input type="date" id="filtro-vencimento" onchange="filtrarClientes()" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm">
-                    <button onclick="limparFiltros()" class="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 rounded-lg transition text-sm">Limpar Filtros</button>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <a id="link-loja" href="#" target="_blank" class="text-xs bg-white bg-opacity-20 hover:bg-opacity-30 px-3 py-2 rounded-lg">Ver Loja</a>
+                    <button onclick="abrirModalSenha()" class="text-xs bg-white bg-opacity-20 hover:bg-opacity-30 px-3 py-2 rounded-lg">Alterar Senha</button>
+                    <button onclick="logout()" class="text-xs bg-red-600 hover:bg-red-700 px-3 py-2 rounded-lg">Sair</button>
                 </div>
             </div>
-            <div id="lista-clientes-admin" class="space-y-3"><p class="text-center text-gray-500 py-4 text-sm">Carregando clientes...</p></div>
-        </div>
+        </header>
 
-        <!-- SEÇÃO: SOLICITAÇÕES -->
-        <div id="secao-solicitacoes" class="secao-admin">
-            <div class="bg-white p-5 rounded-2xl shadow-md border border-gray-100">
-                <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center"><span class="bg-blue-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs mr-2">💡</span>Solicitações de Produtos</h2>
-                <div id="lista-solicitacoes" class="space-y-3"><p class="text-center text-gray-500 text-sm py-2">Carregando...</p></div>
+        <div class="max-w-6xl mx-auto p-6">
+            <!-- Abas -->
+            <div class="flex space-x-2 mb-6 bg-white rounded-xl p-2 shadow-sm">
+                <button onclick="mostrarAba('dashboard')" class="tab-btn active flex-1 py-2 px-4 rounded-lg font-semibold text-sm transition">📊 Dashboard</button>
+                <button onclick="mostrarAba('produtos')" class="tab-btn flex-1 py-2 px-4 rounded-lg font-semibold text-sm transition">📦 Produtos</button>
+                <button onclick="mostrarAba('vips')" class="tab-btn flex-1 py-2 px-4 rounded-lg font-semibold text-sm transition">👑 VIPs</button>
+                <button onclick="mostrarAba('config')" class="tab-btn flex-1 py-2 px-4 rounded-lg font-semibold text-sm transition">⚙️ Config</button>
+            </div>
+
+            <!-- Dashboard -->
+            <div id="aba-dashboard" class="aba-conteudo">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                    <div class="bg-white rounded-xl p-4 shadow-sm">
+                        <p class="text-xs text-gray-500 mb-1">Total de Produtos</p>
+                        <p class="text-2xl font-bold text-gray-900" id="stat-produtos">0</p>
+                    </div>
+                    <div class="bg-white rounded-xl p-4 shadow-sm">
+                        <p class="text-xs text-gray-500 mb-1">Produtos Ativos</p>
+                        <p class="text-2xl font-bold text-green-600" id="stat-ativos">0</p>
+                    </div>
+                    <div class="bg-white rounded-xl p-4 shadow-sm">
+                        <p class="text-xs text-gray-500 mb-1">Assinantes VIP</p>
+                        <p class="text-2xl font-bold text-gray-900" id="stat-vips">0</p>
+                    </div>
+                    <div class="bg-white rounded-xl p-4 shadow-sm">
+                        <p class="text-xs text-gray-500 mb-1">Favoritos</p>
+                        <p class="text-2xl font-bold text-gray-900" id="stat-favoritos">0</p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl p-6 shadow-sm">
+                    <h2 class="text-lg font-bold text-gray-900 mb-4">Últimos Produtos Cadastrados</h2>
+                    <div id="lista-ultimos-produtos" class="space-y-2">
+                        <p class="text-gray-500 text-sm">Carregando...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Produtos -->
+            <div id="aba-produtos" class="aba-conteudo hidden">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-bold text-gray-900">Produtos</h2>
+                    <button onclick="abrirModalProduto()" class="bg-black hover:bg-gray-800 text-white px-4 py-2 rounded-lg font-semibold text-sm flex items-center">
+                        <span class="mr-2">+</span> Novo Produto
+                    </button>
+                </div>
+                <div id="lista-produtos" class="space-y-3">
+                    <p class="text-gray-500 text-sm">Carregando...</p>
+                </div>
+            </div>
+
+            <!-- VIPs -->
+            <div id="aba-vips" class="aba-conteudo hidden">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-bold text-gray-900">Assinantes VIP</h2>
+                    <button onclick="abrirModalVIP()" class="bg-black hover:bg-gray-800 text-white px-4 py-2 rounded-lg font-semibold text-sm flex items-center">
+                        <span class="mr-2">+</span> Novo VIP
+                    </button>
+                </div>
+                <div id="lista-vips" class="space-y-3">
+                    <p class="text-gray-500 text-sm">Carregando...</p>
+                </div>
+            </div>
+
+            <!-- Config -->
+            <div id="aba-config" class="aba-conteudo hidden">
+                <div class="bg-white rounded-xl p-6 shadow-sm">
+                    <h2 class="text-xl font-bold text-gray-900 mb-4">Configurações da Loja</h2>
+                    <form id="form-config" class="space-y-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="col-span-2">
+                                <label class="block text-sm font-semibold text-gray-700 mb-1">Nome da Loja</label>
+                                <input type="text" id="config-nome" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-black focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-1">WhatsApp</label>
+                                <input type="text" id="config-whatsapp" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-black focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-1">Cor do Tema</label>
+                                <div class="flex space-x-2">
+                                    <input type="color" id="config-cor" class="h-10 w-20 rounded-lg border border-gray-300">
+                                    <input type="text" id="config-cor-text" class="flex-1 px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-black focus:outline-none font-mono">
+                                </div>
+                            </div>
+                            <div class="col-span-2">
+                                <label class="block text-sm font-semibold text-gray-700 mb-1">Subtítulo</label>
+                                <input type="text" id="config-subtitulo" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-black focus:outline-none">
+                            </div>
+                            <div class="col-span-2">
+                                <label class="block text-sm font-semibold text-gray-700 mb-1">Endereço</label>
+                                <input type="text" id="config-endereco" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-black focus:outline-none">
+                            </div>
+                            <div class="grid grid-cols-3 gap-4 col-span-2">
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-1">Cidade</label>
+                                    <input type="text" id="config-cidade" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-black focus:outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-1">Estado</label>
+                                    <input type="text" id="config-estado" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-black focus:outline-none" maxlength="2">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-1">CEP</label>
+                                    <input type="text" id="config-cep" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-black focus:outline-none">
+                                </div>
+                            </div>
+                            <div class="col-span-2">
+                                <label class="block text-sm font-semibold text-gray-700 mb-1">Horário de Funcionamento</label>
+                                <input type="text" id="config-horario" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-black focus:outline-none">
+                            </div>
+                            <div class="col-span-2">
+                                <label class="block text-sm font-semibold text-gray-700 mb-1">URL da Logo</label>
+                                <input type="text" id="config-logo" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-black focus:outline-none">
+                            </div>
+                        </div>
+                        <button type="submit" class="w-full bg-black hover:bg-gray-800 text-white font-bold py-3 rounded-lg transition">Salvar Configurações</button>
+                    </form>
+                </div>
+
+                <div class="bg-white rounded-xl p-6 shadow-sm mt-4">
+                    <h2 class="text-xl font-bold text-gray-900 mb-4">Descontos VIP</h2>
+                    <form id="form-vip-config" class="space-y-4">
+                        <div class="grid grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-1">3 Meses (%)</label>
+                                <input type="number" id="vip-3" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-black focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-1">5 Meses (%)</label>
+                                <input type="number" id="vip-5" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-black focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-1">8 Meses (%)</label>
+                                <input type="number" id="vip-8" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-black focus:outline-none">
+                            </div>
+                        </div>
+                        <button type="submit" class="w-full bg-black hover:bg-gray-800 text-white font-bold py-3 rounded-lg transition">Salvar Descontos VIP</button>
+                    </form>
+                </div>
             </div>
         </div>
+    </div>
 
-        <!-- SEÇÃO: CONFIGURAÇÕES -->
-        <div id="secao-configuracoes" class="secao-admin">
-            <div class="bg-white p-5 rounded-2xl shadow-md border border-gray-100 mb-6">
-                <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center"><span class="bg-purple-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs mr-2"></span>Personalizar Estabelecimento</h2>
-                <form id="form-estabelecimento" class="space-y-4">
-                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">Nome do Estabelecimento</label><input type="text" id="est-nome" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
-                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">Tipo</label>
-                        <select id="est-tipo" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm bg-white">
-                            <option value="farmacia">Farmácia</option>
-                            <option value="acougue">Açougue / Carnes</option>
-                            <option value="emporio">Empório Gourmet</option>
-                            <option value="pet">Pet Shop</option>
-                            <option value="outros">Outros</option>
+    <!-- Modal Produto -->
+    <div id="modal-produto" class="modal">
+        <div class="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto mx-4">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-xl font-bold text-gray-900" id="modal-produto-titulo">Novo Produto</h2>
+                <button onclick="fecharModal('modal-produto')" class="text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
+            </div>
+            <form id="form-produto" class="space-y-4">
+                <input type="hidden" id="produto-id">
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="col-span-2">
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Nome *</label>
+                        <input type="text" id="produto-nome" required class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-black focus:outline-none">
+                    </div>
+                    <div class="col-span-2">
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Subtítulo</label>
+                        <input type="text" id="produto-subtitulo" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-black focus:outline-none">
+                    </div>
+                    <div class="col-span-2">
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Descrição</label>
+                        <textarea id="produto-descricao" rows="3" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-black focus:outline-none"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Preço Original</label>
+                        <input type="number" step="0.01" id="produto-preco-original" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-black focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Preço Promocional</label>
+                        <input type="number" step="0.01" id="produto-preco-promocional" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-black focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Tipo *</label>
+                        <select id="produto-tipo" required class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-black focus:outline-none">
+                            <option value="oferta_semanal">Oferta da Semana</option>
+                            <option value="dia_a_dia">Dia a Dia</option>
                         </select>
                     </div>
-                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">WhatsApp (55+DDD+Número)</label><input type="text" id="est-whatsapp" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
-                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">Cor Primária</label><input type="color" id="est-cor" class="w-full h-10 rounded-lg border border-gray-300 cursor-pointer"></div>
-                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">Senha Admin</label><input type="text" id="est-senha" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
-                    <button type="submit" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 rounded-xl shadow-md transition text-sm">Salvar Configurações</button>
-                </form>
-            </div>
-            <div class="bg-white p-5 rounded-2xl shadow-md border border-gray-100">
-                <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center"><span class="bg-health text-white w-6 h-6 rounded-full flex items-center justify-center text-xs mr-2">%</span>Descontos Progressivos</h2>
-                <div class="grid grid-cols-3 gap-3">
-                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">3 meses (%)</label><input type="number" id="desc-3" value="12" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
-                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">5 meses (%)</label><input type="number" id="desc-5" value="20" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
-                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">8 meses (%)</label><input type="number" id="desc-8" value="30" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"></div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Categoria</label>
+                        <input type="text" id="produto-categoria" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-black focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Estoque Restante</label>
+                        <input type="number" id="produto-estoque" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-black focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Válido Até</label>
+                        <input type="date" id="produto-valido" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-black focus:outline-none">
+                    </div>
+                    <div class="col-span-2">
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">URL da Foto</label>
+                        <input type="text" id="produto-foto" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-black focus:outline-none">
+                    </div>
+                    <div class="col-span-2">
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Link CupomClic</label>
+                        <input type="text" id="produto-link" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-black focus:outline-none">
+                    </div>
+                    <div class="col-span-2 flex items-center">
+                        <input type="checkbox" id="produto-ativo" checked class="w-5 h-5 mr-2">
+                        <label for="produto-ativo" class="text-sm font-semibold text-gray-700">Produto Ativo</label>
+                    </div>
                 </div>
-                <button onclick="salvarDescontos()" class="w-full mt-4 bg-health hover:bg-green-700 text-white font-bold py-2 rounded-xl shadow-md transition text-sm">Salvar Descontos</button>
-            </div>
+                <div class="flex space-x-3 pt-4 border-t">
+                    <button type="submit" class="flex-1 bg-black hover:bg-gray-800 text-white font-bold py-3 rounded-lg transition">Salvar Produto</button>
+                    <button type="button" onclick="fecharModal('modal-produto')" class="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50">Cancelar</button>
+                </div>
+            </form>
         </div>
-    </main>
+    </div>
 
-    <footer class="text-center py-6 text-gray-400 text-xs bg-white border-t border-gray-100 mt-auto">&copy; 2026 CUPOMCLIC. Powered by SaaS.</footer>
+    <!-- Modal VIP -->
+    <div id="modal-vip" class="modal">
+        <div class="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto mx-4">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-xl font-bold text-gray-900" id="modal-vip-titulo">Novo Assinante VIP</h2>
+                <button onclick="fecharModal('modal-vip')" class="text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
+            </div>
+            <form id="form-vip" class="space-y-4">
+                <input type="hidden" id="vip-id">
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="col-span-2">
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Nome do Cliente *</label>
+                        <input type="text" id="vip-nome" required class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-black focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">WhatsApp *</label>
+                        <input type="text" id="vip-whatsapp" required class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-black focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Produto de Interesse</label>
+                        <select id="vip-produto" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-black focus:outline-none">
+                            <option value="">Selecione...</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Data Última Compra</label>
+                        <input type="date" id="vip-data" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-black focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Qtd de Compras</label>
+                        <input type="number" id="vip-compras" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-black focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Desconto Atual (%)</label>
+                        <input type="number" id="vip-desconto" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-black focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Plano (Meses)</label>
+                        <select id="vip-plano" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-black focus:outline-none">
+                            <option value="3">3 Meses</option>
+                            <option value="5">5 Meses</option>
+                            <option value="8">8 Meses</option>
+                        </select>
+                    </div>
+                    <div class="col-span-2 flex items-center">
+                        <input type="checkbox" id="vip-ativo" checked class="w-5 h-5 mr-2">
+                        <label for="vip-ativo" class="text-sm font-semibold text-gray-700">VIP Ativo</label>
+                    </div>
+                </div>
+                <div class="flex space-x-3 pt-4 border-t">
+                    <button type="submit" class="flex-1 bg-black hover:bg-gray-800 text-white font-bold py-3 rounded-lg transition">Salvar VIP</button>
+                    <button type="button" onclick="fecharModal('modal-vip')" class="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Alterar Senha -->
+    <div id="modal-senha" class="modal">
+        <div class="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-md mx-4">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-xl font-bold text-gray-900">Alterar Senha</h2>
+                <button onclick="fecharModal('modal-senha')" class="text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
+            </div>
+            <form id="form-senha" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Senha Atual</label>
+                    <input type="password" id="senha-atual" required class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-black focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Nova Senha</label>
+                    <input type="password" id="senha-nova" required class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-black focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Confirmar Nova Senha</label>
+                    <input type="password" id="senha-confirmar" required class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-black focus:outline-none">
+                </div>
+                <button type="submit" class="w-full bg-black hover:bg-gray-800 text-white font-bold py-3 rounded-lg transition">Alterar Senha</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
 
     <script>
-        const SUPABASE_URL = 'https://hcgsttzjolotljqdvlat.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhjZ3N0dHpqb2xvdGxqcWR2bGF0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE0MDU5MTMsImV4cCI6MjEwNjk4MTkxM30.AWbtRx82wDp2K-yERqQy9RA8dYWXev6B14jP5isLkVM';
-
-        const urlParams = new URLSearchParams(window.location.search);
-        const slugLoja = urlParams.get('loja') || 'rafarma';
-
-        let TABELA_DESCONTOS = [{ meses: 3, desconto: 12 }, { meses: 5, desconto: 20 }, { meses: 8, desconto: 30 }];
+        const SUPABASE_URL = 'https://rzapsmtasfdqedlzmyvh.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ6YXBzbXRhc2ZkcWVkbHpteXZoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE0MDQ0NTksImV4cCI6MjEwNjk4MDQ1OX0.EkBMhJwM1aH8TH9aO6JZxkgco2XwSjfu_BsTPZjGfMs';
         const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        
-        let estabelecimento = null, produtos = [], assinaturas = [], solicitacoes = [];
-        let dataAtual = new Date();
-        let ESTABELECIMENTO_ID = 1;
-        let SENHA_ADMIN = '1234';
 
-        document.addEventListener('DOMContentLoaded', async () => {
-            await carregarEstabelecimento();
-        });
+        const params = new URLSearchParams(window.location.search);
+        const slugLoja = params.get('slug') || 'jl-sabores-nobres';
+        let loja = null;
 
-        document.getElementById('form-login').addEventListener('submit', (e) => {
+        // Login
+        document.getElementById('form-login').addEventListener('submit', async (e) => {
             e.preventDefault();
             const senha = document.getElementById('senha-admin').value;
-            if (senha === SENHA_ADMIN) {
-                document.getElementById('tela-login').classList.add('hidden');
-                document.getElementById('painel-admin').classList.remove('hidden');
-                iniciarPainel();
-            } else {
-                alert('Senha incorreta!');
-            }
+            await verificarLogin(senha);
         });
 
-        async function iniciarPainel() {
-            await carregarDescontos();
-            await carregarProdutos();
-            await carregarAssinaturas();
-            await carregarSolicitacoes();
-            mostrarSecao('calendario');
-        }
-
-        async function carregarEstabelecimento() {
+        async function verificarLogin(senha) {
             try {
-                const { data, error } = await db.from('lojas').select('*').eq('slug', slugLoja).limit(1);
-                let finalData = data;
-                if ((!data || data.length === 0) && !error) {
-                     const { data: dataEst, error: errEst } = await db.from('estabelecimentos').select('*').eq('slug', slugLoja).limit(1);
-                     finalData = dataEst;
-                }
-
-                if (finalData && finalData.length > 0) {
-                    estabelecimento = finalData[0];
-                    ESTABELECIMENTO_ID = estabelecimento.id;
-                    SENHA_ADMIN = estabelecimento.senha_admin || '1234';
-                    
-                    document.getElementById('nome-loja-admin').textContent = estabelecimento.nome;
-                    
-                    if (estabelecimento.cor_tema || estabelecimento.cor_primaria) {
-                        const cor = estabelecimento.cor_tema || estabelecimento.cor_primaria;
-                        document.documentElement.style.setProperty('--cor-primaria', cor);
-                        document.getElementById('est-cor').value = cor;
-                    }
-                    document.getElementById('est-nome').value = estabelecimento.nome;
-                    document.getElementById('est-tipo').value = estabelecimento.tipo;
-                    document.getElementById('est-whatsapp').value = estabelecimento.whatsapp;
-                    document.getElementById('est-senha').value = SENHA_ADMIN;
+                const { data, error } = await db.from('lojas').select('*').eq('slug', slugLoja).single();
+                if (error || !data) throw error;
+                
+                if (data.senha_admin === senha) {
+                    loja = data;
+                    localStorage.setItem(`admin_auth_${slugLoja}`, 'true');
+                    mostrarPainel();
                 } else {
-                    alert('Loja não encontrada!');
+                    mostrarToast('Senha incorreta!', 'error');
                 }
-            } catch (e) { console.error('Erro estabelecimento:', e); }
+            } catch (e) {
+                console.error('Erro login:', e);
+                mostrarToast('Erro ao verificar senha', 'error');
+            }
         }
 
-        async function carregarDescontos() {
+        if (localStorage.getItem(`admin_auth_${slugLoja}`) === 'true') {
+            const { data } = await db.from('lojas').select('*').eq('slug', slugLoja).single();
+            if (data) {
+                loja = data;
+                mostrarPainel();
+            }
+        }
+
+        function mostrarPainel() {
+            document.getElementById('tela-login').classList.add('hidden');
+            document.getElementById('painel-principal').classList.remove('hidden');
+            
+            // Personaliza header
+            const cor = loja.cor_tema || '#000000';
+            document.getElementById('header-admin').style.background = `linear-gradient(135deg, ${cor} 0%, ${ajustarCor(cor, 30)} 100%)`;
+            document.getElementById('nome-loja-admin').textContent = loja.nome;
+            document.getElementById('login-subtitulo').textContent = `Admin: ${loja.nome}`;
+            document.getElementById('link-loja').href = `loja.html?slug=${slugLoja}`;
+            
+            if (loja.logo_url) {
+                document.getElementById('logo-admin').src = loja.logo_url;
+            }
+            
+            carregarDashboard();
+            carregarProdutos();
+            carregarVIPs();
+            carregarConfig();
+        }
+
+        function logout() {
+            localStorage.removeItem(`admin_auth_${slugLoja}`);
+            location.reload();
+        }
+
+        function ajustarCor(hex, percentual) {
+            const num = parseInt(hex.replace('#', ''), 16);
+            const r = Math.min(255, Math.max(0, (num >> 16) + percentual));
+            const g = Math.min(255, Math.max(0, ((num >> 8) & 0x00FF) + percentual));
+            const b = Math.min(255, Math.max(0, (num & 0x0000FF) + percentual));
+            return `#${(0x1000000 + r * 0x10000 + g * 0x100 + b).toString(16).slice(1)}`;
+        }
+
+        function mostrarAba(aba) {
+            document.querySelectorAll('.aba-conteudo').forEach(a => a.classList.add('hidden'));
+            document.getElementById('aba-' + aba).classList.remove('hidden');
+            document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        async function carregarDashboard() {
             try {
-                const { data, error } = await db.from('config_descontos').select('*').eq('estabelecimento_id', ESTABELECIMENTO_ID).limit(1);
-                if (!error && data && data.length > 0) {
-                    TABELA_DESCONTOS = [{ meses: 3, desconto: data[0].desc_3 }, { meses: 5, desconto: data[0].desc_5 }, { meses: 8, desconto: data[0].desc_8 }];
-                    document.getElementById('desc-3').value = data[0].desc_3;
-                    document.getElementById('desc-5').value = data[0].desc_5;
-                    document.getElementById('desc-8').value = data[0].desc_8;
+                const [produtos, ativos, vips, favoritos] = await Promise.all([
+                    db.from('produtos').select('id', { count: 'exact' }).eq('estabelecimento_id', loja.id),
+                    db.from('produtos').select('id', { count: 'exact' }).eq('estabelecimento_id', loja.id).eq('ativo', true),
+                    db.from('assinantes_vip').select('id', { count: 'exact' }).eq('estabelecimento_id', loja.id),
+                    db.from('favoritos').select('id', { count: 'exact' }).eq('estabelecimento_id', loja.id)
+                ]);
+                document.getElementById('stat-produtos').textContent = produtos.count || 0;
+                document.getElementById('stat-ativos').textContent = ativos.count || 0;
+                document.getElementById('stat-vips').textContent = vips.count || 0;
+                document.getElementById('stat-favoritos').textContent = favoritos.count || 0;
+
+                const { data: ultimos } = await db.from('produtos').select('*').eq('estabelecimento_id', loja.id).order('criado_em', { ascending: false }).limit(5);
+                const container = document.getElementById('lista-ultimos-produtos');
+                if (ultimos && ultimos.length > 0) {
+                    container.innerHTML = ultimos.map(p => `
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <div>
+                                <p class="font-semibold text-gray-900 text-sm">${p.nome}</p>
+                                <p class="text-xs text-gray-500">${p.tipo === 'oferta_semanal' ? 'Oferta' : 'Dia a Dia'} • R$ ${p.preco_promocional || p.preco_original}</p>
+                            </div>
+                            <span class="text-xs ${p.ativo ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'} px-2 py-1 rounded">${p.ativo ? 'Ativo' : 'Inativo'}</span>
+                        </div>
+                    `).join('');
+                } else {
+                    container.innerHTML = '<p class="text-gray-500 text-sm">Nenhum produto cadastrado ainda.</p>';
                 }
-            } catch (e) { console.log('Usando descontos padrão'); }
+            } catch (e) { console.error('Erro dashboard:', e); }
         }
 
         async function carregarProdutos() {
             try {
-                const { data, error } = await db.from('produtos').select('*').eq('estabelecimento_id', ESTABELECIMENTO_ID).eq('ativo', true).order('criado_em', { ascending: false });
-                if (error) throw error;
-                produtos = data || [];
-                renderizarListaAdmin();
-                atualizarSelectProdutos();
-            } catch (error) { console.error('Erro produtos:', error); }
+                const { data } = await db.from('produtos').select('*').eq('estabelecimento_id', loja.id).order('criado_em', { ascending: false });
+                const container = document.getElementById('lista-produtos');
+                if (!data || data.length === 0) {
+                    container.innerHTML = '<p class="text-gray-500 text-sm">Nenhum produto cadastrado.</p>';
+                    return;
+                }
+                container.innerHTML = data.map(p => `
+                    <div class="bg-white rounded-xl p-4 shadow-sm fade-in flex items-center justify-between">
+                        <div class="flex items-center space-x-4">
+                            <img src="${p.foto_url || 'https://via.placeholder.com/50'}" class="w-12 h-12 rounded-lg object-cover" onerror="this.src='https://via.placeholder.com/50'">
+                            <div>
+                                <h3 class="font-bold text-gray-900 text-sm">${p.nome}</h3>
+                                <p class="text-xs text-gray-500">${p.subtitulo || 'Sem subtítulo'} • ${p.tipo === 'oferta_semanal' ? 'Oferta' : 'Dia a Dia'}</p>
+                                <p class="text-xs text-green-600 font-bold">R$ ${p.preco_promocional || p.preco_original}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <button onclick='editarProduto(${JSON.stringify(p)})' class="text-xs bg-gray-100 text-gray-700 px-3 py-2 rounded-lg hover:bg-gray-200">Editar</button>
+                            <button onclick="excluirProduto('${p.id}', '${p.nome}')" class="text-xs bg-red-100 text-red-700 px-3 py-2 rounded-lg hover:bg-red-200">Excluir</button>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (e) { console.error('Erro produtos:', e); }
         }
 
-        async function carregarAssinaturas() {
+        async function carregarVIPs() {
             try {
-                const { data, error } = await db.from('assinaturas').select('*, produtos(nome, dosagem)').eq('ativa', true).eq('estabelecimento_id', ESTABELECIMENTO_ID).order('data_proxima_entrega', { ascending: true });
-                if (error) throw error;
-                assinaturas = data || [];
-                renderizarCalendario();
-            } catch (error) { console.error('Erro assinaturas:', error); }
+                const { data } = await db.from('assinantes_vip').select('*').eq('estabelecimento_id', loja.id).order('criado_em', { ascending: false });
+                const container = document.getElementById('lista-vips');
+                if (!data || data.length === 0) {
+                    container.innerHTML = '<p class="text-gray-500 text-sm">Nenhum VIP cadastrado.</p>';
+                    return;
+                }
+                container.innerHTML = data.map(v => `
+                    <div class="bg-white rounded-xl p-4 shadow-sm fade-in flex items-center justify-between">
+                        <div>
+                            <h3 class="font-bold text-gray-900 text-sm">${v.nome}</h3>
+                            <p class="text-xs text-gray-500">${v.whatsapp} • ${v.plano_meses || 3} meses • ${v.desconto_atual || 0}% OFF</p>
+                            <p class="text-xs text-gray-400">${v.quantidade_compras || 0} compras</p>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <button onclick='editarVIP(${JSON.stringify(v)})' class="text-xs bg-gray-100 text-gray-700 px-3 py-2 rounded-lg hover:bg-gray-200">Editar</button>
+                            <button onclick="excluirVIP('${v.id}', '${v.nome}')" class="text-xs bg-red-100 text-red-700 px-3 py-2 rounded-lg hover:bg-red-200">Excluir</button>
+                        </div>
+                    </div>
+                `).join('');
+
+                // Carrega produtos no select do modal VIP
+                const { data: produtos } = await db.from('produtos').select('id, nome').eq('estabelecimento_id', loja.id).eq('ativo', true);
+                const select = document.getElementById('vip-produto');
+                select.innerHTML = '<option value="">Selecione...</option>';
+                if (produtos) {
+                    produtos.forEach(p => {
+                        select.innerHTML += `<option value="${p.id}">${p.nome}</option>`;
+                    });
+                }
+            } catch (e) { console.error('Erro VIPs:', e); }
         }
 
-        async function carregarSolicitacoes() {
+        function carregarConfig() {
+            document.getElementById('config-nome').value = loja.nome || '';
+            document.getElementById('config-whatsapp').value = loja.whatsapp || '';
+            document.getElementById('config-cor').value = loja.cor_tema || '#000000';
+            document.getElementById('config-cor-text').value = loja.cor_tema || '#000000';
+            document.getElementById('config-subtitulo').value = loja.subtitulo || '';
+            document.getElementById('config-endereco').value = loja.endereco || '';
+            document.getElementById('config-cidade').value = loja.cidade || '';
+            document.getElementById('config-estado').value = loja.estado || '';
+            document.getElementById('config-cep').value = loja.cep || '';
+            document.getElementById('config-horario').value = loja.horario_funcionamento || '';
+            document.getElementById('config-logo').value = loja.logo_url || '';
+
+            db.from('config_vip').select('*').eq('estabelecimento_id', loja.id).single().then(({ data }) => {
+                if (data) {
+                    document.getElementById('vip-3').value = data.desc_3_meses || 10;
+                    document.getElementById('vip-5').value = data.desc_5_meses || 18;
+                    document.getElementById('vip-8').value = data.desc_8_meses || 25;
+                }
+            });
+        }
+
+        document.getElementById('config-cor').addEventListener('input', (e) => {
+            document.getElementById('config-cor-text').value = e.target.value;
+        });
+        document.getElementById('config-cor-text').addEventListener('input', (e) => {
+            document.getElementById('config-cor').value = e.target.value;
+        });
+
+        document.getElementById('form-config').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const dados = {
+                nome: document.getElementById('config-nome').value.trim(),
+                whatsapp: document.getElementById('config-whatsapp').value.trim(),
+                cor_tema: document.getElementById('config-cor').value,
+                subtitulo: document.getElementById('config-subtitulo').value.trim(),
+                endereco: document.getElementById('config-endereco').value.trim(),
+                cidade: document.getElementById('config-cidade').value.trim(),
+                estado: document.getElementById('config-estado').value.trim().toUpperCase(),
+                cep: document.getElementById('config-cep').value.trim(),
+                horario_funcionamento: document.getElementById('config-horario').value.trim(),
+                logo_url: document.getElementById('config-logo').value.trim()
+            };
             try {
-                const { data } = await db.from('solicitacoes_produtos').select('*').eq('estabelecimento_id', ESTABELECIMENTO_ID).eq('status', 'pendente').order('criado_em', { ascending: false });
-                solicitacoes = data || [];
-                renderizarSolicitacoes();
-            } catch (e) { console.log('Erro solicitações'); }
-        }
-
-        function mostrarSecao(secao) {
-            document.querySelectorAll('.secao-admin').forEach(s => s.classList.remove('ativa'));
-            document.getElementById('secao-' + secao).classList.add('ativa');
-            document.querySelectorAll('[id^="tab-"]').forEach(t => { t.classList.remove('tab-ativa'); t.classList.add('tab-inativa'); });
-            document.getElementById('tab-' + secao).classList.remove('tab-inativa');
-            document.getElementById('tab-' + secao).classList.add('tab-ativa');
-            if (secao === 'calendario') renderizarCalendario();
-            if (secao === 'clientes') renderizarClientesAdmin();
-        }
-
-        document.getElementById('tipo-produto').addEventListener('change', function() {
-            if(this.value === 'oferta_semanal') {
-                document.getElementById('campos-oferta').classList.remove('hidden');
-                document.getElementById('campos-recorrencia').classList.add('hidden');
-            } else {
-                document.getElementById('campos-oferta').classList.add('hidden');
-                document.getElementById('campos-recorrencia').classList.remove('hidden');
+                const { error } = await db.from('lojas').update(dados).eq('id', loja.id);
+                if (error) throw error;
+                mostrarToast('Configurações salvas!', 'success');
+                Object.assign(loja, dados);
+                mostrarPainel();
+            } catch (e) {
+                console.error('Erro config:', e);
+                mostrarToast('Erro ao salvar', 'error');
             }
         });
+
+        document.getElementById('form-vip-config').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const dados = {
+                desc_3_meses: parseInt(document.getElementById('vip-3').value),
+                desc_5_meses: parseInt(document.getElementById('vip-5').value),
+                desc_8_meses: parseInt(document.getElementById('vip-8').value)
+            };
+            try {
+                const { error } = await db.from('config_vip').upsert({ estabelecimento_id: loja.id, ...dados });
+                if (error) throw error;
+                mostrarToast('Descontos VIP salvos!', 'success');
+            } catch (e) {
+                console.error('Erro VIP config:', e);
+                mostrarToast('Erro ao salvar', 'error');
+            }
+        });
+
+        function abrirModalProduto() {
+            document.getElementById('modal-produto-titulo').textContent = 'Novo Produto';
+            document.getElementById('form-produto').reset();
+            document.getElementById('produto-id').value = '';
+            document.getElementById('modal-produto').classList.add('active');
+        }
+
+        function editarProduto(produto) {
+            document.getElementById('modal-produto-titulo').textContent = 'Editar Produto';
+            document.getElementById('produto-id').value = produto.id;
+            document.getElementById('produto-nome').value = produto.nome || '';
+            document.getElementById('produto-subtitulo').value = produto.subtitulo || '';
+            document.getElementById('produto-descricao').value = produto.descricao_longa || '';
+            document.getElementById('produto-preco-original').value = produto.preco_original || '';
+            document.getElementById('produto-preco-promocional').value = produto.preco_promocional || '';
+            document.getElementById('produto-tipo').value = produto.tipo || 'oferta_semanal';
+            document.getElementById('produto-categoria').value = produto.categoria || '';
+            document.getElementById('produto-estoque').value = produto.estoque_restam || 0;
+            document.getElementById('produto-valido').value = produto.valido_ate || '';
+            document.getElementById('produto-foto').value = produto.foto_url || '';
+            document.getElementById('produto-link').value = produto.link_cupomclic || '';
+            document.getElementById('produto-ativo').checked = produto.ativo !== false;
+            document.getElementById('modal-produto').classList.add('active');
+        }
 
         document.getElementById('form-produto').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const tipo = document.getElementById('tipo-produto').value;
-            const novoProd = { 
-                nome: document.getElementById('nome').value, 
-                subtitulo: document.getElementById('subtitulo').value,
-                descricao_longa: document.getElementById('descricao-longa').value,
-                preco_original: document.getElementById('preco-original').value,
-                preco_promocional: document.getElementById('preco-promocional').value,
-                tipo: tipo,
-                estabelecimento_id: ESTABELECIMENTO_ID 
-            };
-
-            if (tipo === 'oferta_semanal') {
-                novoProd.thumbnail_url = document.getElementById('thumbnail-url').value;
-                novoProd.foto_grande_url = document.getElementById('foto-grande-url').value;
-                novoProd.categoria = document.getElementById('categoria').value;
-                novoProd.estoque_restam = parseInt(document.getElementById('estoque-restam').value) || 0;
-                novoProd.atributo1_nome = document.getElementById('atributo1-nome').value;
-                novoProd.atributo1_valor = document.getElementById('atributo1-valor').value;
-                novoProd.atributo2_nome = document.getElementById('atributo2-nome').value;
-                novoProd.atributo2_valor = document.getElementById('atributo2-valor').value;
-                novoProd.link_cupomclic = document.getElementById('link-cupomclic').value;
-                novoProd.valido_ate = document.getElementById('valido-ate').value;
-            } else {
-                novoProd.dias_duracao = parseInt(document.getElementById('dias-duracao').value) || 30;
-                novoProd.estoque = parseInt(document.getElementById('estoque').value) || 0;
-                novoProd.quantidade = document.getElementById('quantidade').value;
-                novoProd.tipo_entrega = document.getElementById('tipo-entrega').value;
-                novoProd.taxa_entrega = document.getElementById('taxa-entrega').value || 0;
-            }
-
-            const editId = document.getElementById('edit-id').value;
-            try {
-                if (editId) await db.from('produtos').update(novoProd).eq('id', editId); 
-                else await db.from('produtos').insert([novoProd]);
-                limparFormulario(); await carregarProdutos(); alert('Produto salvo!');
-            } catch (error) { alert('Erro ao salvar: ' + error.message); }
-        });
-
-        function limparFormulario() { 
-            document.getElementById('form-produto').reset(); 
-            document.getElementById('edit-id').value = ''; 
-        }
-
-        function renderizarListaAdmin() {
-            const listaAdmin = document.getElementById('lista-admin'); listaAdmin.innerHTML = '';
-            if (produtos.length === 0) { listaAdmin.innerHTML = '<p class="text-center text-gray-500 py-4 text-sm">Nenhum produto cadastrado.</p>'; return; }
-            produtos.forEach((prod, index) => {
-                const isOferta = prod.tipo === 'oferta_semanal';
-                const desconto = prod.preco_original ? Math.round(((prod.preco_original - prod.preco_promocional) / prod.preco_original) * 100) : 0;
-                listaAdmin.innerHTML += `<div class="bg-white p-3 rounded-xl border border-gray-200 flex justify-between items-center fade-in">
-                    <div class="flex-grow">
-                        <p class="font-bold text-sm text-gray-900">${prod.nome} <span class="text-[10px] px-2 py-0.5 rounded-full ${isOferta ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}">${isOferta ? 'OFERTA' : 'RECORRÊNCIA'}</span></p>
-                        <p class="text-xs text-gray-500">R$ ${prod.preco_promocional || prod.preco_original} | ${desconto}% OFF | Restam: ${prod.estoque_restam || 'N/A'}</p>
-                    </div>
-                    <div class="flex space-x-2">
-                        <button onclick="editarProduto(${index})" class="p-2 bg-blue-50 text-blue-600 rounded-lg text-xs">✏️</button>
-                        <button onclick="excluirProduto(${index})" class="p-2 bg-red-50 text-red-600 rounded-lg text-xs">🗑️</button>
-                    </div>
-                </div>`;
-            });
-        }
-
-        function editarProduto(index) {
-            const prod = produtos[index];
-            document.getElementById('tipo-produto').value = prod.tipo || 'recorrencia';
-            document.getElementById('tipo-produto').dispatchEvent(new Event('change'));
-            
-            document.getElementById('nome').value = prod.nome; 
-            document.getElementById('subtitulo').value = prod.subtitulo || ''; 
-            document.getElementById('descricao-longa').value = prod.descricao_longa || ''; 
-            document.getElementById('preco-original').value = prod.preco_original; 
-            document.getElementById('preco-promocional').value = prod.preco_promocional || prod.preco_original;
-            
-            if (prod.tipo === 'oferta_semanal') {
-                document.getElementById('thumbnail-url').value = prod.thumbnail_url || '';
-                document.getElementById('foto-grande-url').value = prod.foto_grande_url || '';
-                document.getElementById('categoria').value = prod.categoria || 'Carnes Nobres';
-                document.getElementById('estoque-restam').value = prod.estoque_restam || 0;
-                document.getElementById('atributo1-nome').value = prod.atributo1_nome || '';
-                document.getElementById('atributo1-valor').value = prod.atributo1_valor || '';
-                document.getElementById('atributo2-nome').value = prod.atributo2_nome || '';
-                document.getElementById('atributo2-valor').value = prod.atributo2_valor || '';
-                document.getElementById('link-cupomclic').value = prod.link_cupomclic || '';
-                document.getElementById('valido-ate').value = prod.valido_ate || '';
-            } else {
-                document.getElementById('dias-duracao').value = prod.dias_duracao || 30;
-                document.getElementById('estoque').value = prod.estoque || 0;
-                document.getElementById('quantidade').value = prod.quantidade || '';
-                document.getElementById('tipo-entrega').value = prod.tipo_entrega || 'ambos';
-                document.getElementById('taxa-entrega').value = prod.taxa_entrega || 0;
-            }
-            document.getElementById('edit-id').value = prod.id;
-            document.getElementById('form-produto').scrollIntoView({ behavior: 'smooth' });
-        }
-
-        async function excluirProduto(index) {
-            if (confirm('Excluir este produto?')) {
-                try { await db.from('produtos').delete().eq('id', produtos[index].id); await carregarProdutos(); } catch (error) { alert('Erro ao excluir.'); }
-            }
-        }
-
-        function atualizarSelectProdutos() {
-            const select = document.getElementById('assinatura-produto'); select.innerHTML = '<option value="">Selecione...</option>';
-            produtos.filter(p => p.tipo === 'recorrencia' || !p.tipo).forEach(med => { select.innerHTML += `<option value="${med.id}">${med.nome} ${med.subtitulo || ''}</option>`; });
-        }
-
-        // ... (resto das funções de calendário, assinaturas, clientes, solicitações e configurações permanecem iguais)
-        
-        function renderizarCalendario() {
-            const ano = dataAtual.getFullYear(), mes = dataAtual.getMonth();
-            const nomesMeses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
-            document.getElementById('mes-atual').textContent = nomesMeses[mes] + ' ' + ano;
-            const primeiroDia = new Date(ano, mes, 1).getDay(), diasNoMes = new Date(ano, mes + 1, 0).getDate(), hoje = new Date();
-            let html = '';
-            for (let i = 0; i < primeiroDia; i++) html += '<div></div>';
-            for (let dia = 1; dia <= diasNoMes; dia++) {
-                const dataStr = ano + '-' + String(mes + 1).padStart(2, '0') + '-' + String(dia).padStart(2, '0');
-                const temAviso = assinaturas.some(a => {
-                    const dataEntrega = new Date(a.data_proxima_entrega);
-                    const dataAviso = new Date(dataEntrega); dataAviso.setDate(dataAviso.getDate() - 5);
-                    return dataAviso.toISOString().split('T')[0] === dataStr && a.ativa === true;
-                });
-                const ehHoje = hoje.getDate() === dia && hoje.getMonth() === mes && hoje.getFullYear() === ano;
-                let classes = 'dia-clicavel p-2 rounded-lg text-sm text-center transition';
-                if (temAviso) classes += ' dia-marcado';
-                if (ehHoje) classes += ' dia-hoje';
-                html += `<div class="${classes}">${dia}</div>`;
-            }
-            document.getElementById('calendario').innerHTML = html;
-        }
-
-        function mudarMes(direcao) { dataAtual.setMonth(dataAtual.getMonth() + direcao); renderizarCalendario(); }
-
-        function renderizarClientesAdmin() {
-            const lista = document.getElementById('lista-clientes-admin'); lista.innerHTML = '';
-            if (assinaturas.length === 0) { lista.innerHTML = '<p class="text-center text-gray-500 py-4 text-sm">Nenhum cliente encontrado.</p>'; return; }
-            assinaturas.forEach((cliente, index) => {
-                const proximaEntrega = new Date(cliente.data_proxima_entrega);
-                lista.innerHTML += `<div class="bg-white rounded-xl border border-gray-200 overflow-hidden fade-in">
-                    <div class="p-4">
-                        <div class="flex items-center space-x-3">
-                            <div class="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center text-lg">👤</div>
-                            <div class="flex-grow">
-                                <h3 class="font-bold text-gray-900 text-sm">${cliente.cliente_nome}</h3>
-                                <p class="text-xs text-gray-500">${cliente.produtos?.nome || 'Produto'}</p>
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-2 gap-3 text-sm mt-3">
-                            <div><p class="text-xs text-gray-500">WhatsApp</p><p class="font-semibold text-gray-900">${cliente.cliente_whatsapp}</p></div>
-                            <div><p class="text-xs text-gray-500">Próxima Entrega</p><p class="font-semibold ${proximaEntrega < new Date() ? 'text-red-600' : 'text-green-600'}">${proximaEntrega.toLocaleDateString('pt-BR')}</p></div>
-                            <div><p class="text-xs text-gray-500">Desconto</p><p class="font-semibold text-health">${cliente.desconto_aplicado}% OFF</p></div>
-                            <div><p class="text-xs text-gray-500">Status</p><p class="font-semibold ${cliente.ativa ? 'text-green-600' : 'text-red-600'}">${cliente.ativa ? '✅ Ativa' : '❌ Inativa'}</p></div>
-                        </div>
-                        <div class="flex space-x-2 pt-3">
-                            <a href="https://wa.me/${cliente.cliente_whatsapp}" target="_blank" class="flex-1 bg-green-500 text-white text-center font-semibold py-2 rounded-lg text-sm">💬 WhatsApp</a>
-                        </div>
-                    </div>
-                </div>`;
-            });
-        }
-
-        function filtrarClientes() {
-            const nomeFiltro = document.getElementById('filtro-nome').value.toLowerCase();
-            const produtoFiltro = document.getElementById('filtro-produto').value.toLowerCase();
-            const vencimentoFiltro = document.getElementById('filtro-vencimento').value;
-            const filtrados = assinaturas.filter(cliente => {
-                const matchNome = cliente.cliente_nome.toLowerCase().includes(nomeFiltro);
-                const matchProduto = (cliente.produtos?.nome || '').toLowerCase().includes(produtoFiltro);
-                const matchVencimento = vencimentoFiltro ? cliente.data_proxima_entrega === vencimentoFiltro : true;
-                return matchNome && matchProduto && matchVencimento && cliente.ativa === true;
-            });
-            const lista = document.getElementById('lista-clientes-admin');
-            lista.innerHTML = '';
-            if (filtrados.length === 0) { lista.innerHTML = '<p class="text-center text-gray-500 py-4 text-sm">Nenhum cliente encontrado.</p>'; return; }
-            filtrados.forEach((cliente, index) => {
-                const proximaEntrega = new Date(cliente.data_proxima_entrega);
-                lista.innerHTML += `<div class="bg-white rounded-xl border border-gray-200 overflow-hidden fade-in">
-                    <div class="p-4">
-                        <div class="flex items-center space-x-3">
-                            <div class="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center text-lg"></div>
-                            <div class="flex-grow">
-                                <h3 class="font-bold text-gray-900 text-sm">${cliente.cliente_nome}</h3>
-                                <p class="text-xs text-gray-500">${cliente.produtos?.nome || 'Produto'}</p>
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-2 gap-3 text-sm mt-3">
-                            <div><p class="text-xs text-gray-500">WhatsApp</p><p class="font-semibold text-gray-900">${cliente.cliente_whatsapp}</p></div>
-                            <div><p class="text-xs text-gray-500">Próxima Entrega</p><p class="font-semibold ${proximaEntrega < new Date() ? 'text-red-600' : 'text-green-600'}">${proximaEntrega.toLocaleDateString('pt-BR')}</p></div>
-                            <div><p class="text-xs text-gray-500">Desconto</p><p class="font-semibold text-health">${cliente.desconto_aplicado}% OFF</p></div>
-                            <div><p class="text-xs text-gray-500">Status</p><p class="font-semibold ${cliente.ativa ? 'text-green-600' : 'text-red-600'}">${cliente.ativa ? '✅ Ativa' : '❌ Inativa'}</p></div>
-                        </div>
-                        <div class="flex space-x-2 pt-3">
-                            <a href="https://wa.me/${cliente.cliente_whatsapp}" target="_blank" class="flex-1 bg-green-500 text-white text-center font-semibold py-2 rounded-lg text-sm">💬 WhatsApp</a>
-                        </div>
-                    </div>
-                </div>`;
-            });
-        }
-
-        function limparFiltros() {
-            document.getElementById('filtro-nome').value = '';
-            document.getElementById('filtro-produto').value = '';
-            document.getElementById('filtro-vencimento').value = '';
-            renderizarClientesAdmin();
-        }
-
-        function renderizarSolicitacoes() {
-            const lista = document.getElementById('lista-solicitacoes'); lista.innerHTML = '';
-            if (solicitacoes.length === 0) { lista.innerHTML = '<p class="text-center text-gray-500 text-sm py-2">Nenhuma solicitação pendente.</p>'; return; }
-            solicitacoes.forEach(sol => {
-                lista.innerHTML += `<div class="bg-blue-50 p-3 rounded-lg border border-blue-200">
-                    <p class="font-bold text-sm text-gray-900">${sol.cliente_nome}</p>
-                    <p class="text-xs text-gray-600">📱 ${sol.cliente_whatsapp}</p>
-                    <p class="text-sm text-gray-900 mt-1">💡 Quer: <strong>${sol.produto_desejado}</strong></p>
-                    <div class="flex space-x-2 mt-2">
-                        <button onclick="atualizarStatusSolicitacao(${sol.id}, 'atendido')" class="flex-1 bg-green-500 text-white text-xs font-bold py-1 rounded">Atendido</button>
-                        <button onclick="atualizarStatusSolicitacao(${sol.id}, 'recusado')" class="flex-1 bg-red-500 text-white text-xs font-bold py-1 rounded">Recusar</button>
-                    </div>
-                </div>`;
-            });
-        }
-
-        async function atualizarStatusSolicitacao(id, status) {
-            try { await db.from('solicitacoes_produtos').update({ status }).eq('id', id); await carregarSolicitacoes(); } catch (e) { alert('Erro.'); }
-        }
-
-        document.getElementById('form-assinatura').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const produtoId = parseInt(document.getElementById('assinatura-produto').value);
-            const produto = produtos.find(p => p.id === produtoId);
-            const dataUltimaEntrega = document.getElementById('assinatura-data').value;
-            const dataUltima = new Date(dataUltimaEntrega), dataProxima = new Date(dataUltima); 
-            dataProxima.setDate(dataProxima.getDate() + (produto?.dias_duracao || 30));
-            
-            const novaAssinatura = { 
-                cliente_nome: document.getElementById('cliente-nome').value, 
-                cliente_whatsapp: document.getElementById('cliente-whatsapp').value, 
-                produto_id: produtoId, 
-                dias_duracao: produto?.dias_duracao || 30, 
-                data_ultima_entrega: dataUltimaEntrega, 
-                data_proxima_entrega: dataProxima.toISOString().split('T')[0], 
-                desconto_aplicado: parseInt(document.getElementById('assinatura-desconto').value), 
-                tipo_entrega: document.getElementById('assinatura-tipo').value, 
-                estabelecimento_id: ESTABELECIMENTO_ID, 
-                quantidade_compras: 0, 
-                ativa: true 
-            };
-            try {
-                await db.from('assinaturas').insert([novaAssinatura]); 
-                document.getElementById('form-assinatura').reset(); 
-                await carregarAssinaturas(); 
-                alert('Assinatura registrada!');
-            } catch (error) { alert('Erro ao registrar: ' + error.message); }
-        });
-
-        document.getElementById('form-estabelecimento').addEventListener('submit', async (e) => {
-            e.preventDefault();
+            const id = document.getElementById('produto-id').value;
             const dados = {
-                nome: document.getElementById('est-nome').value,
-                tipo: document.getElementById('est-tipo').value,
-                whatsapp: document.getElementById('est-whatsapp').value,
-                cor_tema: document.getElementById('est-cor').value,
-                senha_admin: document.getElementById('est-senha').value
+                estabelecimento_id: loja.id,
+                nome: document.getElementById('produto-nome').value.trim(),
+                subtitulo: document.getElementById('produto-subtitulo').value.trim(),
+                descricao_longa: document.getElementById('produto-descricao').value.trim(),
+                preco_original: parseFloat(document.getElementById('produto-preco-original').value) || 0,
+                preco_promocional: parseFloat(document.getElementById('produto-preco-promocional').value) || 0,
+                tipo: document.getElementById('produto-tipo').value,
+                categoria: document.getElementById('produto-categoria').value.trim(),
+                estoque_restam: parseInt(document.getElementById('produto-estoque').value) || 0,
+                valido_ate: document.getElementById('produto-valido').value,
+                foto_url: document.getElementById('produto-foto').value.trim(),
+                link_cupomclic: document.getElementById('produto-link').value.trim(),
+                ativo: document.getElementById('produto-ativo').checked
             };
             try {
-                let { error } = await db.from('lojas').update(dados).eq('id', ESTABELECIMENTO_ID);
-                if (error) await db.from('estabelecimentos').update(dados).eq('id', ESTABELECIMENTO_ID);
-                alert('Configurações salvas!');
-                await carregarEstabelecimento();
-            } catch (error) { alert('Erro ao salvar.'); }
+                if (id) {
+                    const { error } = await db.from('produtos').update(dados).eq('id', id);
+                    if (error) throw error;
+                    mostrarToast('Produto atualizado!', 'success');
+                } else {
+                    const { error } = await db.from('produtos').insert([dados]);
+                    if (error) throw error;
+                    mostrarToast('Produto criado!', 'success');
+                }
+                fecharModal('modal-produto');
+                carregarProdutos();
+                carregarDashboard();
+            } catch (e) {
+                console.error('Erro produto:', e);
+                mostrarToast('Erro ao salvar produto', 'error');
+            }
         });
 
-        async function salvarDescontos() {
-            const desc3 = parseInt(document.getElementById('desc-3').value), desc5 = parseInt(document.getElementById('desc-5').value), desc8 = parseInt(document.getElementById('desc-8').value);
+        async function excluirProduto(id, nome) {
+            if (!confirm(`Excluir "${nome}"?`)) return;
             try {
-                const { data: existente } = await db.from('config_descontos').select('id').eq('estabelecimento_id', ESTABELECIMENTO_ID).limit(1);
-                const configData = { desc_3: desc3, desc_5: desc5, desc_8: desc8, estabelecimento_id: ESTABELECIMENTO_ID };
-                if (existente && existente.length > 0) await db.from('config_descontos').update(configData).eq('id', existente[0].id);
-                else await db.from('config_descontos').insert([configData]);
-                TABELA_DESCONTOS = [{ meses: 3, desconto: desc3 }, { meses: 5, desconto: desc5 }, { meses: 8, desconto: desc8 }];
-                alert('Descontos salvos!');
-            } catch (error) { alert('Erro ao salvar.'); }
+                const { error } = await db.from('produtos').delete().eq('id', id);
+                if (error) throw error;
+                mostrarToast('Produto excluído!', 'success');
+                carregarProdutos();
+                carregarDashboard();
+            } catch (e) {
+                console.error('Erro excluir:', e);
+                mostrarToast('Erro ao excluir', 'error');
+            }
+        }
+
+        function abrirModalVIP() {
+            document.getElementById('modal-vip-titulo').textContent = 'Novo Assinante VIP';
+            document.getElementById('form-vip').reset();
+            document.getElementById('vip-id').value = '';
+            document.getElementById('modal-vip').classList.add('active');
+        }
+
+        function editarVIP(vip) {
+            document.getElementById('modal-vip-titulo').textContent = 'Editar VIP';
+            document.getElementById('vip-id').value = vip.id;
+            document.getElementById('vip-nome').value = vip.nome || '';
+            document.getElementById('vip-whatsapp').value = vip.whatsapp || '';
+            document.getElementById('vip-produto').value = vip.produto_id || '';
+            document.getElementById('vip-data').value = vip.data_ultima_compra || '';
+            document.getElementById('vip-compras').value = vip.quantidade_compras || 0;
+            document.getElementById('vip-desconto').value = vip.desconto_atual || 0;
+            document.getElementById('vip-plano').value = vip.plano_meses || 3;
+            document.getElementById('vip-ativo').checked = vip.ativo !== false;
+            document.getElementById('modal-vip').classList.add('active');
+        }
+
+        document.getElementById('form-vip').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('vip-id').value;
+            const dados = {
+                estabelecimento_id: loja.id,
+                nome: document.getElementById('vip-nome').value.trim(),
+                whatsapp: document.getElementById('vip-whatsapp').value.trim(),
+                produto_id: document.getElementById('vip-produto').value,
+                data_ultima_compra: document.getElementById('vip-data').value,
+                quantidade_compras: parseInt(document.getElementById('vip-compras').value) || 0,
+                desconto_atual: parseInt(document.getElementById('vip-desconto').value) || 0,
+                plano_meses: parseInt(document.getElementById('vip-plano').value) || 3,
+                ativo: document.getElementById('vip-ativo').checked
+            };
+            try {
+                if (id) {
+                    const { error } = await db.from('assinantes_vip').update(dados).eq('id', id);
+                    if (error) throw error;
+                    mostrarToast('VIP atualizado!', 'success');
+                } else {
+                    const { error } = await db.from('assinantes_vip').insert([dados]);
+                    if (error) throw error;
+                    mostrarToast('VIP criado!', 'success');
+                }
+                fecharModal('modal-vip');
+                carregarVIPs();
+                carregarDashboard();
+            } catch (e) {
+                console.error('Erro VIP:', e);
+                mostrarToast('Erro ao salvar VIP', 'error');
+            }
+        });
+
+        async function excluirVIP(id, nome) {
+            if (!confirm(`Excluir VIP "${nome}"?`)) return;
+            try {
+                const { error } = await db.from('assinantes_vip').delete().eq('id', id);
+                if (error) throw error;
+                mostrarToast('VIP excluído!', 'success');
+                carregarVIPs();
+                carregarDashboard();
+            } catch (e) {
+                console.error('Erro excluir VIP:', e);
+                mostrarToast('Erro ao excluir', 'error');
+            }
+        }
+
+        function abrirModalSenha() {
+            document.getElementById('form-senha').reset();
+            document.getElementById('modal-senha').classList.add('active');
+        }
+
+        document.getElementById('form-senha').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const atual = document.getElementById('senha-atual').value;
+            const nova = document.getElementById('senha-nova').value;
+            const confirmar = document.getElementById('senha-confirmar').value;
+
+            if (atual !== loja.senha_admin) {
+                mostrarToast('Senha atual incorreta!', 'error');
+                return;
+            }
+            if (nova !== confirmar) {
+                mostrarToast('As senhas não coincidem!', 'error');
+                return;
+            }
+            if (nova.length < 4) {
+                mostrarToast('Senha muito curta (mínimo 4 caracteres)!', 'error');
+                return;
+            }
+
+            try {
+                const { error } = await db.from('lojas').update({ senha_admin: nova }).eq('id', loja.id);
+                if (error) throw error;
+                loja.senha_admin = nova;
+                mostrarToast('Senha alterada com sucesso!', 'success');
+                fecharModal('modal-senha');
+            } catch (e) {
+                console.error('Erro senha:', e);
+                mostrarToast('Erro ao alterar senha', 'error');
+            }
+        });
+
+        function fecharModal(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+
+        function mostrarToast(msg, tipo = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.className = `toast toast-${tipo} show`;
+            setTimeout(() => toast.classList.remove('show'), 3000);
         }
     </script>
 </body>
