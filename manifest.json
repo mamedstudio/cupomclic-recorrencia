@@ -1,11 +1,11 @@
 {
-  "name": "JL Sabores Nobres | Shop Pocket",
+  "name": "Shop Pocket",
   "short_name": "Shop Pocket",
-  "description": "O catálogo digital mais completo e sem burocracia.",
-  "start_url": "/JL-Ofertas.html",
+  "description": "Catálogo digital",
+  "start_url": "/loja.html",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#8B1A1A",
+  "theme_color": "#000000",
   "orientation": "portrait",
   "icons": [
     {
