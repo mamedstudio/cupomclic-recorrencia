@@ -191,7 +191,7 @@
 
         async function carregarLoja() {
             try {
-                const { data, error } = await db.from('lojas').select('*').eq('slug', slugLoja).eq('ativo', true).limit(1);
+                const { data, error } = await db.from('lojas').select('*').eq('slug', slugLoja).limit(1);
                 if (error || !data || data.length === 0) {
                     loja = null;
                     return;
