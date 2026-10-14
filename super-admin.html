@@ -52,7 +52,6 @@
 
     <!-- Painel Principal -->
     <div id="painel-principal" class="hidden">
-        <!-- Header -->
         <header class="bg-black text-white py-4 px-6 shadow-lg">
             <div class="max-w-6xl mx-auto flex items-center justify-between">
                 <div class="flex items-center space-x-3">
@@ -70,7 +69,6 @@
         </header>
 
         <div class="max-w-6xl mx-auto p-6">
-            <!-- Estatísticas -->
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                 <div class="bg-white rounded-xl p-4 shadow-sm">
                     <p class="text-xs text-gray-500 mb-1">Total de Lojas</p>
@@ -90,7 +88,6 @@
                 </div>
             </div>
 
-            <!-- Botão Nova Loja -->
             <div class="flex items-center justify-between mb-4">
                 <h2 class="text-xl font-bold text-gray-900">Lojas Cadastradas</h2>
                 <button onclick="abrirModalNovaLoja()" class="bg-black hover:bg-gray-800 text-white px-4 py-2 rounded-lg font-semibold text-sm flex items-center">
@@ -98,7 +95,6 @@
                 </button>
             </div>
 
-            <!-- Lista de Lojas -->
             <div id="lista-lojas" class="space-y-3">
                 <div class="text-center py-8 text-gray-500">Carregando...</div>
             </div>
@@ -143,9 +139,10 @@
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-1">Cor do Tema *</label>
                         <div class="flex space-x-2">
-                            <input type="color" id="loja-cor" value="#000000" class="h-10 w-20 rounded-lg border border-gray-300">
-                            <input type="text" id="loja-cor-text" value="#000000" class="flex-1 px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-black focus:outline-none" placeholder="#000000">
+                            <input type="color" id="loja-cor" value="#000000" class="h-10 w-20 rounded-lg border border-gray-300 cursor-pointer">
+                            <input type="text" id="loja-cor-text" value="#000000" class="flex-1 px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-black focus:outline-none font-mono" placeholder="#000000">
                         </div>
+                        <div id="preview-cor" class="mt-2 h-8 rounded-lg border border-gray-300" style="background-color: #000000;"></div>
                     </div>
                     
                     <div>
@@ -208,16 +205,14 @@
         </div>
     </div>
 
-    <!-- Toast -->
     <div id="toast" class="toast"></div>
 
     <script>
         const SUPABASE_URL = 'https://rzapsmtasfdqedlzmyvh.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ6YXBzbXRhc2ZkcWVkbHpteXZoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE0MDQ0NTksImV4cCI6MjEwNjk4MDQ1OX0.EkBMhJwM1aH8TH9aO6JZxkgco2XwSjfu_BsTPZjGfMs';
         const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        const SENHA_MESTRA = 'tokto2026'; // Senha do Super Admin
+        const SENHA_MESTRA = 'tokto2026';
 
-        // Login
         document.getElementById('form-login').addEventListener('submit', (e) => {
             e.preventDefault();
             const senha = document.getElementById('senha-mestra').value;
@@ -229,7 +224,6 @@
             }
         });
 
-        // Verifica se já está logado
         if (localStorage.getItem('super_admin_auth') === 'true') {
             mostrarPainel();
         }
@@ -307,17 +301,22 @@
             document.getElementById('loja-id').value = '';
             document.getElementById('loja-cor').value = '#000000';
             document.getElementById('loja-cor-text').value = '#000000';
+            document.getElementById('preview-cor').style.backgroundColor = '#000000';
             document.getElementById('modal-loja').classList.add('active');
         }
 
         function editarLoja(loja) {
             document.getElementById('modal-titulo').textContent = 'Editar Loja';
-            document.getElementById('loja-id').value = loja.id;
+            document.getElementById('loja-id').value = loja.id || '';
             document.getElementById('loja-nome').value = loja.nome || '';
             document.getElementById('loja-slug').value = loja.slug || '';
             document.getElementById('loja-tipo').value = loja.tipo || 'outros';
-            document.getElementById('loja-cor').value = loja.cor_tema || '#000000';
-            document.getElementById('loja-cor-text').value = loja.cor_tema || '#000000';
+            
+            const cor = loja.cor_tema || '#000000';
+            document.getElementById('loja-cor').value = cor;
+            document.getElementById('loja-cor-text').value = cor;
+            document.getElementById('preview-cor').style.backgroundColor = cor;
+            
             document.getElementById('loja-whatsapp').value = loja.whatsapp || '';
             document.getElementById('loja-senha').value = loja.senha_admin || '';
             document.getElementById('loja-subtitulo').value = loja.subtitulo || '';
@@ -335,48 +334,57 @@
             document.getElementById('modal-loja').classList.remove('active');
         }
 
-        // Sincroniza color picker com input text
-        document.getElementById('loja-cor').addEventListener('input', (e) => {
-            document.getElementById('loja-cor-text').value = e.target.value;
-        });
-        document.getElementById('loja-cor-text').addEventListener('input', (e) => {
-            document.getElementById('loja-cor').value = e.target.value;
-        });
+        // Sincroniza color picker com input text e preview
+        function atualizarCor(valor) {
+            document.getElementById('loja-cor').value = valor;
+            document.getElementById('loja-cor-text').value = valor;
+            document.getElementById('preview-cor').style.backgroundColor = valor;
+        }
+
+        document.getElementById('loja-cor').addEventListener('input', (e) => atualizarCor(e.target.value));
+        document.getElementById('loja-cor-text').addEventListener('input', (e) => atualizarCor(e.target.value));
 
         document.getElementById('form-loja').addEventListener('submit', async (e) => {
             e.preventDefault();
             const id = document.getElementById('loja-id').value;
             
             const dados = {
-                nome: document.getElementById('loja-nome').value,
-                slug: document.getElementById('loja-slug').value.toLowerCase().replace(/\s+/g, '-'),
+                nome: document.getElementById('loja-nome').value.trim(),
+                slug: document.getElementById('loja-slug').value.toLowerCase().trim().replace(/\s+/g, '-'),
                 tipo: document.getElementById('loja-tipo').value,
                 cor_tema: document.getElementById('loja-cor').value,
-                whatsapp: document.getElementById('loja-whatsapp').value,
+                whatsapp: document.getElementById('loja-whatsapp').value.trim(),
                 senha_admin: document.getElementById('loja-senha').value,
-                subtitulo: document.getElementById('loja-subtitulo').value,
-                endereco: document.getElementById('loja-endereco').value,
-                cidade: document.getElementById('loja-cidade').value,
-                estado: document.getElementById('loja-estado').value,
-                cep: document.getElementById('loja-cep').value,
-                horario_funcionamento: document.getElementById('loja-horario').value,
-                descricao: document.getElementById('loja-descricao').value,
-                logo_url: document.getElementById('loja-logo').value
+                subtitulo: document.getElementById('loja-subtitulo').value.trim(),
+                endereco: document.getElementById('loja-endereco').value.trim(),
+                cidade: document.getElementById('loja-cidade').value.trim(),
+                estado: document.getElementById('loja-estado').value.trim().toUpperCase(),
+                cep: document.getElementById('loja-cep').value.trim(),
+                horario_funcionamento: document.getElementById('loja-horario').value.trim(),
+                descricao: document.getElementById('loja-descricao').value.trim(),
+                logo_url: document.getElementById('loja-logo').value.trim()
             };
+            
+            console.log('🔵 Dados a salvar:', dados);
             
             try {
                 if (id) {
-                    // Atualizar
-                    const { error } = await db.from('lojas').update(dados).eq('id', id);
-                    if (error) throw error;
+                    const { data, error } = await db.from('lojas').update(dados).eq('id', id).select();
+                    if (error) {
+                        console.error(' Erro Supabase:', error);
+                        throw error;
+                    }
+                    console.log('✅ Loja atualizada:', data);
                     mostrarToast('Loja atualizada com sucesso!', 'success');
                 } else {
-                    // Criar nova
-                    const { error } = await db.from('lojas').insert([dados]);
-                    if (error) throw error;
+                    const { data, error } = await db.from('lojas').insert([dados]).select();
+                    if (error) {
+                        console.error(' Erro Supabase:', error);
+                        throw error;
+                    }
+                    console.log('✅ Loja criada:', data);
                     
-                    // Criar config VIP padrão
-                    const { data: novaLoja } = await db.from('lojas').select('id').eq('slug', dados.slug).single();
+                    const novaLoja = data[0];
                     if (novaLoja) {
                         await db.from('config_vip').insert([{
                             estabelecimento_id: novaLoja.id,
@@ -391,7 +399,7 @@
                 carregarLojas();
                 carregarEstatisticas();
             } catch (e) {
-                console.error('Erro ao salvar:', e);
+                console.error('❌ Erro ao salvar:', e);
                 mostrarToast('Erro ao salvar loja: ' + e.message, 'error');
             }
         });
