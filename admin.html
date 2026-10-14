@@ -73,11 +73,12 @@
 
         <div class="max-w-6xl mx-auto p-6">
             <!-- Abas -->
-            <div class="flex space-x-2 mb-6 bg-white rounded-xl p-2 shadow-sm">
-                <button onclick="mostrarAba('dashboard')" class="tab-btn active flex-1 py-2 px-4 rounded-lg font-semibold text-sm transition">📊 Dashboard</button>
-                <button onclick="mostrarAba('produtos')" class="tab-btn flex-1 py-2 px-4 rounded-lg font-semibold text-sm transition">📦 Produtos</button>
-                <button onclick="mostrarAba('vips')" class="tab-btn flex-1 py-2 px-4 rounded-lg font-semibold text-sm transition">👑 VIPs</button>
-                <button onclick="mostrarAba('config')" class="tab-btn flex-1 py-2 px-4 rounded-lg font-semibold text-sm transition">⚙️ Config</button>
+            <div class="flex space-x-2 mb-6 bg-white rounded-xl p-2 shadow-sm overflow-x-auto">
+                <button onclick="mostrarAba('dashboard')" class="tab-btn active flex-1 py-2 px-4 rounded-lg font-semibold text-sm transition whitespace-nowrap"> Dashboard</button>
+                <button onclick="mostrarAba('produtos')" class="tab-btn flex-1 py-2 px-4 rounded-lg font-semibold text-sm transition whitespace-nowrap">📦 Produtos</button>
+                <button onclick="mostrarAba('vips')" class="tab-btn flex-1 py-2 px-4 rounded-lg font-semibold text-sm transition whitespace-nowrap">👑 VIPs</button>
+                <button onclick="mostrarAba('calendario')" class="tab-btn flex-1 py-2 px-4 rounded-lg font-semibold text-sm transition whitespace-nowrap">📅 Calendário</button>
+                <button onclick="mostrarAba('config')" class="tab-btn flex-1 py-2 px-4 rounded-lg font-semibold text-sm transition whitespace-nowrap">⚙️ Config</button>
             </div>
 
             <!-- Dashboard -->
@@ -132,6 +133,42 @@
                 </div>
                 <div id="lista-vips" class="space-y-3">
                     <p class="text-gray-500 text-sm">Carregando...</p>
+                </div>
+            </div>
+
+            <!-- Calendário -->
+            <div id="aba-calendario" class="aba-conteudo hidden">
+                <div class="bg-white rounded-xl p-6 shadow-sm mb-4">
+                    <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
+                        <h2 class="text-xl font-bold text-gray-900"> Calendário de Alertas</h2>
+                        <div class="flex space-x-2">
+                            <button onclick="filtrarAlertas('hoje')" class="text-xs bg-blue-100 text-blue-700 px-3 py-2 rounded-lg hover:bg-blue-200 font-semibold">Hoje</button>
+                            <button onclick="filtrarAlertas('amanha')" class="text-xs bg-purple-100 text-purple-700 px-3 py-2 rounded-lg hover:bg-purple-200 font-semibold">Amanhã</button>
+                            <button onclick="filtrarAlertas('semana')" class="text-xs bg-green-100 text-green-700 px-3 py-2 rounded-lg hover:bg-green-200 font-semibold">Esta Semana</button>
+                        </div>
+                    </div>
+                    
+                    <div id="lista-alertas" class="space-y-3">
+                        <p class="text-gray-500 text-sm">Carregando alertas...</p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl p-6 shadow-sm">
+                    <h2 class="text-xl font-bold text-gray-900 mb-4">📊 Resumo</h2>
+                    <div class="grid grid-cols-3 gap-4">
+                        <div class="text-center p-4 bg-blue-50 rounded-lg">
+                            <p class="text-2xl font-bold text-blue-700" id="stat-hoje">0</p>
+                            <p class="text-xs text-gray-600">Alertas no Período</p>
+                        </div>
+                        <div class="text-center p-4 bg-yellow-50 rounded-lg">
+                            <p class="text-2xl font-bold text-yellow-700" id="stat-pendentes">0</p>
+                            <p class="text-xs text-gray-600">Pendentes</p>
+                        </div>
+                        <div class="text-center p-4 bg-green-50 rounded-lg">
+                            <p class="text-2xl font-bold text-green-700" id="stat-enviados">0</p>
+                            <p class="text-xs text-gray-600">Enviados</p>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -329,6 +366,10 @@
                             <option value="8">8 Meses</option>
                         </select>
                     </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Próximo Alerta</label>
+                        <input type="date" id="vip-alerta" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-black focus:outline-none">
+                    </div>
                     <div class="col-span-2 flex items-center">
                         <input type="checkbox" id="vip-ativo" checked class="w-5 h-5 mr-2">
                         <label for="vip-ativo" class="text-sm font-semibold text-gray-700">VIP Ativo</label>
@@ -378,7 +419,6 @@
         const slugLoja = params.get('slug') || 'jl-sabores-nobres';
         let loja = null;
 
-        // Login
         document.getElementById('form-login').addEventListener('submit', async (e) => {
             e.preventDefault();
             const senha = document.getElementById('senha-admin').value;
@@ -403,27 +443,25 @@
             }
         }
 
-        // Auto-login se já estiver autenticado
-(async () => {
-    if (localStorage.getItem(`admin_auth_${slugLoja}`) === 'true') {
-        try {
-            const { data } = await db.from('lojas').select('*').eq('slug', slugLoja).single();
-            if (data) {
-                loja = data;
-                mostrarPainel();
+        (async () => {
+            if (localStorage.getItem(`admin_auth_${slugLoja}`) === 'true') {
+                try {
+                    const { data } = await db.from('lojas').select('*').eq('slug', slugLoja).single();
+                    if (data) {
+                        loja = data;
+                        mostrarPainel();
+                    }
+                } catch (e) {
+                    console.error('Erro no auto-login:', e);
+                    localStorage.removeItem(`admin_auth_${slugLoja}`);
+                }
             }
-        } catch (e) {
-            console.error('Erro no auto-login:', e);
-            localStorage.removeItem(`admin_auth_${slugLoja}`);
-        }
-    }
-})();
+        })();
 
         function mostrarPainel() {
             document.getElementById('tela-login').classList.add('hidden');
             document.getElementById('painel-principal').classList.remove('hidden');
             
-            // Personaliza header
             const cor = loja.cor_tema || '#000000';
             document.getElementById('header-admin').style.background = `linear-gradient(135deg, ${cor} 0%, ${ajustarCor(cor, 30)} 100%)`;
             document.getElementById('nome-loja-admin').textContent = loja.nome;
@@ -458,6 +496,10 @@
             document.getElementById('aba-' + aba).classList.remove('hidden');
             document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
             event.target.classList.add('active');
+            
+            if (aba === 'calendario') {
+                carregarAlertas('hoje');
+            }
         }
 
         async function carregarDashboard() {
@@ -540,7 +582,6 @@
                     </div>
                 `).join('');
 
-                // Carrega produtos no select do modal VIP
                 const { data: produtos } = await db.from('produtos').select('id, nome').eq('estabelecimento_id', loja.id).eq('ativo', true);
                 const select = document.getElementById('vip-produto');
                 select.innerHTML = '<option value="">Selecione...</option>';
@@ -704,6 +745,10 @@
             document.getElementById('modal-vip-titulo').textContent = 'Novo Assinante VIP';
             document.getElementById('form-vip').reset();
             document.getElementById('vip-id').value = '';
+            const hoje = new Date();
+            const proximo = new Date();
+            proximo.setDate(hoje.getDate() + 30);
+            document.getElementById('vip-alerta').value = proximo.toISOString().split('T')[0];
             document.getElementById('modal-vip').classList.add('active');
         }
 
@@ -717,6 +762,7 @@
             document.getElementById('vip-compras').value = vip.quantidade_compras || 0;
             document.getElementById('vip-desconto').value = vip.desconto_atual || 0;
             document.getElementById('vip-plano').value = vip.plano_meses || 3;
+            document.getElementById('vip-alerta').value = vip.data_proximo_alerta || '';
             document.getElementById('vip-ativo').checked = vip.ativo !== false;
             document.getElementById('modal-vip').classList.add('active');
         }
@@ -728,11 +774,12 @@
                 estabelecimento_id: loja.id,
                 nome: document.getElementById('vip-nome').value.trim(),
                 whatsapp: document.getElementById('vip-whatsapp').value.trim(),
-                produto_id: document.getElementById('vip-produto').value,
-                data_ultima_compra: document.getElementById('vip-data').value,
+                produto_id: document.getElementById('vip-produto').value || null,
+                data_ultima_compra: document.getElementById('vip-data').value || null,
                 quantidade_compras: parseInt(document.getElementById('vip-compras').value) || 0,
                 desconto_atual: parseInt(document.getElementById('vip-desconto').value) || 0,
                 plano_meses: parseInt(document.getElementById('vip-plano').value) || 3,
+                data_proximo_alerta: document.getElementById('vip-alerta').value || null,
                 ativo: document.getElementById('vip-ativo').checked
             };
             try {
@@ -768,6 +815,145 @@
             }
         }
 
+        // ====== CALENDÁRIO DE ALERTAS ======
+        async function carregarAlertas(filtro = 'hoje') {
+            try {
+                const hoje = new Date();
+                hoje.setHours(0, 0, 0, 0);
+                
+                let dataInicio = new Date(hoje);
+                let dataFim = new Date(hoje);
+                
+                if (filtro === 'amanha') {
+                    dataInicio.setDate(hoje.getDate() + 1);
+                    dataFim.setDate(hoje.getDate() + 1);
+                } else if (filtro === 'semana') {
+                    dataFim.setDate(hoje.getDate() + 7);
+                }
+                
+                const { data: alertas, error } = await db
+                    .from('assinantes_vip')
+                    .select(`
+                        *,
+                        produtos(nome, subtitulo)
+                    `)
+                    .eq('estabelecimento_id', loja.id)
+                    .eq('ativo', true)
+                    .gte('data_proximo_alerta', dataInicio.toISOString().split('T')[0])
+                    .lte('data_proximo_alerta', dataFim.toISOString().split('T')[0])
+                    .order('data_proximo_alerta', { ascending: true });
+                
+                if (error) throw error;
+                
+                const container = document.getElementById('lista-alertas');
+                
+                if (!alertas || alertas.length === 0) {
+                    container.innerHTML = '<p class="text-gray-500 text-sm text-center py-8">Nenhum alerta para este período.</p>';
+                    atualizarEstatisticasAlertas(0, 0, 0);
+                    return;
+                }
+                
+                const alertasPorData = {};
+                alertas.forEach(a => {
+                    const data = a.data_proximo_alerta;
+                    if (!alertasPorData[data]) alertasPorData[data] = [];
+                    alertasPorData[data].push(a);
+                });
+                
+                let html = '';
+                let totalPendentes = 0;
+                let totalEnviados = 0;
+                
+                Object.keys(alertasPorData).sort().forEach(data => {
+                    const dataFormatada = new Date(data + 'T00:00:00').toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' });
+                    html += `<div class="mb-6"><h3 class="text-sm font-bold text-gray-700 mb-3 uppercase border-b pb-2">${dataFormatada}</h3><div class="space-y-3">`;
+                    
+                    alertasPorData[data].forEach(alerta => {
+                        const produto = alerta.produtos;
+                        const isEnviado = alerta.alerta_enviado;
+                        const cor = isEnviado ? 'bg-green-50 border-green-200' : 'bg-yellow-50 border-yellow-200';
+                        const status = isEnviado ? '<span class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded">✓ Enviado</span>' : '<span class="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded">⏳ Pendente</span>';
+                        
+                        if (isEnviado) totalEnviados++; else totalPendentes++;
+                        
+                        html += `
+                            <div class="${cor} border rounded-lg p-4 fade-in">
+                                <div class="flex items-start justify-between mb-2">
+                                    <div>
+                                        <h4 class="font-bold text-gray-900">${alerta.nome}</h4>
+                                        <p class="text-xs text-gray-600">${produto?.nome || 'Produto não especificado'} ${produto?.subtitulo ? '• ' + produto.subtitulo : ''} • ${alerta.desconto_atual}% OFF</p>
+                                        <p class="text-xs text-gray-500 mt-1">📱 ${alerta.whatsapp}</p>
+                                    </div>
+                                    ${status}
+                                </div>
+                                <div class="flex space-x-2 mt-3">
+                                    <button onclick="enviarAlerta('${alerta.id}', '${alerta.nome.replace(/'/g, "\\'")}', '${alerta.whatsapp}', '${(produto?.nome || '').replace(/'/g, "\\'")}', ${alerta.desconto_atual})" class="flex-1 text-xs bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-lg font-semibold">
+                                        📱 Enviar WhatsApp
+                                    </button>
+                                    ${!isEnviado ? `<button onclick="marcarEnviado('${alerta.id}')" class="text-xs bg-gray-200 hover:bg-gray-300 text-gray-700 px-3 py-2 rounded-lg">Marcar Enviado</button>` : ''}
+                                </div>
+                            </div>
+                        `;
+                    });
+                    
+                    html += '</div></div>';
+                });
+                
+                container.innerHTML = html;
+                atualizarEstatisticasAlertas(alertas.length, totalPendentes, totalEnviados);
+                
+            } catch (e) {
+                console.error('Erro ao carregar alertas:', e);
+                document.getElementById('lista-alertas').innerHTML = '<p class="text-red-500 text-sm">Erro ao carregar alertas.</p>';
+            }
+        }
+
+        function filtrarAlertas(filtro) {
+            carregarAlertas(filtro);
+        }
+
+        function atualizarEstatisticasAlertas(total, pendentes, enviados) {
+            document.getElementById('stat-hoje').textContent = total;
+            document.getElementById('stat-pendentes').textContent = pendentes;
+            document.getElementById('stat-enviados').textContent = enviados;
+        }
+
+        async function enviarAlerta(vipId, nome, whatsapp, produto, desconto) {
+            const msg = `Olá ${nome}! 👋\n\nSeu produto *${produto}* está chegando ao fim. Como cliente VIP, você tem *${desconto}% OFF* na próxima compra!\n\nQuer renovar? É só responder esta mensagem.\n\nAtenciosamente,\n${loja.nome}`;
+            
+            const linkZap = `https://wa.me/${whatsapp}?text=${encodeURIComponent(msg)}`;
+            window.open(linkZap, '_blank');
+            
+            await marcarEnviado(vipId);
+        }
+
+        async function marcarEnviado(vipId) {
+            try {
+                const hoje = new Date().toISOString().split('T')[0];
+                const proximoAlerta = new Date();
+                proximoAlerta.setDate(proximoAlerta.getDate() + 30);
+                
+                const { error } = await db
+                    .from('assinantes_vip')
+                    .update({
+                        alerta_enviado: true,
+                        data_ultimo_alerta: hoje,
+                        data_proximo_alerta: proximoAlerta.toISOString().split('T')[0]
+                    })
+                    .eq('id', vipId);
+                
+                if (error) throw error;
+                
+                mostrarToast('Alerta marcado como enviado!', 'success');
+                carregarAlertas('hoje');
+                
+            } catch (e) {
+                console.error('Erro ao marcar enviado:', e);
+                mostrarToast('Erro ao atualizar', 'error');
+            }
+        }
+
+        // ====== ALTERAR SENHA ======
         function abrirModalSenha() {
             document.getElementById('form-senha').reset();
             document.getElementById('modal-senha').classList.add('active');
