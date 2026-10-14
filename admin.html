@@ -403,13 +403,21 @@
             }
         }
 
-        if (localStorage.getItem(`admin_auth_${slugLoja}`) === 'true') {
+        // Auto-login se já estiver autenticado
+(async () => {
+    if (localStorage.getItem(`admin_auth_${slugLoja}`) === 'true') {
+        try {
             const { data } = await db.from('lojas').select('*').eq('slug', slugLoja).single();
             if (data) {
                 loja = data;
                 mostrarPainel();
             }
+        } catch (e) {
+            console.error('Erro no auto-login:', e);
+            localStorage.removeItem(`admin_auth_${slugLoja}`);
         }
+    }
+})();
 
         function mostrarPainel() {
             document.getElementById('tela-login').classList.add('hidden');
