@@ -7,12 +7,16 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Shop Pocket">
+    
     <link rel="manifest" href="/manifest.json">
     <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/mamedstudio/cupomclic-recorrencia/main/shop-pocket-logo.png">
+    
     <title>Carregando... | Shop Pocket</title>
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+    
     <style>
         body { font-family: 'Inter', sans-serif; }
         .font-serif { font-family: 'Playfair Display', serif; }
@@ -39,8 +43,68 @@
             transition: opacity 0.3s ease; pointer-events: none;
         }
         .toast.show { opacity: 1; }
-        .erro-loja { text-align: center; padding: 40px 20px; }
     </style>
+
+    <!-- MANIFEST DINÂMICO -->
+    <script>
+        (async function() {
+            const slug = new URLSearchParams(window.location.search).get('slug') || 'jl-sabores-nobres';
+            
+            try {
+                const SUPABASE_URL = 'https://rzapsmtasfdqedlzmyvh.supabase.co';
+                const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ6YXBzbXRhc2ZkcWVkbHpteXZoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE0MDQ0NTksImV4cCI6MjEwNjk4MDQ1OX0.EkBMhJwM1aH8TH9aO6JZxkgco2XwSjfu_BsTPZjGfMs';
+                
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/lojas?slug=eq.${slug}&select=nome,cor_tema,logo_url`, {
+                    headers: { 'apikey': SUPABASE_ANON_KEY }
+                });
+                const data = await response.json();
+                
+                if (data && data.length > 0) {
+                    const loja = data[0];
+                    const manifest = {
+                        name: `${loja.nome} | Shop Pocket`,
+                        short_name: loja.nome.split(' ')[0],
+                        description: `Catálogo digital de ${loja.nome}`,
+                        start_url: `/loja.html?slug=${slug}`,
+                        display: 'standalone',
+                        background_color: '#ffffff',
+                        theme_color: loja.cor_tema || '#000000',
+                        orientation: 'portrait',
+                        icons: [
+                            {
+                                src: loja.logo_url || 'https://raw.githubusercontent.com/mamedstudio/cupomclic-recorrencia/main/shop-pocket-logo.png',
+                                sizes: '192x192',
+                                type: 'image/png',
+                                purpose: 'any maskable'
+                            },
+                            {
+                                src: loja.logo_url || 'https://raw.githubusercontent.com/mamedstudio/cupomclic-recorrencia/main/shop-pocket-logo.png',
+                                sizes: '512x512',
+                                type: 'image/png',
+                                purpose: 'any maskable'
+                            }
+                        ]
+                    };
+                    
+                    const blob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement('link');
+                    link.rel = 'manifest';
+                    link.href = url;
+                    document.head.appendChild(link);
+                    
+                    const metaTheme = document.querySelector('meta[name="theme-color"]');
+                    if (metaTheme) metaTheme.content = loja.cor_tema || '#000000';
+                    
+                    document.title = `${loja.nome} | Shop Pocket`;
+                    const metaApple = document.querySelector('meta[name="apple-mobile-web-app-title"]');
+                    if (metaApple) metaApple.content = loja.nome.split(' ')[0];
+                }
+            } catch (e) {
+                console.log('Usando manifest padrão');
+            }
+        })();
+    </script>
 </head>
 <body class="bg-gray-50 min-h-screen">
 
@@ -52,17 +116,16 @@
         </div>
     </div>
 
-    <!-- Tela de Erro (loja não encontrada) -->
+    <!-- Tela de Erro -->
     <div id="tela-erro" class="hidden min-h-screen flex items-center justify-center p-4">
         <div class="text-center max-w-md">
             <span class="text-6xl">😕</span>
             <h1 class="text-2xl font-bold text-gray-900 mt-4">Loja não encontrada</h1>
             <p class="text-gray-600 mt-2">A loja que você procura não existe ou está temporariamente indisponível.</p>
-            <a href="/" class="inline-block mt-4 bg-black text-white px-6 py-3 rounded-lg font-semibold">Ver outras lojas</a>
         </div>
     </div>
 
-    <!-- Conteúdo Principal (inicialmente oculto) -->
+    <!-- Conteúdo Principal -->
     <div id="conteudo-principal" class="hidden">
         <header id="header-loja" class="text-white py-6 px-6 shadow-lg">
             <div class="max-w-md mx-auto flex items-center justify-between">
@@ -83,9 +146,9 @@
         <div class="max-w-md mx-auto px-4 pt-4">
             <div class="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-200">
                 <div class="grid grid-cols-3 gap-1 p-2">
-                    <button onclick="mostrarAba('ofertas')" id="tab-ofertas" class="tab-ativa py-2 px-1 rounded-lg text-xs font-semibold transition">🔥 Ofertas</button>
+                    <button onclick="mostrarAba('ofertas')" id="tab-ofertas" class="tab-ativa py-2 px-1 rounded-lg text-xs font-semibold transition"> Ofertas</button>
                     <button onclick="mostrarAba('diadia')" id="tab-diadia" class="tab-inativa py-2 px-1 rounded-lg text-xs font-semibold transition">🛒 Dia a Dia</button>
-                    <button onclick="mostrarAba('vip')" id="tab-vip" class="tab-inativa py-2 px-1 rounded-lg text-xs font-semibold transition"> VIP</button>
+                    <button onclick="mostrarAba('vip')" id="tab-vip" class="tab-inativa py-2 px-1 rounded-lg text-xs font-semibold transition">👑 VIP</button>
                 </div>
             </div>
         </div>
@@ -157,9 +220,8 @@
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ6YXBzbXRhc2ZkcWVkbHpteXZoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE0MDQ0NTksImV4cCI6MjEwNjk4MDQ1OX0.EkBMhJwM1aH8TH9aO6JZxkgco2XwSjfu_BsTPZjGfMs';
         const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         
-        // Pega o slug da URL (ex: ?slug=jl-sabores-nobres)
         const params = new URLSearchParams(window.location.search);
-        const slugLoja = params.get('slug') || 'jl-sabores-nobres'; // fallback para JL
+        const slugLoja = params.get('slug') || 'jl-sabores-nobres';
         
         let loja = null, ofertas = [], produtosDiaADia = [];
         let favoritosIds = JSON.parse(localStorage.getItem(`favoritos_${slugLoja}`) || '[]');
@@ -198,35 +260,29 @@
                 }
                 loja = data[0];
                 
-                // Atualiza título da página
                 document.title = `${loja.nome} | Shop Pocket`;
                 
-                // Atualiza header
-                document.getElementById('nome-loja').textContent = loja.nome.toUpperCase();
                 const tipos = { emporio: 'Empório Gourmet', acougue: 'Açougue Premium', farmacia: 'Farmácia de Manipulação', outros: 'Qualidade Superior' };
                 document.getElementById('subtitulo-loja').textContent = loja.subtitulo || tipos[loja.tipo] || 'Qualidade Superior';
                 
-                // Atualiza cor do header
                 const cor = loja.cor_tema || '#000000';
                 document.getElementById('header-loja').style.background = `linear-gradient(135deg, ${cor} 0%, ${ajustarCor(cor, 30)} 50%, ${ajustarCor(cor, 60)} 100%)`;
                 
-                // Atualiza abas ativas com a cor da loja
                 document.querySelectorAll('.tab-ativa').forEach(tab => {
                     tab.style.backgroundColor = cor;
                 });
                 
-                // Atualiza logo
                 if (loja.logo_url) {
                     document.getElementById('logo-loja').src = loja.logo_url;
                 } else {
                     document.getElementById('logo-loja').src = `https://raw.githubusercontent.com/mamedstudio/cupomclic-recorrencia/main/${slugLoja}.png`;
                 }
                 
-                // Atualiza link do botão VIP
                 document.getElementById('btn-vip').href = `cadastrar-vip.html?loja=${slugLoja}`;
                 
-                // Atualiza meta theme-color
                 document.querySelector('meta[name="theme-color"]').content = cor;
+                const metaApple = document.querySelector('meta[name="apple-mobile-web-app-title"]');
+                if (metaApple) metaApple.content = loja.nome.split(' ')[0];
                 
             } catch (e) { 
                 console.error('Erro loja:', e);
@@ -332,7 +388,7 @@
                 const isUnico = produto.tipo_preco === 'unico';
                 const desconto = (produto.preco_original && produto.preco_promocional && !isUnico) ? Math.round(((produto.preco_original - produto.preco_promocional) / produto.preco_original) * 100) : 0;
                 const precoExibicao = produto.preco_promocional || produto.preco_original;
-                const thumbnail = produto.foto_url ? `<img src="${produto.foto_url}" class="w-16 h-16 rounded-lg object-cover mr-3 flex-shrink-0" onerror="this.src='https://via.placeholder.com/100x100/000000/FFFFFF?text=Produto'">` : `<div class="w-16 h-16 rounded-lg bg-gray-200 flex items-center justify-center mr-3 flex-shrink-0 text-2xl">📦</div>`;
+                const thumbnail = produto.foto_url ? `<img src="${produto.foto_url}" class="w-16 h-16 rounded-lg object-cover mr-3 flex-shrink-0" onerror="this.src='https://via.placeholder.com/100x100/000000/FFFFFF?text=Produto'">` : `<div class="w-16 h-16 rounded-lg bg-gray-200 flex items-center justify-center mr-3 flex-shrink-0 text-2xl"></div>`;
                 container.innerHTML += `<div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden mb-3 fade-in"><div class="p-4 flex items-center">${thumbnail}<div class="flex-grow min-w-0 pr-2"><h3 class="font-bold text-gray-900 text-sm leading-tight line-clamp-2 mb-1">${produto.nome}</h3><p class="text-xs text-gray-500 truncate">${produto.subtitulo || ''}</p><div class="flex items-baseline flex-wrap gap-2 mt-1">${!isUnico && produto.preco_original ? `<span class="text-gray-400 text-xs line-through">R$ ${parseFloat(produto.preco_original).toFixed(2)}</span>` : ''}<span class="text-lg font-black text-green-600">R$ ${parseFloat(precoExibicao).toFixed(2)}</span>${desconto > 0 ? `<span class="bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">${desconto}% OFF</span>` : ''}</div></div><button onclick="toggleFavorito('${produto.id}'); renderizarFavoritos();" class="coracao favoritado text-2xl ml-2">❤️</button></div></div>`;
             });
         }
@@ -359,7 +415,7 @@
                 const totalFavs = contadoresFavoritos[oferta.id] || 0;
                 const cor = loja?.cor_tema || '#000000';
                 const thumbnail = oferta.foto_url ? `<img src="${oferta.foto_url}" class="w-16 h-16 rounded-lg object-cover mr-3 flex-shrink-0" onerror="this.src='https://via.placeholder.com/100x100/000000/FFFFFF?text=Produto'">` : `<div class="w-16 h-16 rounded-lg bg-gray-200 flex items-center justify-center mr-3 flex-shrink-0 text-2xl">📦</div>`;
-                const fotoGrande = oferta.foto_url ? `<img src="${oferta.foto_url}" class="w-full h-48 object-cover rounded-lg foto-zoom" onerror="this.src='https://via.placeholder.com/600x400/000000/FFFFFF?text=Produto'">` : `<div class="w-full h-48 bg-gray-200 rounded-lg flex items-center justify-center text-6xl">📦</div>`;
+                const fotoGrande = oferta.foto_url ? `<img src="${oferta.foto_url}" class="w-full h-48 object-cover rounded-lg foto-zoom" onerror="this.src='https://via.placeholder.com/600x400/000000/FFFFFF?text=Produto'">` : `<div class="w-full h-48 bg-gray-200 rounded-lg flex items-center justify-center text-6xl"></div>`;
                 container.innerHTML += `<div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden mb-3 fade-in card-oferta"><div class="p-4 flex items-center cursor-pointer" onclick="toggleDetalhes('detalhes-${index}')">${thumbnail}<div class="flex-grow min-w-0 pr-2"><h3 class="font-bold text-gray-900 text-sm leading-tight line-clamp-2 mb-1">${oferta.nome}</h3><p class="text-xs text-gray-500 truncate">${oferta.subtitulo || ''}</p><div class="flex items-baseline flex-wrap gap-2 mt-1">${!isUnico && oferta.preco_original ? `<span class="text-gray-400 text-xs line-through">R$ ${parseFloat(oferta.preco_original).toFixed(2)}</span>` : ''}<span class="text-lg font-black text-green-600">R$ ${parseFloat(precoExibicao).toFixed(2)}</span>${desconto > 0 ? `<span class="bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">${desconto}% OFF</span>` : ''}</div>${oferta.valido_ate ? `<p class="text-[10px] text-gray-400 mt-1">📅 Válido até ${new Date(oferta.valido_ate).toLocaleDateString('pt-BR')}</p>` : ''}${totalFavs > 0 ? `<p class="text-[10px] text-gray-400 mt-0.5">❤️ ${totalFavs} pessoa${totalFavs > 1 ? 's' : ''} favoritaram</p>` : ''}</div><button onclick="event.stopPropagation(); toggleFavorito('${oferta.id}')" class="coracao ${isFav ? 'favoritado' : ''} text-2xl mr-2" data-produto-id="${oferta.id}">${isFav ? '❤️' : '🤍'}</button><button class="text-white font-bold py-2 px-4 rounded-lg text-sm flex-shrink-0" style="background-color: ${cor}">EU QUERO</button></div><div id="detalhes-${index}" class="card-detalhes border-t border-gray-100"><div class="p-4 space-y-3"><div class="relative">${fotoGrande}${oferta.estoque_restam > 0 ? `<div class="absolute bottom-2 right-2"><div class="badge-restam flex items-end justify-center pb-1"><div class="text-center text-white"><p class="text-[7px] font-bold leading-tight">RESTAM</p><p class="text-sm font-black leading-tight">${oferta.estoque_restam}</p></div></div></div>` : ''}${oferta.categoria ? `<div class="absolute bottom-0 left-0 right-0 bg-green-700 text-white text-center py-1.5 text-xs font-bold rounded-b-lg">${oferta.categoria}</div>` : ''}</div>${oferta.descricao_longa ? `<div><h4 class="font-bold text-gray-900 text-sm mb-1">Descrição</h4><p class="text-xs text-gray-600 leading-relaxed">${oferta.descricao_longa}</p></div>` : ''}${(oferta.atributo1_nome || oferta.atributo2_nome) ? `<div class="grid grid-cols-2 gap-2 text-xs">${oferta.atributo1_nome ? `<div class="bg-gray-50 p-2 rounded"><p class="text-gray-500">${oferta.atributo1_nome}</p><p class="font-bold text-gray-900">${oferta.atributo1_valor || '-'}</p></div>` : ''}${oferta.atributo2_nome ? `<div class="bg-gray-50 p-2 rounded"><p class="text-gray-500">${oferta.atributo2_nome}</p><p class="font-bold text-gray-900">${oferta.atributo2_valor || '-'}</p></div>` : ''}</div>` : ''}<div class="text-xs text-gray-500 bg-gray-50 p-2 rounded">📅 Válido até: <strong>${oferta.valido_ate ? new Date(oferta.valido_ate).toLocaleDateString('pt-BR') : 'Fim da semana'}</strong>${oferta.tipo_entrega_produto === 'delivery' ? ' • 🚚 Delivery' : oferta.tipo_entrega_produto === 'retirada' ? ' • 🏪 Retirada' : ' • 🚚 Delivery + Retirada'}${oferta.taxa_entrega_produto > 0 ? ` • Taxa: R$ ${parseFloat(oferta.taxa_entrega_produto).toFixed(2)}` : ''}</div><a href="${oferta.link_cupomclic || '#'}" target="_blank" class="block w-full text-white text-center font-bold py-3 rounded-xl shadow-sm transition text-sm" style="background-color: ${cor}">COMPRAR AGORA</a></div></div></div>`;
             });
         }
