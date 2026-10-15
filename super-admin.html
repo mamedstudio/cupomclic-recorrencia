@@ -69,7 +69,6 @@
         </header>
 
         <div class="max-w-6xl mx-auto p-6">
-            <!-- Estatísticas -->
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                 <div class="bg-white rounded-xl p-4 shadow-sm">
                     <p class="text-xs text-gray-500 mb-1">Total de Lojas</p>
@@ -89,7 +88,6 @@
                 </div>
             </div>
 
-            <!-- Botão Nova Loja -->
             <div class="flex items-center justify-between mb-4">
                 <h2 class="text-xl font-bold text-gray-900">Lojas Cadastradas</h2>
                 <button onclick="abrirModalNovaLoja()" class="bg-black hover:bg-gray-800 text-white px-4 py-2 rounded-lg font-semibold text-sm flex items-center">
@@ -97,7 +95,6 @@
                 </button>
             </div>
 
-            <!-- Lista de Lojas -->
             <div id="lista-lojas" class="space-y-3">
                 <div class="text-center py-8 text-gray-500">Carregando...</div>
             </div>
@@ -273,9 +270,9 @@
                 data.forEach(loja => {
                     const tipos = { emporio: 'Empório', acougue: 'Açougue', farmacia: 'Farmácia', restaurante: 'Restaurante', servicos: 'Serviços', outros: 'Outros' };
                     container.innerHTML += `
-                        <div class="bg-white rounded-xl p-4 shadow-sm fade-in flex items-center justify-between">
+                        <div class="bg-white rounded-xl p-4 shadow-sm fade-in flex items-center justify-between flex-wrap gap-3">
                             <div class="flex items-center space-x-4">
-                                <div class="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg" style="background-color: ${loja.cor_tema || '#000'}">
+                                <div class="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg flex-shrink-0" style="background-color: ${loja.cor_tema || '#000'}">
                                     ${loja.nome.charAt(0).toUpperCase()}
                                 </div>
                                 <div>
@@ -284,11 +281,11 @@
                                     <p class="text-xs text-gray-400">${loja.whatsapp || 'Sem WhatsApp'}</p>
                                 </div>
                             </div>
-                            <div class="flex items-center space-x-2">
+                            <div class="flex items-center space-x-2 flex-wrap">
                                 <a href="loja.html?slug=${loja.slug}" target="_blank" class="text-xs bg-blue-100 text-blue-700 px-3 py-2 rounded-lg hover:bg-blue-200">Ver Loja</a>
-                                <a href="admin.html?slug=${loja.slug}" target="_blank" class="text-xs bg-purple-100 text-purple-700 px-3 py-2 rounded-lg hover:bg-purple-200"> Admin</a>
-                                <button onclick='editarLoja(${JSON.stringify(loja)})' class="text-xs bg-gray-100 text-gray-700 px-3 py-2 rounded-lg hover:bg-gray-200">Editar</button>
-                                <button onclick="excluirLoja('${loja.id}', '${loja.nome}')" class="text-xs bg-red-100 text-red-700 px-3 py-2 rounded-lg hover:bg-red-200">Excluir</button>
+                                <a href="admin.html?slug=${loja.slug}" target="_blank" class="text-xs bg-purple-100 text-purple-700 px-3 py-2 rounded-lg hover:bg-purple-200">🔑 Admin</a>
+                                <button onclick='editarLoja(${JSON.stringify(loja).replace(/'/g, "&#39;")})' class="text-xs bg-gray-100 text-gray-700 px-3 py-2 rounded-lg hover:bg-gray-200">Editar</button>
+                                <button onclick="excluirLoja('${loja.id}', '${loja.nome.replace(/'/g, "\\'")}')" class="text-xs bg-red-100 text-red-700 px-3 py-2 rounded-lg hover:bg-red-200">Excluir</button>
                             </div>
                         </div>
                     `;
@@ -310,8 +307,16 @@
         }
 
         function editarLoja(loja) {
+            console.log('🔍 Loja recebida para editar:', loja);
+            console.log('🆔 ID da loja:', loja.id);
+            
+            if (!loja.id) {
+                mostrarToast('Erro: ID da loja não encontrado!', 'error');
+                return;
+            }
+            
             document.getElementById('modal-titulo').textContent = 'Editar Loja';
-            document.getElementById('loja-id').value = loja.id || '';
+            document.getElementById('loja-id').value = loja.id;
             document.getElementById('loja-nome').value = loja.nome || '';
             document.getElementById('loja-slug').value = loja.slug || '';
             document.getElementById('loja-tipo').value = loja.tipo || 'outros';
@@ -351,6 +356,14 @@
             e.preventDefault();
             const id = document.getElementById('loja-id').value;
             
+            console.log('🆔 ID do formulário:', id);
+            console.log(' ID vazio?', !id);
+            
+            if (!id) {
+                mostrarToast('Erro: ID não encontrado. Tente editar novamente.', 'error');
+                return;
+            }
+            
             const dados = {
                 nome: document.getElementById('loja-nome').value.trim(),
                 slug: document.getElementById('loja-slug').value.toLowerCase().trim().replace(/\s+/g, '-'),
@@ -368,7 +381,7 @@
                 logo_url: document.getElementById('loja-logo').value.trim()
             };
             
-            console.log(' Dados a salvar:', dados);
+            console.log('🔵 Dados a salvar:', dados);
             
             try {
                 if (id) {
