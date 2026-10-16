@@ -3,310 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cupomclic - Ofertas e Recorrência</title>
+    <title>Tokto | Catálogos Digitais</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        :root { --cor-primaria: #16a34a; }
-        .bg-health { background-color: var(--cor-primaria); }
-        .bg-health:hover { filter: brightness(0.9); }
-        .text-health { color: var(--cor-primaria); }
-        .border-health { border-color: var(--cor-primaria); }
-        .fade-in { animation: fadeIn 0.4s ease-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
-        .accordion-content { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
-        .accordion-content.open { max-height: 2000px; }
-        .rotate-icon { transition: transform 0.3s; }
-        .rotate-icon.open { transform: rotate(180deg); }
-        
-        #header-principal { position: relative; overflow: hidden; transition: all 0.5s ease; }
-        #header-principal.header-colorido { color: white; padding: 1.5rem 1.5rem; }
-        #header-principal.header-colorido::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; opacity: 0.15; z-index: 0; }
-        #header-principal.header-colorido > div { position: relative; z-index: 1; }
-        #header-principal.header-colorido #nome-estabelecimento, #header-principal.header-colorido #tipo-estabelecimento { color: white; }
-        
-        #header-principal.bg-farmacia { background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%); }
-        #header-principal.bg-pet { background: linear-gradient(135deg, #c2410c 0%, #f97316 100%); }
-        #header-principal.bg-proteicos { background: linear-gradient(135deg, #7f1d1d 0%, #dc2626 100%); }
-        #header-principal.bg-outros { background: linear-gradient(135deg, #374151 0%, #6b7280 100%); }
-        #header-principal.bg-acougue { background: linear-gradient(135deg, #7f1d1d 0%, #991b1b 50%, #dc2626 100%); }
-        
-        .header-icon { position: absolute; font-size: 3.5rem; opacity: 0.25; z-index: 0; pointer-events: none; }
-        .header-icon-1 { top: 5px; right: 20px; }
-        .header-icon-2 { bottom: 5px; right: 80px; font-size: 2.5rem; }
+        body { font-family: 'Inter', sans-serif; }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800 font-sans antialiased min-h-screen flex flex-col">
+<body class="bg-gradient-to-br from-orange-50 to-white min-h-screen flex flex-col items-center justify-center p-6">
+    
+    <div class="text-center mb-10">
+        <img src="https://raw.githubusercontent.com/mamedstudio/cupomclic-recorrencia/main/tokto-logo.png" alt="Tokto" class="h-32 mx-auto mb-6">
+        <h1 class="text-4xl font-black text-gray-900 mb-2">Tokto</h1>
+        <p class="text-gray-600 text-lg">Catálogos digitais completos para sua loja</p>
+        <p class="text-gray-400 text-sm mt-2">Checkout powered by CupomClic</p>
+    </div>
 
-    <!-- HEADER -->
-    <header id="header-principal" class="bg-white shadow-sm py-4 px-6 sticky top-0 z-20">
-        <span class="header-icon header-icon-1" id="header-icon-1"></span>
-        <span class="header-icon header-icon-2" id="header-icon-2"></span>
-        <div class="max-w-md mx-auto flex items-center justify-between">
+    <div class="w-full max-w-md space-y-4">
+        <!-- Card JL -->
+        <a href="loja.html?slug=jl-sabores-nobres" class="block bg-white rounded-2xl p-5 shadow-sm border border-gray-100 hover:shadow-md hover:border-red-200 transition flex items-center space-x-4 group">
+            <div class="w-14 h-14 rounded-full bg-red-900 flex items-center justify-center text-white font-bold text-xl group-hover:scale-110 transition">JL</div>
             <div>
-                <span class="text-xl font-extrabold" id="nome-estabelecimento">CUPOMCLIC</span>
-                <p class="text-xs opacity-80" id="tipo-estabelecimento"></p>
+                <h3 class="font-bold text-gray-900">JL Sabores Nobres</h3>
+                <p class="text-sm text-gray-500">Empório Gourmet</p>
             </div>
-        </div>
-    </header>
+            <span class="ml-auto text-gray-300 group-hover:text-red-600">→</span>
+        </a>
 
-    <main class="max-w-md mx-auto px-4 py-6 flex-grow w-full">
-        
-        <!-- SEÇÃO 1: OFERTAS DA SEMANA (ISCAS) -->
-        <section>
-            <div class="flex items-center justify-between mb-4">
-                <h2 class="text-xl font-extrabold text-gray-900 flex items-center">
-                    🔥 Ofertas da Semana
-                </h2>
-                <span class="text-xs font-semibold bg-red-100 text-red-700 px-2 py-1 rounded-full">Válido até Domingo</span>
+        <!-- Card Loja Grill -->
+        <a href="loja.html?slug=loja-grill" class="block bg-white rounded-2xl p-5 shadow-sm border border-gray-100 hover:shadow-md hover:border-red-200 transition flex items-center space-x-4 group">
+            <div class="w-14 h-14 rounded-full bg-red-800 flex items-center justify-center text-white font-bold text-xl group-hover:scale-110 transition">LG</div>
+            <div>
+                <h3 class="font-bold text-gray-900">Loja Grill</h3>
+                <p class="text-sm text-gray-500">Tudo para Churrasco</p>
             </div>
-            <div id="lista-ofertas" class="space-y-4">
-                <div class="text-center py-8"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600 mx-auto"></div></div>
+            <span class="ml-auto text-gray-300 group-hover:text-red-800">→</span>
+        </a>
+
+        <!-- Card Farmácia -->
+        <a href="loja.html?slug=farmacia-magistral" class="block bg-white rounded-2xl p-5 shadow-sm border border-gray-100 hover:shadow-md hover:border-purple-300 transition flex items-center space-x-4 group">
+            <div class="w-14 h-14 rounded-full bg-purple-600 flex items-center justify-center text-white font-bold text-xl group-hover:scale-110 transition">FM</div>
+            <div>
+                <h3 class="font-bold text-gray-900">Farmácia Magistral</h3>
+                <p class="text-sm text-gray-500">Farmácia de Manipulação</p>
             </div>
-        </section>
+            <span class="ml-auto text-gray-300 group-hover:text-purple-600">→</span>
+        </a>
+    </div>
 
-        <!-- DIVISOR VISUAL -->
-        <div class="relative flex py-6 items-center">
-            <div class="flex-grow border-t border-gray-300"></div>
-            <span class="flex-shrink-0 mx-4 text-gray-400 text-xs font-semibold uppercase tracking-wider">Ou garanta seus produtos de uso contínuo</span>
-            <div class="flex-grow border-t border-gray-300"></div>
-        </div>
+    <div class="mt-12 text-center">
+        <a href="super-admin.html" class="text-xs text-gray-400 hover:text-gray-600 underline">Acesso Restrito (Tokto Admin)</a>
+    </div>
 
-        <!-- SEÇÃO 2: RECORRÊNCIA -->
-        <section class="space-y-4">
-            <div class="text-center space-y-1">
-                <h1 class="text-lg font-bold text-gray-900">Nunca mais esqueça seu <span class="text-health">produto favorito</span>.</h1>
-                <p class="text-gray-500 text-xs">Assine e ganhe descontos progressivos. Quanto mais fiel, mais desconto!</p>
-            </div>
-
-            <div class="relative">
-                <input type="text" id="busca-produtos" oninput="filtrarProdutos()" placeholder="🔍 Buscar produto de recorrência..." class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-green-500 focus:outline-none text-sm bg-white">
-            </div>
-
-            <div id="lista-cliente" class="space-y-3">
-                <div class="text-center py-8"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mx-auto"></div></div>
-            </div>
-
-            <section class="bg-blue-50 border border-blue-200 rounded-xl p-4 mt-6">
-                <h3 class="font-bold text-gray-900 text-sm mb-2 flex items-center"><span class="text-lg mr-2">💡</span> Não encontrou o que procura?</h3>
-                <form id="form-solicitacao" class="space-y-2">
-                    <input type="text" id="sol-nome" required placeholder="Seu nome" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm">
-                    <input type="text" id="sol-whatsapp" required placeholder="WhatsApp (5511999999999)" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm">
-                    <input type="text" id="sol-produto" required placeholder="Nome do produto desejado" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm">
-                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded-lg transition text-sm">Enviar Solicitação</button>
-                </form>
-            </section>
-        </section>
-    </main>
-
-    <!-- FOOTER -->
-    <footer class="text-center py-6 text-gray-400 text-xs bg-white border-t border-gray-100 mt-auto">
-        <p>&copy; 2026 CUPOMCLIC. Powered by SaaS.</p>
-        <a href="admin.html?loja=rafarma" class="text-[10px] text-gray-300 hover:text-gray-500 mt-2 transition inline-block">Acesso Restrito</a>
-    </footer>
-
-    <script>
-        const SUPABASE_URL = 'https://hcgsttzjolotljqdvlat.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhjZ3N0dHpqb2xvdGxqcWR2bGF0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE0MDU5MTMsImV4cCI6MjEwNjk4MTkxM30.AWbtRx82wDp2K-yERqQy9RA8dYWXev6B14jP5isLkVM';
-
-        const urlParams = new URLSearchParams(window.location.search);
-        const slugLoja = urlParams.get('loja') || 'rafarma';
-
-        let TABELA_DESCONTOS = [{ meses: 3, desconto: 12 }, { meses: 5, desconto: 20 }, { meses: 8, desconto: 30 }];
-        const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        
-        let estabelecimento = null, produtos = [], produtosFiltrados = [], ofertas = [];
-        let ESTABELECIMENTO_ID = 1;
-        let accordionAberto = {};
-
-        document.addEventListener('DOMContentLoaded', async () => {
-            await carregarEstabelecimento();
-            await carregarDescontos();
-            await carregarProdutos(); 
-        });
-
-        async function carregarEstabelecimento() {
-            try {
-                const { data, error } = await db.from('lojas').select('*').eq('slug', slugLoja).limit(1);
-                let finalData = data;
-                if ((!data || data.length === 0) && !error) {
-                     const { data: dataEst, error: errEst } = await db.from('estabelecimentos').select('*').eq('slug', slugLoja).limit(1);
-                     finalData = dataEst;
-                }
-
-                if (finalData && finalData.length > 0) {
-                    estabelecimento = finalData[0];
-                    ESTABELECIMENTO_ID = estabelecimento.id;
-                    
-                    document.getElementById('nome-estabelecimento').textContent = estabelecimento.nome;
-                    const tipos = { farmacia: 'Farmácia', acougue: 'Açougue & Carnes Nobres', pet: 'Pet Shop', proteicos: 'Loja de Proteicos', outros: 'Estabelecimento' };
-                    document.getElementById('tipo-estabelecimento').textContent = tipos[estabelecimento.tipo] || '';
-                    
-                    if (estabelecimento.cor_tema || estabelecimento.cor_primaria) {
-                        const cor = estabelecimento.cor_tema || estabelecimento.cor_primaria;
-                        document.documentElement.style.setProperty('--cor-primaria', cor);
-                    }
-                    
-                    aplicarBackgroundEstabelecimento(estabelecimento.tipo);
-                } else {
-                    window.location.href = '?loja=rafarma';
-                }
-            } catch (e) { console.error('Erro estabelecimento:', e); }
-        }
-
-        function aplicarBackgroundEstabelecimento(tipo) {
-            const header = document.getElementById('header-principal');
-            const icon1 = document.getElementById('header-icon-1');
-            const icon2 = document.getElementById('header-icon-2');
-            
-            header.classList.remove('bg-farmacia', 'bg-pet', 'bg-proteicos', 'bg-outros', 'bg-acougue', 'header-colorido');
-            
-            switch(tipo) {
-                case 'acougue':
-                    header.classList.add('bg-acougue', 'header-colorido');
-                    icon1.textContent = ''; icon2.textContent = '🔪';
-                    break;
-                case 'farmacia':
-                    header.classList.add('bg-farmacia', 'header-colorido');
-                    icon1.textContent = '💊'; icon2.textContent = '⚕️';
-                    break;
-                case 'pet':
-                    header.classList.add('bg-pet', 'header-colorido');
-                    icon1.textContent = '🐾'; icon2.textContent = '🐕';
-                    break;
-                case 'proteicos':
-                    header.classList.add('bg-proteicos', 'header-colorido');
-                    icon1.textContent = '💪'; icon2.textContent = '🏋️';
-                    break;
-                default:
-                    header.classList.add('bg-outros', 'header-colorido');
-                    icon1.textContent = '🏪'; icon2.textContent = '⭐';
-            }
-        }
-
-        async function carregarDescontos() {
-            try {
-                const { data, error } = await db.from('config_descontos').select('*').eq('estabelecimento_id', ESTABELECIMENTO_ID).limit(1);
-                if (!error && data && data.length > 0) {
-                    TABELA_DESCONTOS = [{ meses: 3, desconto: data[0].desc_3 }, { meses: 5, desconto: data[0].desc_5 }, { meses: 8, desconto: data[0].desc_8 }];
-                }
-            } catch (e) { console.log('Usando descontos padrão'); }
-        }
-
-        async function carregarProdutos() {
-            try {
-                const { data, error } = await db.from('produtos').select('*').eq('estabelecimento_id', ESTABELECIMENTO_ID).eq('ativo', true).order('criado_em', { ascending: false });
-                if (error) throw error;
-                
-                produtos = data || [];
-                ofertas = produtos.filter(p => p.tipo === 'oferta_semanal').slice(0, 3);
-                produtosFiltrados = produtos.filter(p => p.tipo === 'recorrencia' || !p.tipo);
-                
-                renderizarOfertas();
-                renderizarTimelineCliente();
-            } catch (error) { console.error('Erro produtos:', error); }
-        }
-
-        function renderizarOfertas() {
-            const container = document.getElementById('lista-ofertas');
-            container.innerHTML = '';
-            if (ofertas.length === 0) {
-                container.innerHTML = '<p class="text-center text-gray-500 py-4 text-sm">Nenhuma oferta da semana no momento.</p>';
-                return;
-            }
-            ofertas.forEach((oferta, index) => {
-                const desconto = Math.round(((oferta.preco_original - oferta.preco_promocional) / oferta.preco_original) * 100);
-                const dataValidade = oferta.valido_ate ? new Date(oferta.valido_ate).toLocaleDateString('pt-BR') : 'Fim da semana';
-                
-                container.innerHTML += `
-                <div class="bg-white rounded-2xl shadow-lg border-2 border-red-100 overflow-hidden fade-in relative">
-                    <div class="absolute top-3 left-3 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md z-10">
-                        ${desconto}% OFF
-                    </div>
-                    <div class="h-40 bg-gray-200 flex items-center justify-center overflow-hidden">
-                        ${oferta.foto_url ? `<img src="${oferta.foto_url}" class="w-full h-full object-cover" alt="${oferta.nome}">` : '<span class="text-4xl">🔥</span>'}
-                    </div>
-                    <div class="p-4">
-                        <h3 class="font-extrabold text-gray-900 text-lg leading-tight mb-1">${oferta.nome} <span class="text-health text-sm">${oferta.dosagem || ''}</span></h3>
-                        <p class="text-xs text-gray-500 mb-3 line-clamp-2">${oferta.descricao || ''}</p>
-                        
-                        <div class="flex items-end space-x-2 mb-4">
-                            <span class="text-gray-400 text-sm line-through">R$ ${parseFloat(oferta.preco_original).toFixed(2)}</span>
-                            <span class="text-3xl font-black text-red-600">R$ ${parseFloat(oferta.preco_promocional).toFixed(2)}</span>
-                        </div>
-                        
-                        <div class="flex items-center justify-between text-xs text-gray-500 mb-4 bg-gray-50 p-2 rounded-lg">
-                            <span>📅 Válido até: <strong>${dataValidade}</strong></span>
-                        </div>
-
-                        <a href="${oferta.link_cupomclic || '#'}" target="_blank" class="block w-full bg-red-600 hover:bg-red-700 text-white text-center font-bold py-3 rounded-xl shadow-md transition text-sm uppercase tracking-wide">
-                            Reservar Agora (PIX)
-                        </a>
-                    </div>
-                </div>`;
-            });
-        }
-
-        function filtrarProdutos() {
-            const busca = document.getElementById('busca-produtos').value.toLowerCase();
-            const baseRecorrencia = produtos.filter(p => p.tipo === 'recorrencia' || !p.tipo);
-            produtosFiltrados = baseRecorrencia.filter(m => m.nome.toLowerCase().includes(busca) || (m.dosagem && m.dosagem.toLowerCase().includes(busca)));
-            renderizarTimelineCliente();
-        }
-
-        function toggleAccordion(index) {
-            accordionAberto[index] = !accordionAberto[index];
-            const content = document.getElementById('accordion-' + index), icon = document.getElementById('icon-' + index);
-            if (accordionAberto[index]) { content.classList.add('open'); icon.classList.add('open'); } 
-            else { content.classList.remove('open'); icon.classList.remove('open'); }
-        }
-
-        function renderizarTimelineCliente() {
-            const listaCliente = document.getElementById('lista-cliente'); listaCliente.innerHTML = '';
-            if (produtosFiltrados.length === 0) { listaCliente.innerHTML = '<p class="text-center text-gray-500 py-4 text-sm">Nenhum produto de recorrência encontrado.</p>'; return; }
-            
-            produtosFiltrados.forEach((med, index) => {
-                const estaEsgotado = med.estoque <= 0;
-                listaCliente.innerHTML += `<div class="timeline-item bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden fade-in ${estaEsgotado ? 'opacity-60' : ''}">
-                    <div class="p-4 cursor-pointer" onclick="toggleAccordion(${index})">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center space-x-3 flex-grow">
-                                <div class="w-10 h-10 bg-green-50 rounded-lg flex items-center justify-center text-xl">${estaEsgotado ? '🚫' : ''}</div>
-                                <div class="flex-grow">
-                                    <div class="flex items-center space-x-2">
-                                        <h3 class="font-bold text-gray-900 text-sm">${med.nome}</h3>
-                                        <span class="text-xs text-health font-semibold">${med.dosagem || ''}</span>
-                                    </div>
-                                    <p class="text-xs text-gray-500 mt-0.5">${med.quantidade || '1 un'} • R$ ${med.preco_original}</p>
-                                    ${estaEsgotado ? '<p class="text-red-600 font-bold text-xs mt-1">ESGOTADO</p>' : ''}
-                                </div>
-                            </div>
-                            <svg id="icon-${index}" class="w-5 h-5 text-gray-400 rotate-icon flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                        </div>
-                    </div>
-                    <div id="accordion-${index}" class="accordion-content">
-                        <div class="px-4 pb-4 space-y-3 border-t border-gray-100 pt-3">
-                            <p class="text-xs text-gray-600 leading-relaxed">${med.descricao || ''}</p>
-                            <div class="bg-gradient-to-r from-green-50 to-green-100 border border-green-200 rounded-lg p-3">
-                                <p class="text-xs font-bold text-gray-700 mb-2">Descontos progressivos:</p>
-                                <div class="grid grid-cols-3 gap-2 text-center">
-                                    <div class="bg-white rounded p-1"><p class="text-xs text-gray-600">${TABELA_DESCONTOS[0].meses}m</p><p class="text-sm font-bold text-health">${TABELA_DESCONTOS[0].desconto}%</p></div>
-                                    <div class="bg-white rounded p-1"><p class="text-xs text-gray-600">${TABELA_DESCONTOS[1].meses}m</p><p class="text-sm font-bold text-health">${TABELA_DESCONTOS[1].desconto}%</p></div>
-                                    <div class="bg-white rounded p-1"><p class="text-xs text-gray-600">${TABELA_DESCONTOS[2].meses}m</p><p class="text-sm font-bold text-health">${TABELA_DESCONTOS[2].desconto}%</p></div>
-                                </div>
-                            </div>
-                            ${!estaEsgotado ? `<button onclick="alert('Funcionalidade de assinatura em breve!')" class="block w-full bg-health text-white text-center font-bold py-3 rounded-xl shadow-md transition text-sm">ASSINAR COM DESCONTO</button>` : ''}
-                        </div>
-                    </div>
-                </div>`;
-            });
-        }
-
-        document.getElementById('form-solicitacao').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const solicitacao = { estabelecimento_id: ESTABELECIMENTO_ID, cliente_nome: document.getElementById('sol-nome').value, cliente_whatsapp: document.getElementById('sol-whatsapp').value, produto_desejado: document.getElementById('sol-produto').value, status: 'pendente' };
-            try { await db.from('solicitacoes_produtos').insert([solicitacao]); document.getElementById('form-solicitacao').reset(); alert('Solicitação enviada!'); } catch (error) { alert('Erro ao enviar.'); }
-        });
-    </script>
 </body>
 </html>
