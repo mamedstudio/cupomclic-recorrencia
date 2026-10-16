@@ -72,13 +72,12 @@
         </header>
 
         <div class="max-w-6xl mx-auto p-6">
-            <!-- Abas -->
             <div class="flex space-x-2 mb-6 bg-white rounded-xl p-2 shadow-sm overflow-x-auto">
-                <button onclick="mostrarAba('dashboard')" class="tab-btn active flex-1 py-2 px-4 rounded-lg font-semibold text-sm transition whitespace-nowrap">📊 Dashboard</button>
+                <button onclick="mostrarAba('dashboard')" class="tab-btn active flex-1 py-2 px-4 rounded-lg font-semibold text-sm transition whitespace-nowrap"> Dashboard</button>
                 <button onclick="mostrarAba('produtos')" class="tab-btn flex-1 py-2 px-4 rounded-lg font-semibold text-sm transition whitespace-nowrap">📦 Produtos</button>
                 <button onclick="mostrarAba('vips')" class="tab-btn flex-1 py-2 px-4 rounded-lg font-semibold text-sm transition whitespace-nowrap">👑 VIPs</button>
                 <button onclick="mostrarAba('calendario')" class="tab-btn flex-1 py-2 px-4 rounded-lg font-semibold text-sm transition whitespace-nowrap">📅 Calendário</button>
-                <button onclick="mostrarAba('config')" class="tab-btn flex-1 py-2 px-4 rounded-lg font-semibold text-sm transition whitespace-nowrap">️ Config</button>
+                <button onclick="mostrarAba('config')" class="tab-btn flex-1 py-2 px-4 rounded-lg font-semibold text-sm transition whitespace-nowrap">⚙️ Config</button>
             </div>
 
             <!-- Dashboard -->
@@ -219,9 +218,33 @@
                                 <label class="block text-sm font-semibold text-gray-700 mb-1">Horário de Funcionamento</label>
                                 <input type="text" id="config-horario" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-black focus:outline-none">
                             </div>
+                            
+                            <!-- LOGO DA LOJA COM UPLOAD -->
                             <div class="col-span-2">
-                                <label class="block text-sm font-semibold text-gray-700 mb-1">URL da Logo</label>
-                                <input type="text" id="config-logo" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-black focus:outline-none">
+                                <label class="block text-sm font-semibold text-gray-700 mb-1">Logo da Loja</label>
+                                
+                                <div id="preview-logo-container" class="mb-3 hidden">
+                                    <img id="preview-logo" src="" class="w-24 h-24 object-contain rounded-lg border border-gray-300 bg-white p-2">
+                                    <button type="button" onclick="removerLogo()" class="mt-2 text-xs text-red-600 hover:text-red-700">Remover logo</button>
+                                </div>
+                                
+                                <label class="block cursor-pointer mb-2">
+                                    <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-gray-400 transition">
+                                        <p class="text-sm text-gray-600">📷 Clique para selecionar logo</p>
+                                        <p class="text-xs text-gray-500 mt-1">PNG, JPG (máx 2MB)</p>
+                                    </div>
+                                    <input type="file" id="config-logo-file" accept="image/*" class="hidden" onchange="handleLogoUpload(event)">
+                                </label>
+                                
+                                <div id="logo-upload-progress" class="hidden mb-3">
+                                    <div class="w-full bg-gray-200 rounded-full h-2">
+                                        <div id="logo-upload-progress-bar" class="bg-blue-600 h-2 rounded-full transition-all" style="width: 0%"></div>
+                                    </div>
+                                    <p class="text-xs text-gray-600 mt-1">Enviando...</p>
+                                </div>
+                                
+                                <input type="hidden" id="config-logo">
+                                <input type="text" id="config-logo-url-display" readonly class="w-full px-4 py-2 rounded-lg border border-gray-300 bg-gray-50 text-xs text-gray-600" placeholder="A URL aparecerá aqui após o upload">
                             </div>
                         </div>
                         <button type="submit" class="w-full bg-black hover:bg-gray-800 text-white font-bold py-3 rounded-lg transition">Salvar Configurações</button>
@@ -302,17 +325,15 @@
                         <input type="date" id="produto-valido" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-black focus:outline-none">
                     </div>
                     
-                    <!-- UPLOAD DE FOTO -->
+                    <!-- UPLOAD DE FOTO DO PRODUTO -->
                     <div class="col-span-2">
                         <label class="block text-sm font-semibold text-gray-700 mb-1">Foto do Produto</label>
                         
-                        <!-- Preview da imagem -->
                         <div id="preview-foto-container" class="mb-3 hidden">
                             <img id="preview-foto" src="" class="w-32 h-32 object-cover rounded-lg border border-gray-300">
                             <button type="button" onclick="removerFoto()" class="mt-2 text-xs text-red-600 hover:text-red-700">Remover foto</button>
                         </div>
                         
-                        <!-- Botão de upload -->
                         <label class="block cursor-pointer mb-2">
                             <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-gray-400 transition">
                                 <p class="text-sm text-gray-600">📷 Clique para selecionar imagem</p>
@@ -321,7 +342,6 @@
                             <input type="file" id="produto-foto-file" accept="image/*" class="hidden" onchange="handleFotoUpload(event)">
                         </label>
                         
-                        <!-- Barra de progresso -->
                         <div id="upload-progress" class="hidden mb-3">
                             <div class="w-full bg-gray-200 rounded-full h-2">
                                 <div id="upload-progress-bar" class="bg-blue-600 h-2 rounded-full transition-all" style="width: 0%"></div>
@@ -329,7 +349,6 @@
                             <p class="text-xs text-gray-600 mt-1">Enviando...</p>
                         </div>
                         
-                        <!-- URL da foto (hidden) -->
                         <input type="hidden" id="produto-foto">
                         <input type="text" id="produto-foto-url-display" readonly class="w-full px-4 py-2 rounded-lg border border-gray-300 bg-gray-50 text-xs text-gray-600" placeholder="A URL aparecerá aqui após o upload">
                     </div>
@@ -633,7 +652,8 @@
             document.getElementById('config-estado').value = loja.estado || '';
             document.getElementById('config-cep').value = loja.cep || '';
             document.getElementById('config-horario').value = loja.horario_funcionamento || '';
-            document.getElementById('config-logo').value = loja.logo_url || '';
+            
+            carregarLogoExistente(loja.logo_url);
 
             db.from('config_vip').select('*').eq('estabelecimento_id', loja.id).single().then(({ data }) => {
                 if (data) {
@@ -912,7 +932,7 @@
                                     <div>
                                         <h4 class="font-bold text-gray-900">${alerta.nome}</h4>
                                         <p class="text-xs text-gray-600">${produto?.nome || 'Produto não especificado'} ${produto?.subtitulo ? '• ' + produto.subtitulo : ''} • ${alerta.desconto_atual}% OFF</p>
-                                        <p class="text-xs text-gray-500 mt-1"> ${alerta.whatsapp}</p>
+                                        <p class="text-xs text-gray-500 mt-1">📱 ${alerta.whatsapp}</p>
                                     </div>
                                     ${status}
                                 </div>
@@ -983,7 +1003,7 @@
             }
         }
 
-        // ====== UPLOAD DE FOTO ======
+        // ====== UPLOAD DE FOTO DO PRODUTO ======
         async function handleFotoUpload(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -998,7 +1018,6 @@
                 return;
             }
             
-            // Mostra preview
             const preview = document.getElementById('preview-foto');
             const previewContainer = document.getElementById('preview-foto-container');
             const reader = new FileReader();
@@ -1008,7 +1027,6 @@
             };
             reader.readAsDataURL(file);
             
-            // Upload para Supabase
             try {
                 const progressDiv = document.getElementById('upload-progress');
                 const progressBar = document.getElementById('upload-progress-bar');
@@ -1063,6 +1081,86 @@
                 document.getElementById('preview-foto-container').classList.remove('hidden');
             } else {
                 removerFoto();
+            }
+        }
+
+        // ====== UPLOAD DE LOGO DA LOJA ======
+        async function handleLogoUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            if (!file.type.startsWith('image/')) {
+                mostrarToast('Selecione uma imagem válida', 'error');
+                return;
+            }
+            
+            if (file.size > 2 * 1024 * 1024) {
+                mostrarToast('Imagem muito grande (máx 2MB)', 'error');
+                return;
+            }
+            
+            const preview = document.getElementById('preview-logo');
+            const previewContainer = document.getElementById('preview-logo-container');
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                preview.src = e.target.result;
+                previewContainer.classList.remove('hidden');
+            };
+            reader.readAsDataURL(file);
+            
+            try {
+                const progressDiv = document.getElementById('logo-upload-progress');
+                const progressBar = document.getElementById('logo-upload-progress-bar');
+                progressDiv.classList.remove('hidden');
+                
+                const fileName = `${slugLoja}-logo.${file.name.split('.').pop()}`;
+                
+                const { data, error } = await db.storage
+                    .from('logos')
+                    .upload(fileName, file, {
+                        cacheControl: '3600',
+                        upsert: true
+                    });
+                
+                if (error) throw error;
+                
+                const { data: { publicUrl } } = db.storage
+                    .from('logos')
+                    .getPublicUrl(fileName);
+                
+                document.getElementById('config-logo').value = publicUrl;
+                document.getElementById('config-logo-url-display').value = publicUrl;
+                
+                progressBar.style.width = '100%';
+                setTimeout(() => {
+                    progressDiv.classList.add('hidden');
+                    progressBar.style.width = '0%';
+                }, 500);
+                
+                mostrarToast('Logo enviada com sucesso!', 'success');
+                
+            } catch (error) {
+                console.error('Erro no upload:', error);
+                mostrarToast('Erro ao enviar logo: ' + error.message, 'error');
+                document.getElementById('logo-upload-progress').classList.add('hidden');
+            }
+        }
+
+        function removerLogo() {
+            document.getElementById('config-logo').value = '';
+            document.getElementById('config-logo-url-display').value = '';
+            document.getElementById('preview-logo-container').classList.add('hidden');
+            document.getElementById('config-logo-file').value = '';
+        }
+
+        function carregarLogoExistente(url) {
+            if (url) {
+                document.getElementById('config-logo').value = url;
+                document.getElementById('config-logo-url-display').value = url;
+                document.getElementById('preview-logo').src = url;
+                document.getElementById('preview-logo-container').classList.remove('hidden');
+            } else {
+                removerLogo();
             }
         }
 
