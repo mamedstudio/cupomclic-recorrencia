@@ -1,21 +1,21 @@
 {
-  "name": "Shop Pocket",
-  "short_name": "Shop Pocket",
-  "description": "Catálogo digital",
-  "start_url": "/loja.html",
+  "name": "Tokto | Catálogos Digitais",
+  "short_name": "Tokto",
+  "description": "Compra online, busca na loja!",
+  "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#000000",
+  "theme_color": "#f97316",
   "orientation": "portrait",
   "icons": [
     {
-      "src": "https://raw.githubusercontent.com/mamedstudio/cupomclic-recorrencia/main/shop-pocket-logo.png",
+      "src": "https://raw.githubusercontent.com/mamedstudio/cupomclic-recorrencia/main/tokto-logo.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "https://raw.githubusercontent.com/mamedstudio/cupomclic-recorrencia/main/shop-pocket-logo.png",
+      "src": "https://raw.githubusercontent.com/mamedstudio/cupomclic-recorrencia/main/tokto-logo.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
