@@ -333,11 +333,7 @@
             console.log(' Loja recebida para editar:', loja);
             console.log('🆔 ID da loja:', loja.id);
             
-            if (!loja.id) {
-                mostrarToast('Erro: ID da loja não encontrado!', 'error');
-                return;
-            }
-            
+                     
             document.getElementById('modal-titulo').textContent = 'Editar Loja';
             document.getElementById('loja-id').value = loja.id;
             document.getElementById('loja-nome').value = loja.nome || '';
