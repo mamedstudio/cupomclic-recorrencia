@@ -376,73 +376,57 @@
         document.getElementById('loja-cor').addEventListener('input', (e) => atualizarCor(e.target.value));
         document.getElementById('loja-cor-text').addEventListener('input', (e) => atualizarCor(e.target.value));
 
-        document.getElementById('form-loja').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const id = document.getElementById('loja-id').value;
+document.getElementById('form-loja').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const id = document.getElementById('loja-id').value;
+    
+    const dados = {
+        nome: document.getElementById('loja-nome').value.trim(),
+        slug: document.getElementById('loja-slug').value.toLowerCase().trim().replace(/\s+/g, '-'),
+        tipo: document.getElementById('loja-tipo').value,
+        cor_tema: document.getElementById('loja-cor').value,
+        whatsapp: document.getElementById('loja-whatsapp').value.trim(),
+        senha_admin: document.getElementById('loja-senha').value,
+        subtitulo: document.getElementById('loja-subtitulo').value.trim(),
+        endereco: document.getElementById('loja-endereco').value.trim(),
+        cidade: document.getElementById('loja-cidade').value.trim(),
+        estado: document.getElementById('loja-estado').value.trim().toUpperCase(),
+        cep: document.getElementById('loja-cep').value.trim(),
+        horario_funcionamento: document.getElementById('loja-horario').value.trim(),
+        descricao: document.getElementById('loja-descricao').value.trim(),
+        logo_url: document.getElementById('loja-logo').value.trim()
+    };
+    
+    try {
+        if (id) {
+            // EDITAR loja existente
+            const { error } = await db.from('lojas').update(dados).eq('id', id);
+            if (error) throw error;
+            mostrarToast('Loja atualizada com sucesso!', 'success');
+        } else {
+            // CRIAR nova loja
+            const { data, error } = await db.from('lojas').insert([dados]).select('id');
+            if (error) throw error;
             
-            console.log('🆔 ID do formulário:', id);
-            console.log('🆔 ID vazio?', !id);
-            
-            if (!id) {
-                mostrarToast('Erro: ID não encontrado. Tente editar novamente.', 'error');
-                return;
+            const novaLoja = data[0];
+            if (novaLoja) {
+                await db.from('config_vip').insert([{
+                    estabelecimento_id: novaLoja.id,
+                    desc_3_meses: 10,
+                    desc_5_meses: 18,
+                    desc_8_meses: 25
+                }]);
             }
-            
-            const dados = {
-                nome: document.getElementById('loja-nome').value.trim(),
-                slug: document.getElementById('loja-slug').value.toLowerCase().trim().replace(/\s+/g, '-'),
-                tipo: document.getElementById('loja-tipo').value,
-                cor_tema: document.getElementById('loja-cor').value,
-                whatsapp: document.getElementById('loja-whatsapp').value.trim(),
-                senha_admin: document.getElementById('loja-senha').value,
-                subtitulo: document.getElementById('loja-subtitulo').value.trim(),
-                endereco: document.getElementById('loja-endereco').value.trim(),
-                cidade: document.getElementById('loja-cidade').value.trim(),
-                estado: document.getElementById('loja-estado').value.trim().toUpperCase(),
-                cep: document.getElementById('loja-cep').value.trim(),
-                horario_funcionamento: document.getElementById('loja-horario').value.trim(),
-                descricao: document.getElementById('loja-descricao').value.trim(),
-                logo_url: document.getElementById('loja-logo').value.trim()
-            };
-            
-            console.log('🔵 Dados a salvar:', dados);
-            
-            try {
-                if (id) {
-                    const { error } = await db.from('lojas').update(dados).eq('id', id);
-                    if (error) {
-                        console.error('❌ Erro Supabase:', error);
-                        throw error;
-                    }
-                    console.log('✅ Loja atualizada com sucesso');
-                    mostrarToast('Loja atualizada com sucesso!', 'success');
-                } else {
-                    const { data, error } = await db.from('lojas').insert([dados]).select('id');
-                    if (error) {
-                        console.error('❌ Erro Supabase:', error);
-                        throw error;
-                    }
-                    console.log('✅ Loja criada:', data);
-                    
-                    const novaLoja = data[0];
-                    if (novaLoja) {
-                        await db.from('config_vip').insert([{
-                            estabelecimento_id: novaLoja.id,
-                            desc_3_meses: 10,
-                            desc_5_meses: 18,
-                            desc_8_meses: 25
-                        }]);
-                    }
-                    mostrarToast('Loja criada com sucesso!', 'success');
-                }
-                fecharModal();
-                carregarLojas();
-                carregarEstatisticas();
-            } catch (e) {
-                console.error('❌ Erro ao salvar:', e);
-                mostrarToast('Erro ao salvar loja: ' + e.message, 'error');
-            }
-        });
+            mostrarToast('Loja criada com sucesso!', 'success');
+        }
+        fecharModal();
+        carregarLojas();
+        carregarEstatisticas();
+    } catch (e) {
+        console.error('Erro ao salvar:', e);
+        mostrarToast('Erro ao salvar loja: ' + e.message, 'error');
+    }
+});
 
         async function excluirLoja(id, nome) {
             if (!confirm(`Tem certeza que deseja excluir "${nome}"? Esta ação não pode ser desfeita.`)) return;
