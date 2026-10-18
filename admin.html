@@ -1085,66 +1085,67 @@
         }
 
         // ====== UPLOAD DE LOGO DA LOJA ======
-        async function handleLogoUpload(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            
-            if (!file.type.startsWith('image/')) {
-                mostrarToast('Selecione uma imagem válida', 'error');
-                return;
-            }
-            
-            if (file.size > 2 * 1024 * 1024) {
-                mostrarToast('Imagem muito grande (máx 2MB)', 'error');
-                return;
-            }
-            
-            const preview = document.getElementById('preview-logo');
-            const previewContainer = document.getElementById('preview-logo-container');
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                preview.src = e.target.result;
-                previewContainer.classList.remove('hidden');
-            };
-            reader.readAsDataURL(file);
-            
-            try {
-                const progressDiv = document.getElementById('logo-upload-progress');
-                const progressBar = document.getElementById('logo-upload-progress-bar');
-                progressDiv.classList.remove('hidden');
-                
-                const fileName = `${slugLoja}-logo.${file.name.split('.').pop()}`;
-                
-                const { data, error } = await db.storage
-                    .from('logos')
-                    .upload(fileName, file, {
-                        cacheControl: '3600',
-                        upsert: true
-                    });
-                
-                if (error) throw error;
-                
-                const { data: { publicUrl } } = db.storage
-                    .from('logos')
-                    .getPublicUrl(fileName);
-                
-                document.getElementById('config-logo').value = publicUrl;
-                document.getElementById('config-logo-url-display').value = publicUrl;
-                
-                progressBar.style.width = '100%';
-                setTimeout(() => {
-                    progressDiv.classList.add('hidden');
-                    progressBar.style.width = '0%';
-                }, 500);
-                
-                mostrarToast('Logo enviada com sucesso!', 'success');
-                
-            } catch (error) {
-                console.error('Erro no upload:', error);
-                mostrarToast('Erro ao enviar logo: ' + error.message, 'error');
-                document.getElementById('logo-upload-progress').classList.add('hidden');
-            }
-        }
+       async function handleLogoUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    if (!file.type.startsWith('image/')) {
+        mostrarToast('Selecione uma imagem válida', 'error');
+        return;
+    }
+    
+    if (file.size > 2 * 1024 * 1024) {
+        mostrarToast('Imagem muito grande (máx 2MB)', 'error');
+        return;
+    }
+    
+    const preview = document.getElementById('preview-logo');
+    const previewContainer = document.getElementById('preview-logo-container');
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        preview.src = e.target.result;
+        previewContainer.classList.remove('hidden');
+    };
+    reader.readAsDataURL(file);
+    
+    try {
+        const progressDiv = document.getElementById('logo-upload-progress');
+        const progressBar = document.getElementById('logo-upload-progress-bar');
+        progressDiv.classList.remove('hidden');
+        
+        // ✅ CORREÇÃO: Nome único com timestamp para evitar cache
+        const fileName = `${slugLoja}-logo-${Date.now()}.${file.name.split('.').pop()}`;
+        
+        const { data, error } = await db.storage
+            .from('logos')
+            .upload(fileName, file, {
+                cacheControl: '3600',
+                upsert: false
+            });
+        
+        if (error) throw error;
+        
+        const { data: { publicUrl } } = db.storage
+            .from('logos')
+            .getPublicUrl(fileName);
+        
+        document.getElementById('config-logo').value = publicUrl;
+        document.getElementById('config-logo-url-display').value = publicUrl;
+        
+        progressBar.style.width = '100%';
+        setTimeout(() => {
+            progressDiv.classList.add('hidden');
+            progressBar.style.width = '0%';
+        }, 500);
+        
+        mostrarToast('Logo enviada com sucesso!', 'success');
+        
+    } catch (error) {
+        console.error('Erro no upload:', error);
+        mostrarToast('Erro ao enviar logo: ' + error.message, 'error');
+        document.getElementById('logo-upload-progress').classList.add('hidden');
+    }
+}
 
         function removerLogo() {
             document.getElementById('config-logo').value = '';
