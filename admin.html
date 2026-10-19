@@ -697,22 +697,42 @@
             }
         });
 
-        document.getElementById('form-vip-config').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const dados = {
-                desc_3_meses: parseInt(document.getElementById('vip-3').value),
-                desc_5_meses: parseInt(document.getElementById('vip-5').value),
-                desc_8_meses: parseInt(document.getElementById('vip-8').value)
-            };
-            try {
-                const { error } = await db.from('config_vip').upsert({ estabelecimento_id: loja.id, ...dados });
-                if (error) throw error;
-                mostrarToast('Descontos VIP salvos!', 'success');
-            } catch (e) {
-                console.error('Erro VIP config:', e);
-                mostrarToast('Erro ao salvar', 'error');
-            }
-        });
+       document.getElementById('form-vip-config').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const dados = {
+        desc_3_meses: parseInt(document.getElementById('vip-3').value),
+        desc_5_meses: parseInt(document.getElementById('vip-5').value),
+        desc_8_meses: parseInt(document.getElementById('vip-8').value)
+    };
+    try {
+        // Primeiro verifica se já existe
+        const { data: existente } = await db
+            .from('config_vip')
+            .select('id')
+            .eq('estabelecimento_id', loja.id)
+            .single();
+        
+        let error;
+        if (existente) {
+            // Já existe → atualiza
+            ({ error } = await db
+                .from('config_vip')
+                .update(dados)
+                .eq('estabelecimento_id', loja.id));
+        } else {
+            // Não existe → insere
+            ({ error } = await db
+                .from('config_vip')
+                .insert([{ estabelecimento_id: loja.id, ...dados }]));
+        }
+        
+        if (error) throw error;
+        mostrarToast('Descontos VIP salvos!', 'success');
+    } catch (e) {
+        console.error('Erro VIP config:', e);
+        mostrarToast('Erro ao salvar: ' + e.message, 'error');
+    }
+});
 
         function abrirModalProduto() {
             document.getElementById('modal-produto-titulo').textContent = 'Novo Produto';
